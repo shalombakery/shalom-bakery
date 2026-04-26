@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Shalom Bakery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --cream: #FAF6EF;
+  --wheat: #F0E6C8;
+  --toast: #C8956C;
+  --crust: #7B4A2D;
+  --dark: #2C1810;
+  --medium: #5A3825;
+  --light-text: #8B6B4A;
+  --white: #FFFFFF;
+  --green: #2E7D32;
+  --green-bg: #E8F5E9;
+  --red: #C62828;
+  --red-bg: #FFEBEE;
+  --blue: #1565C0;
+  --blue-bg: #E3F2FD;
+  --border: rgba(123,74,45,0.15);
+  --shadow: 0 2px 12px rgba(44,24,16,0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--crust);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(44,24,16,0.3);
+}
+.header-logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 22px; line-height: 1; }
+.header-logo h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--wheat); line-height: 1.1;
+}
+.header-date { font-size: 11px; color: rgba(240,230,200,0.65); display: block; }
+.btn-menu {
+  background: rgba(255,255,255,0.15); border: none;
+  color: var(--wheat); font-size: 20px;
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+/* SIDE NAV (secundario) */
+.side-nav { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+.side-nav.open { pointer-events: all; }
+.nav-overlay { position: absolute; inset: 0; background: rgba(44,24,16,0); transition: background 0.25s; }
+.side-nav.open .nav-overlay { background: rgba(44,24,16,0.55); }
+.nav-panel {
+  position: absolute; left: -280px; top: 0; bottom: 0; width: 260px;
+  background: var(--crust); transition: left 0.25s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+.side-nav.open .nav-panel { left: 0; }
+.nav-brand {
+  font-family: 'Playfair Display', serif; font-size: 15px;
+  color: var(--wheat); padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(240,230,200,0.2);
+  display: flex; align-items: center; gap: 8px; font-weight: 700;
+}
+.nav-close { margin-left: auto; background: none; border: none; color: var(--wheat); font-size: 18px; cursor: pointer; opacity: 0.7; }
+.nav-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(240,230,200,0.4); padding: 12px 16px 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px; color: rgba(240,230,200,0.8);
+  text-decoration: none; font-size: 14px; font-weight: 400;
+  transition: all 0.15s; border-left: 3px solid transparent; cursor: pointer;
+}
+.nav-item:hover, .nav-item.active {
+  background: rgba(255,255,255,0.1); color: var(--wheat);
+  border-left-color: var(--toast);
+}
+.nav-item-icon { font-size: 16px; width: 20px; text-align: center; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--crust);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  box-shadow: 0 -2px 12px rgba(44,24,16,0.25);
+}
+.bnav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 10px; border-radius: 10px;
+  cursor: pointer; transition: all 0.15s;
+  border: none; background: none; color: rgba(240,230,200,0.55);
+  min-width: 56px;
+}
+.bnav-item.active { color: var(--wheat); }
+.bnav-item .bnav-icon { font-size: 22px; line-height: 1; transition: transform 0.15s; }
+.bnav-item.active .bnav-icon { transform: scale(1.12); }
+.bnav-item .bnav-label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+.bnav-more { font-size: 22px; }
+
+/* MAIN */
+.main-content { padding: 0 0 90px; max-width: 480px; margin: 0 auto; }
+
+/* PAGES */
+.page { display: none; animation: fadeSlide 0.2s ease; }
+.page.active { display: block; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.page-header {
+  padding: 16px 16px 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+.page-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--crust); }
+.page-date { font-size: 12px; color: var(--light-text); }
+
+/* FILTER ROW */
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filter-btn {
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--toast); background: transparent;
+  color: var(--toast); font-size: 12px; font-family: 'DM Sans', sans-serif;
+  font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.filter-btn.active, .filter-btn:hover { background: var(--toast); color: var(--white); }
+
+/* DATE RANGE PICKER */
+.date-range-row {
+  display: none; gap: 8px; align-items: center;
+  padding: 0 16px 10px; flex-wrap: wrap;
+}
+.date-range-row.visible { display: flex; }
+.date-range-row label { font-size: 11px; color: var(--light-text); font-weight: 500; }
+.date-range-row input[type="date"] {
+  padding: 6px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--white); color: var(--dark); font-size: 12px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.btn-apply-range {
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  background: var(--crust); color: var(--wheat); border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+
+/* CARDS */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); margin: 0 16px 14px; padding: 16px;
+}
+.card-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--crust); margin-bottom: 12px; }
+.card-label { font-size: 11px; color: var(--light-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 16px 14px; }
+.kpi-card { background: var(--white); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 11px; color: var(--light-text); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.kpi-value { font-size: 20px; font-weight: 700; color: var(--dark); line-height: 1.1; }
+.kpi-value.green { color: var(--green); }
+.kpi-value.red { color: var(--red); }
+
+/* CAJA SALDOS */
+.saldo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.saldo-box { border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.saldo-box.ef { background: var(--green-bg); }
+.saldo-box.qr { background: var(--blue-bg); }
+.saldo-box .saldo-val { font-size: 18px; font-weight: 700; }
+.saldo-box.ef .saldo-val { color: var(--green); }
+.saldo-box.qr .saldo-val { color: var(--blue); }
+.saldo-box .saldo-lbl { font-size: 11px; font-weight: 500; margin-bottom: 2px; }
+
+/* CHART */
+.chart-wrap { position: relative; height: 180px; margin-top: 8px; }
+.chart-wrap-tall { position: relative; height: 200px; margin-top: 8px; }
+
+/* LEGEND */
+.legend-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--dark); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* LIST ITEMS */
+.list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.list-item:last-of-type { border-bottom: none; }
+.list-item-info { flex: 1; min-width: 0; }
+.list-item-name { font-size: 14px; font-weight: 600; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-item-sub { font-size: 12px; color: var(--light-text); margin-top: 2px; }
+.list-item-amount { font-size: 15px; font-weight: 700; color: var(--dark); text-align: right; }
+.list-item-amount.negative { color: var(--red); }
+
+/* PROD ROWS */
+.prod-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.prod-row:last-of-type { border-bottom: none; }
+.prod-bar-wrap { flex: 1; min-width: 0; }
+.prod-name { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+.prod-bar-bg { background: var(--wheat); border-radius: 4px; height: 6px; overflow: hidden; }
+.prod-bar-fill { height: 100%; background: var(--toast); border-radius: 4px; transition: width 0.5s ease; }
+.prod-stats { text-align: right; flex-shrink: 0; }
+.prod-margin { font-size: 15px; font-weight: 700; color: var(--green); }
+.prod-margin.neg { color: var(--red); }
+
+/* FORMS */
+.form-group { margin-bottom: 12px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--medium); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+.form-control {
+  width: 100%; padding: 11px 13px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--white); color: var(--dark);
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.15s; -webkit-appearance: none;
+}
+.form-control:focus { outline: none; border-color: var(--toast); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-primary {
+  width: 100%; padding: 14px; background: var(--crust); color: var(--wheat);
+  border: none; border-radius: var(--radius-sm); font-size: 15px;
+  font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.15s; margin-top: 4px;
+}
+.btn-primary:hover { background: var(--dark); transform: translateY(-1px); }
+.btn-secondary {
+  padding: 9px 16px; background: transparent; color: var(--crust);
+  border: 1.5px solid var(--crust); border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+
+/* BADGES */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.badge-prod { background: rgba(200,149,108,0.2); color: #7B4A2D; }
+.badge-op { background: rgba(90,56,37,0.15); color: #5A3825; }
+.badge-ef { background: var(--green-bg); color: var(--green); }
+.badge-qr { background: var(--blue-bg); color: var(--blue); }
+
+/* TAGS */
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; background: var(--wheat); padding: 5px 10px; border-radius: 20px; font-size: 12px; color: var(--dark); }
+.tag button { background: none; border: none; cursor: pointer; color: var(--light-text); font-size: 12px; padding: 0; line-height: 1; }
+
+/* DELETE BTN */
+.btn-del { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; opacity: 0.6; }
+.btn-del:hover { opacity: 1; }
+
+/* EMPTY */
+.empty-state { text-align: center; padding: 24px; color: var(--light-text); font-size: 13px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(60px);
+  background: var(--dark); color: var(--wheat); padding: 12px 20px;
+  border-radius: 24px; font-size: 13px; font-weight: 600; z-index: 500;
+  opacity: 0; transition: all 0.25s; white-space: nowrap; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.green { background: var(--green); }
+.toast.red { background: var(--red); }
+
+/* CONFIG */
+.cfg-status { font-size: 13px; font-weight: 600; margin-top: 8px; padding: 8px; border-radius: var(--radius-sm); }
+.cfg-status.ok { background: var(--green-bg); color: var(--green); }
+.cfg-status.err { background: var(--red-bg); color: var(--red); }
+.sql-block { background: #1e1e1e; color: #d4d4d4; border-radius: var(--radius-sm); padding: 12px; font-size: 10px; font-family: monospace; overflow-x: auto; white-space: pre; max-height: 180px; overflow-y: auto; margin-bottom: 8px; }
+.section-divider { height: 1px; background: var(--border); margin: 16px 0; }
+.info-box { background: var(--wheat); border-radius: var(--radius-sm); padding: 12px; font-size: 12px; color: var(--medium); margin-bottom: 12px; }
+
+/* MERMA TOTAL */
+.merma-total { padding: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--red); text-align: right; }
+
+/* PERIOD BADGE */
+.period-badge {
+  font-size: 11px; background: var(--wheat); color: var(--medium);
+  padding: 3px 10px; border-radius: 12px; font-weight: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-logo">
+    <span class="logo-icon">🥐</span>
+    <div>
+      <h1>Shalom Bakery</h1>
+      <span class="header-date" id="header-date"></span>
+    </div>
+  </div>
+  <button class="btn-menu" id="btn-menu" aria-label="Menú">☰</button>
+</header>
+
+<!-- SIDE NAV (Config, Materiales, etc.) -->
+<nav class="side-nav" id="side-nav">
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <div class="nav-panel">
+    <div class="nav-brand">🥐 Shalom Bakery <button class="nav-close" id="nav-close">✕</button></div>
+    <span class="nav-section-label">Más opciones</span>
+    <a class="nav-item" data-page="materiales"><span class="nav-item-icon">📈</span> Costos Promedio</a>
+    <a class="nav-item" data-page="config"><span class="nav-item-icon">⚙️</span> Configuración</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ====== DASHBOARD ====== -->
+  <section class="page active" id="page-dashboard">
+    <div class="page-header">
+      <h2>📊 Indicadores</h2>
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="dia">Hoy</button>
+        <button class="filter-btn" data-filter="semana">Semana</button>
+        <button class="filter-btn" data-filter="mes">Mes</button>
+        <button class="filter-btn" data-filter="rango">📅 Rango</button>
+      </div>
+    </div>
+    <!-- DATE RANGE DASH -->
+    <div class="date-range-row" id="dash-range-row">
+      <label>Desde</label>
+      <input type="date" id="dash-desde">
+      <label>Hasta</label>
+      <input type="date" id="dash-hasta">
+      <button class="btn-apply-range" id="btn-apply-dash">Aplicar</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Ventas</div>
+        <div class="kpi-value" id="kpi-ventas">$0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Margen Neto</div>
+        <div class="kpi-value" id="kpi-margen">0%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Utilidad Bruta</div>
+        <div class="kpi-value" id="kpi-bruta">$0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Utilidad Neta</div>
+        <div class="kpi-value" id="kpi-neta">$0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 Saldo en Caja</div>
+      <div class="saldo-row">
+        <div class="saldo-box ef">
+          <div class="saldo-lbl">💵 Efectivo</div>
+          <div class="saldo-val" id="dash-efectivo">$0</div>
+        </div>
+        <div class="saldo-box qr">
+          <div class="saldo-lbl">📱 QR / Digital</div>
+          <div class="saldo-val" id="dash-qr">$0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🍞 Distribución de Costos</div>
+      <div class="chart-wrap"><canvas id="costos-chart"></canvas></div>
+      <div class="legend-wrap" id="costos-legend"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏆 Rentabilidad por Producto</div>
+      <div id="productos-table"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗑 Merma del Período</div>
+      <div id="merma-dash"></div>
+    </div>
+  </section>
+
+  <!-- ====== PRODUCCION ====== -->
+  <section class="page" id="page-produccion">
+    <div class="page-header">
+      <h2>🥖 Producción</h2>
+      <span class="page-date" id="prod-date"></span>
+    </div>
+    <div class="card">
+      <div class="card-title">Registrar producción de hoy</div>
+      <div class="form-group">
+        <label class="form-label">Producto</label>
+        <select class="form-control" id="prod-producto"><option value="">-- Seleccionar --</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Cant. Producida</label>
+          <input type="number" class="form-control" id="prod-cantidad" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cant. Vendida</label>
+          <input type="number" class="form-control" id="prod-vendida" placeholder="0" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Precio Venta</label>
+          <input type="number" class="form-control" id="prod-precio" placeholder="$0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Costo Unitario</label>
+          <input type="number" class="form-control" id="prod-costo" placeholder="$0" min="0">
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-add-prod">+ Registrar Producción</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Producción de hoy</div>
+      <div id="prod-list"></div>
+    </div>
+  </section>
+
+  <!-- ====== COSTOS ====== -->
+  <section class="page" id="page-costos">
+    <div class="page-header"><h2>📋 Costos</h2></div>
+    <div class="card">
+      <div class="card-title">Registrar Costo</div>
+      <div class="form-group">
+        <label class="form-label">Categoría</label>
+        <select class="form-control" id="costo-tipo">
+          <option value="">-- Seleccionar tipo --</option>
+          <optgroup label="🔧 Producción Directa">
+            <option value="materia_prima">Materia Prima</option>
+            <option value="insumos_empaques">Insumos / Empaques</option>
+            <option value="mano_obra_directa">Mano de Obra Directa</option>
+            <option value="mermas_desperdicios">Mermas y Desperdicios</option>
+          </optgroup>
+          <optgroup label="🏢 Operativos">
+            <option value="arriendo">Arriendo</option>
+            <option value="servicios">Servicios Públicos</option>
+            <option value="nomina_operativa">Nómina Operativa</option>
+            <option value="tecnologia">Tecnología</option>
+            <option value="marketing">Marketing</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input type="text" class="form-control" id="costo-desc" placeholder="Ej: Harina 50kg">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monto</label>
+          <input type="number" class="form-control" id="costo-monto" placeholder="$0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Producto (opcional)</label>
+          <select class="form-control" id="costo-producto"><option value="">General</option></select>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-add-costo">+ Registrar Costo</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Costos de hoy</div>
+      <div id="costos-list"></div>
+    </div>
+  </section>
+
+  <!-- ====== CAJA ====== -->
+  <section class="page" id="page-caja">
+    <div class="page-header"><h2>💰 Caja</h2></div>
+    <div class="card">
+      <div class="card-title">Saldo actual</div>
+      <div class="saldo-row">
+        <div class="saldo-box ef">
+          <div class="saldo-lbl">💵 Efectivo</div>
+          <div class="saldo-val" id="saldo-efectivo-personal">$0</div>
+        </div>
+        <div class="saldo-box qr">
+          <div class="saldo-lbl">📱 QR / Digital</div>
+          <div class="saldo-val" id="saldo-qr-personal">$0</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding-top:4px">
+        <div class="card-label">Total en caja</div>
+        <div style="font-size:22px;font-weight:700;color:var(--dark)" id="res-total">$0</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Registrar Ventas del Día</div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-control" id="caja-fecha">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">💵 Efectivo</label>
+          <input type="number" class="form-control" id="caja-efectivo" placeholder="$0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 QR / Digital</label>
+          <input type="number" class="form-control" id="caja-qr" placeholder="$0" min="0">
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-save-caja">💾 Guardar Caja</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Historial reciente</div>
+      <div id="caja-historial"></div>
+    </div>
+  </section>
+
+  <!-- ====== MERMA ====== -->
+  <section class="page" id="page-merma">
+    <div class="page-header"><h2>🗑 Merma</h2></div>
+    <div class="card">
+      <div class="card-title">Registrar Merma</div>
+      <div class="form-group">
+        <label class="form-label">Producto</label>
+        <select class="form-control" id="merma-producto"><option value="">-- Seleccionar --</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control" id="merma-cantidad" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Costo Unitario</label>
+          <input type="number" class="form-control" id="merma-costo" placeholder="$0" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motivo</label>
+        <select class="form-control" id="merma-motivo">
+          <option value="vencido">Vencido</option>
+          <option value="quemado">Quemado / Mal cocido</option>
+          <option value="caido">Caído / Roto</option>
+          <option value="devolucion">Devolución</option>
+          <option value="sobrante">Sobrante del día</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="btn-add-merma">+ Registrar Merma</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Merma de hoy</div>
+      <div id="merma-list"></div>
+    </div>
+  </section>
+
+  <!-- ====== PERSONAL ====== -->
+  <section class="page" id="page-personal">
+    <div class="page-header"><h2>👥 Personal</h2></div>
+    <div class="card">
+      <div class="card-title">Saldo disponible para pago</div>
+      <div class="saldo-row">
+        <div class="saldo-box ef">
+          <div class="saldo-lbl">💵 Efectivo</div>
+          <div class="saldo-val" id="saldo-ef-p">$0</div>
+        </div>
+        <div class="saldo-box qr">
+          <div class="saldo-lbl">📱 QR</div>
+          <div class="saldo-val" id="saldo-qr-p">$0</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Registrar Pago</div>
+      <div class="form-group">
+        <label class="form-label">Empleado</label>
+        <select class="form-control" id="pago-empleado"><option value="">-- Seleccionar --</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monto</label>
+          <input type="number" class="form-control" id="pago-monto" placeholder="$0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Forma de pago</label>
+          <select class="form-control" id="pago-forma">
+            <option value="efectivo">💵 Efectivo</option>
+            <option value="qr">📱 QR</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Concepto</label>
+        <input type="text" class="form-control" id="pago-concepto" placeholder="Ej: Quincena, anticipo...">
+      </div>
+      <button class="btn-primary" id="btn-add-pago">💸 Registrar Pago</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Pagos de hoy</div>
+      <div id="pagos-list"></div>
+    </div>
+  </section>
+
+  <!-- ====== COSTOS PROMEDIO ====== -->
+  <section class="page" id="page-materiales">
+    <div class="page-header">
+      <h2>📈 Costos Promedio</h2>
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter-mat="semana">Semana</button>
+        <button class="filter-btn" data-filter-mat="mes">Mes</button>
+        <button class="filter-btn" data-filter-mat="rango">📅 Rango</button>
+      </div>
+    </div>
+    <!-- DATE RANGE MAT -->
+    <div class="date-range-row" id="mat-range-row">
+      <label>Desde</label>
+      <input type="date" id="mat-desde">
+      <label>Hasta</label>
+      <input type="date" id="mat-hasta">
+      <button class="btn-apply-range" id="btn-apply-mat">Aplicar</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Costo promedio por materia prima</div>
+      <div class="chart-wrap-tall"><canvas id="mat-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Evolución de costos totales</div>
+      <div class="chart-wrap"><canvas id="evol-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">% por categoría</div>
+      <div id="mat-detail"></div>
+    </div>
+  </section>
+
+  <!-- ====== CONFIG ====== -->
+  <section class="page" id="page-config">
+    <div class="page-header"><h2>⚙️ Configuración</h2></div>
+    <div class="card">
+      <div class="card-title">Supabase (opcional)</div>
+      <div class="info-box">Si querés guardar datos en la nube y acceder desde varios dispositivos, conectá Supabase. Sin esto, los datos se guardan solo en este navegador.</div>
+      <div class="form-group">
+        <label class="form-label">URL del Proyecto</label>
+        <input type="text" class="form-control" id="cfg-url" placeholder="https://xxx.supabase.co">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Anon Key</label>
+        <input type="text" class="form-control" id="cfg-key" placeholder="eyJhbGci...">
+      </div>
+      <button class="btn-primary" id="btn-save-cfg">Conectar a Supabase</button>
+      <div class="cfg-status" id="cfg-status" style="display:none"></div>
+      <div class="section-divider"></div>
+      <div class="card-title" style="margin-bottom:8px">SQL para crear tablas</div>
+      <pre class="sql-block" id="sql-block"></pre>
+      <button class="btn-secondary" id="btn-copy-sql">📋 Copiar SQL</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Productos</div>
+      <div class="form-row" style="margin-bottom:10px">
+        <input type="text" class="form-control" id="new-producto" placeholder="Nuevo producto...">
+        <button class="btn-secondary" id="btn-add-producto">Agregar</button>
+      </div>
+      <div class="tags-wrap" id="productos-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Empleados</div>
+      <div class="form-row" style="margin-bottom:10px">
+        <input type="text" class="form-control" id="new-empleado" placeholder="Nombre empleado...">
+        <button class="btn-secondary" id="btn-add-empleado">Agregar</button>
+      </div>
+      <div class="tags-wrap" id="empleados-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Datos</div>
+      <div class="info-box" style="margin-bottom:0">Limpiar todos los datos guardados localmente en este dispositivo.</div>
+      <div class="section-divider"></div>
+      <button class="btn-secondary" id="btn-clear-data" style="color:var(--red);border-color:var(--red);width:100%">🗑 Borrar todos los datos</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav-item active" data-page="dashboard">
+    <span class="bnav-icon">📊</span>
+    <span class="bnav-label">Dashboard</span>
+  </button>
+  <button class="bnav-item" data-page="produccion">
+    <span class="bnav-icon">🥖</span>
+    <span class="bnav-label">Producción</span>
+  </button>
+  <button class="bnav-item" data-page="costos">
+    <span class="bnav-icon">📋</span>
+    <span class="bnav-label">Costos</span>
+  </button>
+  <button class="bnav-item" data-page="caja">
+    <span class="bnav-icon">💰</span>
+    <span class="bnav-label">Caja</span>
+  </button>
+  <button class="bnav-item" data-page="merma">
+    <span class="bnav-icon">🗑</span>
+    <span class="bnav-label">Merma</span>
+  </button>
+  <button class="bnav-item" data-page="personal">
+    <span class="bnav-icon">👥</span>
+    <span class="bnav-label">Personal</span>
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// SHALOM BAKERY — App Principal v2.0
+// =============================================
+
+let supabase = null;
+let state = {
+  produccion: [], costos: [], caja: [], merma: [], pagos: [],
+  productos: [], empleados: [],
+  filtro: 'dia', filtroMat: 'semana',
+  dashDesde: null, dashHasta: null,
+  matDesde: null, matHasta: null
+};
+let chartCostos = null, chartMat = null, chartEvol = null;
+
+// ---------- UTILS ----------
+const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-CO', {minimumFractionDigits:0, maximumFractionDigits:0});
+const today = () => new Date().toISOString().split('T')[0];
+const weekAgo = () => { const d=new Date(); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; };
+const monthAgo = () => { const d=new Date(); d.setMonth(d.getMonth()-1); return d.toISOString().split('T')[0]; };
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+function filterByPeriod(arr, campo='fecha') {
+  const f = state.filtro, td = today(), wa = weekAgo(), ma = monthAgo();
+  return arr.filter(r => {
+    const d = (r[campo]||'').split('T')[0];
+    if (f === 'dia') return d === td;
+    if (f === 'semana') return d >= wa && d <= td;
+    if (f === 'mes') return d >= ma && d <= td;
+    if (f === 'rango') {
+      const desde = state.dashDesde || '2000-01-01';
+      const hasta = state.dashHasta || td;
+      return d >= desde && d <= hasta;
+    }
+    return true;
+  });
+}
+
+function filterMatPeriod(arr, campo='fecha') {
+  const f = state.filtroMat, td = today(), wa = weekAgo(), ma = monthAgo();
+  return arr.filter(r => {
+    const d = (r[campo]||'').split('T')[0];
+    if (f === 'semana') return d >= wa && d <= td;
+    if (f === 'mes') return d >= ma && d <= td;
+    if (f === 'rango') {
+      const desde = state.matDesde || '2000-01-01';
+      const hasta = state.matHasta || td;
+      return d >= desde && d <= hasta;
+    }
+    return true;
+  });
+}
+
+// ---------- LOCAL STORAGE ----------
+function saveLocal() {
+  localStorage.setItem('shalom_v2', JSON.stringify({
+    produccion: state.produccion, costos: state.costos, caja: state.caja,
+    merma: state.merma, pagos: state.pagos,
+    productos: state.productos, empleados: state.empleados
+  }));
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem('shalom_v2') || localStorage.getItem('shalom_state');
+  if (raw) { try { Object.assign(state, JSON.parse(raw)); } catch(e){} }
+  if (!state.productos.length) state.productos = ['Pan Blanco','Pan Integral','Medialunas','Facturas','Torta del Día','Bizcochos'];
+  if (!state.empleados.length) state.empleados = ['Empleado 1'];
+}
+
+// ---------- SUPABASE ----------
+function initSupabase() {
+  const url = localStorage.getItem('sb_url'), key = localStorage.getItem('sb_key');
+  if (url && key && window.supabase) {
+    try { supabase = window.supabase.createClient(url, key); } catch(e){}
+  }
+}
+
+async function syncToSupabase(table, data) {
+  if (!supabase) return;
+  try { await supabase.from(table).insert([data]); } catch(e){}
+}
+
+async function loadFromSupabase() {
+  if (!supabase) return;
+  try {
+    const [p,c,ca,m,pa] = await Promise.all([
+      supabase.from('produccion').select('*').order('fecha',{ascending:false}),
+      supabase.from('costos').select('*').order('fecha',{ascending:false}),
+      supabase.from('caja').select('*').order('fecha',{ascending:false}),
+      supabase.from('merma').select('*').order('fecha',{ascending:false}),
+      supabase.from('pagos').select('*').order('fecha',{ascending:false})
+    ]);
+    if(p.data) state.produccion = p.data;
+    if(c.data) state.costos = c.data;
+    if(ca.data) state.caja = ca.data;
+    if(m.data) state.merma = m.data;
+    if(pa.data) state.pagos = pa.data;
+    saveLocal(); renderAll();
+  } catch(e){}
+}
+
+// ---------- NAVIGATION ----------
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll(`[data-page="${page}"]`).forEach(el => el.classList.add('active'));
+  closeNav();
+  setTimeout(() => renderPage(page), 50);
+}
+
+function openNav() { document.getElementById('side-nav').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeNav() { document.getElementById('side-nav').classList.remove('open'); document.body.style.overflow=''; }
+
+// ---------- SELECTS ----------
+function populateSelects() {
+  ['prod-producto','merma-producto','costo-producto'].forEach(id => {
+    const sel = document.getElementById(id); if (!sel) return;
+    const isOpt = id === 'costo-producto';
+    const prev = sel.value;
+    sel.innerHTML = isOpt ? '<option value="">General</option>' : '<option value="">-- Seleccionar --</option>';
+    state.productos.forEach(p => { const o = document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o); });
+    if (prev) sel.value = prev;
+  });
+  const pagSel = document.getElementById('pago-empleado');
+  if (pagSel) {
+    const prev = pagSel.value;
+    pagSel.innerHTML = '<option value="">-- Seleccionar --</option>';
+    state.empleados.forEach(e => { const o = document.createElement('option'); o.value=e; o.textContent=e; pagSel.appendChild(o); });
+    if (prev) pagSel.value = prev;
+  }
+}
+
+function renderConfigLists() {
+  const pl = document.getElementById('productos-list'), el = document.getElementById('empleados-list');
+  if (pl) pl.innerHTML = state.productos.map((p,i) => `<span class="tag">${p}<button onclick="removeProducto(${i})">✕</button></span>`).join('');
+  if (el) el.innerHTML = state.empleados.map((e,i) => `<span class="tag">${e}<button onclick="removeEmpleado(${i})">✕</button></span>`).join('');
+}
+
+window.removeProducto = i => { state.productos.splice(i,1); saveLocal(); populateSelects(); renderConfigLists(); };
+window.removeEmpleado = i => { state.empleados.splice(i,1); saveLocal(); populateSelects(); renderConfigLists(); };
+
+// ---------- DASHBOARD ----------
+const COST_LABELS = { materia_prima:'Materia Prima', insumos_empaques:'Insumos/Empaques', mano_obra_directa:'Mano de Obra', mermas_desperdicios:'Mermas', arriendo:'Arriendo', servicios:'Servicios', nomina_operativa:'Nómina', tecnologia:'Tecnología', marketing:'Marketing' };
+const COST_COLORS = ['#C8956C','#7B4A2D','#E8C99A','#5A3825','#A0522D','#D2691E','#8B4513','#CD853F','#DEB887'];
+
+function renderDashboard() {
+  const prod = filterByPeriod(state.produccion);
+  const costos = filterByPeriod(state.costos);
+  const pagos = filterByPeriod(state.pagos);
+  const merma = filterByPeriod(state.merma);
+  const cajaHoy = state.caja.filter(c => c.fecha === today());
+
+  const ventas = prod.reduce((s,r) => s + (r.precio_venta * r.cantidad_vendida), 0);
+  const costosProd = prod.reduce((s,r) => s + (r.costo_unitario * r.cantidad_producida), 0);
+  const costosReg = costos.reduce((s,r) => s + parseFloat(r.monto||0), 0);
+  const totalPagos = pagos.reduce((s,r) => s + parseFloat(r.monto||0), 0);
+  const totalCostos = costosProd + costosReg + totalPagos;
+  const utilBruta = ventas - costosProd;
+  const utilNeta = ventas - totalCostos;
+  const margen = ventas > 0 ? ((utilNeta/ventas)*100).toFixed(1) : 0;
+
+  const efectivo = cajaHoy.reduce((s,r) => s+parseFloat(r.efectivo||0),0)
+    - pagos.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const qr = cajaHoy.reduce((s,r) => s+parseFloat(r.qr||0),0)
+    - pagos.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+
+  document.getElementById('kpi-ventas').textContent = fmt(ventas);
+  document.getElementById('kpi-bruta').textContent = fmt(utilBruta);
+  document.getElementById('kpi-bruta').className = 'kpi-value ' + (utilBruta>=0?'green':'red');
+  document.getElementById('kpi-neta').textContent = fmt(utilNeta);
+  document.getElementById('kpi-neta').className = 'kpi-value ' + (utilNeta>=0?'green':'red');
+  document.getElementById('kpi-margen').textContent = margen + '%';
+  document.getElementById('dash-efectivo').textContent = fmt(efectivo);
+  document.getElementById('dash-qr').textContent = fmt(qr);
+
+  renderCostosChart(costos, costosProd, totalPagos);
+  renderProductosTable(prod);
+  renderMermaDash(merma);
+}
+
+function renderCostosChart(costos, costosProd, pagos) {
+  const byType = {};
+  costos.forEach(c => { const t=c.tipo||'otro'; byType[t]=(byType[t]||0)+parseFloat(c.monto||0); });
+  if (costosProd>0) byType['_produccion']=costosProd;
+  if (pagos>0) byType['_pagos']=pagos;
+  const labels = Object.keys(byType).map(k => k==='_produccion'?'Costo Producción': k==='_pagos'?'Pagos Personal': (COST_LABELS[k]||k));
+  const data = Object.values(byType);
+  const total = data.reduce((a,b)=>a+b,0);
+  const legend = document.getElementById('costos-legend');
+  if (legend) legend.innerHTML = labels.map((l,i) => { const pct=total>0?((data[i]/total)*100).toFixed(1):0; return `<span class="legend-item"><span class="legend-dot" style="background:${COST_COLORS[i%COST_COLORS.length]}"></span>${l} (${pct}%)</span>`; }).join('');
+  if (!labels.length) { if(chartCostos){chartCostos.destroy();chartCostos=null;} return; }
+  const ctx = document.getElementById('costos-chart'); if (!ctx) return;
+  if (chartCostos) chartCostos.destroy();
+  chartCostos = new Chart(ctx, { type:'doughnut', data:{ labels, datasets:[{ data, backgroundColor:COST_COLORS.slice(0,data.length), borderWidth:2, borderColor:'#FAF6EF' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${fmt(ctx.raw)} (${total>0?((ctx.raw/total)*100).toFixed(1):0}%)`}} }, cutout:'62%' } });
+}
+
+function renderProductosTable(prod) {
+  const el = document.getElementById('productos-table'); if (!el) return;
+  if (!prod.length) { el.innerHTML='<p class="empty-state">Sin datos en el período</p>'; return; }
+  const byProd = {};
+  prod.forEach(r => { if(!byProd[r.producto]) byProd[r.producto]={ventas:0,costos:0}; byProd[r.producto].ventas+=r.precio_venta*r.cantidad_vendida; byProd[r.producto].costos+=r.costo_unitario*r.cantidad_producida; });
+  const maxV = Math.max(...Object.values(byProd).map(v=>v.ventas),1);
+  el.innerHTML = Object.entries(byProd).map(([n,v]) => { const m=v.ventas>0?((v.ventas-v.costos)/v.ventas*100).toFixed(1):0; const pct=(v.ventas/maxV*100).toFixed(1); return `<div class="prod-row"><div class="prod-bar-wrap"><div class="prod-name">${n}</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--light-text);margin-top:3px">${fmt(v.ventas)} en ventas</div></div><div class="prod-stats"><div class="prod-margin ${m<0?'neg':''}">${m}%</div><div style="font-size:10px;color:var(--light-text)">margen</div></div></div>`; }).join('');
+}
+
+function renderMermaDash(merma) {
+  const el = document.getElementById('merma-dash'); if (!el) return;
+  if (!merma.length) { el.innerHTML='<p class="empty-state">Sin merma registrada</p>'; return; }
+  const total = merma.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
+  el.innerHTML = merma.map(r=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}</div></div><div class="list-item-amount negative">${fmt(r.costo_unitario*r.cantidad)}</div></div>`).join('') + `<div class="merma-total">Total pérdida: ${fmt(total)}</div>`;
+}
+
+// ---------- PRODUCCION ----------
+function renderProduccion() {
+  const hoy = state.produccion.filter(r=>(r.fecha||'').split('T')[0]===today());
+  const el = document.getElementById('prod-list'); if(!el) return;
+  if (!hoy.length) { el.innerHTML='<p class="empty-state">Sin registros hoy</p>'; return; }
+  el.innerHTML = hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Vend: ${r.cantidad_vendida} · Costo: ${fmt(r.costo_unitario)}/u</div></div><div><div class="list-item-amount">${fmt(r.precio_venta*r.cantidad_vendida)}</div><button class="btn-del" onclick="deleteItem('produccion',${i})">🗑</button></div></div>`).join('');
+  document.getElementById('prod-date').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+}
+
+window.deleteItem = function(tabla, idx) {
+  if (tabla==='produccion') { state.produccion.splice(idx,1); renderProduccion(); }
+  else if (tabla==='costos') { state.costos.splice(idx,1); renderCostos(); }
+  else if (tabla==='merma') { state.merma.splice(idx,1); renderMerma(); }
+  else if (tabla==='pagos') { state.pagos.splice(idx,1); renderPersonal(); updateCajaSaldos(); }
+  saveLocal();
+};
+
+// ---------- COSTOS ----------
+function renderCostos() {
+  const hoy = state.costos.filter(r=>(r.fecha||'').split('T')[0]===today());
+  const el = document.getElementById('costos-list'); if(!el) return;
+  if (!hoy.length) { el.innerHTML='<p class="empty-state">Sin costos registrados</p>'; return; }
+  el.innerHTML = hoy.map((r,i)=>{
+    const esProd=['materia_prima','insumos_empaques','mano_obra_directa','mermas_desperdicios'].includes(r.tipo);
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${esProd?'badge-prod':'badge-op'}">${COST_LABELS[r.tipo]||r.tipo}</span>${r.producto?' · '+r.producto:''}</div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('costos',${i})">🗑</button></div></div>`;
+  }).join('');
+}
+
+// ---------- CAJA ----------
+function updateCajaSaldos() {
+  const cajaHoy = state.caja.filter(c=>c.fecha===today());
+  const pagosHoy = state.pagos.filter(p=>(p.fecha||'').split('T')[0]===today());
+  const efectivo = cajaHoy.reduce((s,r)=>s+parseFloat(r.efectivo||0),0) - pagosHoy.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const qr = cajaHoy.reduce((s,r)=>s+parseFloat(r.qr||0),0) - pagosHoy.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  ['saldo-efectivo-personal','saldo-ef-p'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(efectivo);});
+  ['saldo-qr-personal','saldo-qr-p'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(qr);});
+  ['res-efectivo'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(efectivo);});
+  ['res-qr'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(qr);});
+  const tot = document.getElementById('res-total'); if(tot) tot.textContent=fmt(efectivo+qr);
+}
+
+function renderCaja() {
+  const fechaInput = document.getElementById('caja-fecha');
+  if (fechaInput && !fechaInput.value) fechaInput.value = today();
+  updateCajaSaldos();
+  const el = document.getElementById('caja-historial'); if(!el) return;
+  const hist = state.caja.slice(-10).reverse();
+  if (!hist.length) { el.innerHTML='<p class="empty-state">Sin registros</p>'; return; }
+  el.innerHTML = hist.map(r=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.fecha}</div><div class="list-item-sub">Efectivo: ${fmt(r.efectivo)} · QR: ${fmt(r.qr)}</div></div><div class="list-item-amount">${fmt(parseFloat(r.efectivo||0)+parseFloat(r.qr||0))}</div></div>`).join('');
+}
+
+// ---------- MERMA ----------
+function renderMerma() {
+  const hoy = state.merma.filter(r=>(r.fecha||'').split('T')[0]===today());
+  const el = document.getElementById('merma-list'); if(!el) return;
+  if (!hoy.length) { el.innerHTML='<p class="empty-state">Sin merma registrada hoy</p>'; return; }
+  const total = hoy.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
+  el.innerHTML = hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo} · ${fmt(r.costo_unitario)}/u</div></div><div><div class="list-item-amount negative">${fmt(r.costo_unitario*r.cantidad)}</div><button class="btn-del" onclick="deleteItem('merma',${i})">🗑</button></div></div>`).join('') + `<div class="merma-total">Total: ${fmt(total)}</div>`;
+}
+
+// ---------- PERSONAL ----------
+function renderPersonal() {
+  const hoy = state.pagos.filter(r=>(r.fecha||'').split('T')[0]===today());
+  const el = document.getElementById('pagos-list'); if(!el) return;
+  if (!hoy.length) { el.innerHTML='<p class="empty-state">Sin pagos registrados hoy</p>'; return; }
+  el.innerHTML = hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.empleado}</div><div class="list-item-sub">${r.concepto||'Sin concepto'} · <span class="badge ${r.forma==='efectivo'?'badge-ef':'badge-qr'}">${r.forma==='efectivo'?'💵 Efectivo':'📱 QR'}</span></div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('pagos',${i})">🗑</button></div></div>`).join('');
+}
+
+// ---------- MATERIALES ----------
+function renderMateriales() {
+  const costos = filterMatPeriod(state.costos);
+  const mps = costos.filter(c=>c.tipo==='materia_prima');
+  const byDesc = {};
+  mps.forEach(c=>{ if(!byDesc[c.descripcion]) byDesc[c.descripcion]=[]; byDesc[c.descripcion].push(parseFloat(c.monto||0)); });
+  const labels = Object.keys(byDesc);
+  const data = labels.map(l=>{ const arr=byDesc[l]; return parseFloat((arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(2)); });
+  const ctx = document.getElementById('mat-chart');
+  if (ctx) {
+    if (chartMat) chartMat.destroy();
+    if (labels.length) {
+      chartMat = new Chart(ctx,{ type:'bar', data:{ labels, datasets:[{label:'Costo promedio',data,backgroundColor:'#C8956C',borderColor:'#7B4A2D',borderWidth:1.5}] }, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback:v=>'$'+v},grid:{color:'rgba(0,0,0,0.05)'}},y:{ticks:{font:{size:11}}}} } });
+    }
+  }
+  const byFecha = {};
+  costos.forEach(c=>{ const f=(c.fecha||'').split('T')[0]; byFecha[f]=(byFecha[f]||0)+parseFloat(c.monto||0); });
+  const fechas = Object.keys(byFecha).sort(), montos = fechas.map(f=>byFecha[f]);
+  const ctx2 = document.getElementById('evol-chart');
+  if (ctx2) {
+    if (chartEvol) chartEvol.destroy();
+    if (fechas.length) {
+      chartEvol = new Chart(ctx2,{ type:'line', data:{ labels:fechas, datasets:[{label:'Costos totales',data:montos,borderColor:'#7B4A2D',backgroundColor:'rgba(200,149,108,0.15)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#C8956C'}] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{ticks:{font:{size:10},maxRotation:45}},y:{ticks:{callback:v=>'$'+v}}} } });
+    }
+  }
+  const byCat = {};
+  costos.forEach(c=>{ byCat[c.tipo]=(byCat[c.tipo]||0)+parseFloat(c.monto||0); });
+  const totalCat = Object.values(byCat).reduce((a,b)=>a+b,0);
+  const el = document.getElementById('mat-detail');
+  if (el) {
+    if (!Object.keys(byCat).length) { el.innerHTML='<p class="empty-state">Sin datos suficientes</p>'; return; }
+    el.innerHTML = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([tipo,monto])=>{
+      const pct=totalCat>0?((monto/totalCat)*100).toFixed(1):0;
+      const esProd=['materia_prima','insumos_empaques','mano_obra_directa','mermas_desperdicios'].includes(tipo);
+      return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${COST_LABELS[tipo]||tipo}</div><div style="margin-top:4px"><div style="background:var(--wheat);border-radius:4px;height:5px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${esProd?'#C8956C':'#7B4A2D'};border-radius:4px"></div></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:600">${fmt(monto)}</div><div style="font-size:11px;color:var(--light-text)">${pct}%</div></div></div>`;
+    }).join('');
+  }
+}
+
+// ---------- CONFIG ----------
+function renderConfig() {
+  renderConfigLists();
+  const url = localStorage.getItem('sb_url')||'', key = localStorage.getItem('sb_key')||'';
+  document.getElementById('cfg-url').value=url; document.getElementById('cfg-key').value=key;
+  const sql=`-- Ejecutar en Supabase SQL Editor\nCREATE TABLE IF NOT EXISTS produccion (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  fecha timestamptz DEFAULT now(),\n  producto text NOT NULL,\n  cantidad_producida numeric DEFAULT 0,\n  cantidad_vendida numeric DEFAULT 0,\n  precio_venta numeric DEFAULT 0,\n  costo_unitario numeric DEFAULT 0\n);\n\nCREATE TABLE IF NOT EXISTS costos (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  fecha timestamptz DEFAULT now(),\n  tipo text NOT NULL,\n  descripcion text,\n  monto numeric DEFAULT 0,\n  producto text\n);\n\nCREATE TABLE IF NOT EXISTS caja (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  fecha date NOT NULL,\n  efectivo numeric DEFAULT 0,\n  qr numeric DEFAULT 0\n);\n\nCREATE TABLE IF NOT EXISTS merma (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  fecha timestamptz DEFAULT now(),\n  producto text NOT NULL,\n  cantidad numeric DEFAULT 0,\n  costo_unitario numeric DEFAULT 0,\n  motivo text\n);\n\nCREATE TABLE IF NOT EXISTS pagos (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  fecha timestamptz DEFAULT now(),\n  empleado text NOT NULL,\n  monto numeric DEFAULT 0,\n  forma text DEFAULT 'efectivo',\n  concepto text\n);\n\nALTER TABLE produccion ENABLE ROW LEVEL SECURITY;\nALTER TABLE costos ENABLE ROW LEVEL SECURITY;\nALTER TABLE caja ENABLE ROW LEVEL SECURITY;\nALTER TABLE merma ENABLE ROW LEVEL SECURITY;\nALTER TABLE pagos ENABLE ROW LEVEL SECURITY;`;
+  const sqlEl = document.getElementById('sql-block'); if(sqlEl) sqlEl.textContent=sql;
+}
+
+// ---------- PAGE ROUTER ----------
+function renderPage(page) {
+  if (page==='dashboard') renderDashboard();
+  else if (page==='produccion') renderProduccion();
+  else if (page==='costos') renderCostos();
+  else if (page==='caja') renderCaja();
+  else if (page==='merma') renderMerma();
+  else if (page==='personal') { renderPersonal(); updateCajaSaldos(); }
+  else if (page==='materiales') renderMateriales();
+  else if (page==='config') renderConfig();
+}
+
+function renderAll() {
+  const activePage = document.querySelector('.page.active');
+  if (activePage) renderPage(activePage.id.replace('page-',''));
+}
+
+// ---------- EVENT LISTENERS ----------
+document.addEventListener('DOMContentLoaded', () => {
+  loadLocal();
+  initSupabase();
+
+  document.getElementById('header-date').textContent = new Date().toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'long'});
+
+  // NAV
+  document.getElementById('btn-menu').addEventListener('click', openNav);
+  document.getElementById('nav-close').addEventListener('click', closeNav);
+  document.getElementById('nav-overlay').addEventListener('click', closeNav);
+
+  // BOTTOM NAV
+  document.querySelectorAll('.bnav-item').forEach(item => {
+    item.addEventListener('click', () => navigate(item.dataset.page));
+  });
+
+  // SIDE NAV
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', e => { e.preventDefault(); navigate(item.dataset.page); });
+  });
+
+  // DASHBOARD FILTERS
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.filtro = btn.dataset.filter;
+      const rangeRow = document.getElementById('dash-range-row');
+      if (state.filtro === 'rango') { rangeRow.classList.add('visible'); }
+      else { rangeRow.classList.remove('visible'); renderDashboard(); }
+    });
+  });
+
+  document.getElementById('btn-apply-dash').addEventListener('click', () => {
+    state.dashDesde = document.getElementById('dash-desde').value || null;
+    state.dashHasta = document.getElementById('dash-hasta').value || null;
+    renderDashboard();
+  });
+
+  // MATERIALES FILTERS
+  document.querySelectorAll('[data-filter-mat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter-mat]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.filtroMat = btn.dataset.filterMat;
+      const rangeRow = document.getElementById('mat-range-row');
+      if (state.filtroMat === 'rango') { rangeRow.classList.add('visible'); }
+      else { rangeRow.classList.remove('visible'); renderMateriales(); }
+    });
+  });
+
+  document.getElementById('btn-apply-mat').addEventListener('click', () => {
+    state.matDesde = document.getElementById('mat-desde').value || null;
+    state.matHasta = document.getElementById('mat-hasta').value || null;
+    renderMateriales();
+  });
+
+  // PRODUCCION
+  document.getElementById('btn-add-prod').addEventListener('click', () => {
+    const producto = document.getElementById('prod-producto').value;
+    const cantidad_producida = parseFloat(document.getElementById('prod-cantidad').value)||0;
+    const cantidad_vendida = parseFloat(document.getElementById('prod-vendida').value)||0;
+    const precio_venta = parseFloat(document.getElementById('prod-precio').value)||0;
+    const costo_unitario = parseFloat(document.getElementById('prod-costo').value)||0;
+    if (!producto) { showToast('Seleccioná un producto','red'); return; }
+    if (cantidad_producida<=0) { showToast('Ingresá la cantidad producida','red'); return; }
+    const item = { id:Date.now(), fecha:new Date().toISOString(), producto, cantidad_producida, cantidad_vendida, precio_venta, costo_unitario };
+    state.produccion.push(item); saveLocal(); syncToSupabase('produccion',item);
+    ['prod-cantidad','prod-vendida','prod-precio','prod-costo'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('prod-producto').value='';
+    renderProduccion(); showToast('✓ Producción registrada','green');
+  });
+
+  // COSTOS
+  document.getElementById('btn-add-costo').addEventListener('click', () => {
+    const tipo = document.getElementById('costo-tipo').value;
+    const descripcion = document.getElementById('costo-desc').value.trim();
+    const monto = parseFloat(document.getElementById('costo-monto').value)||0;
+    const producto = document.getElementById('costo-producto').value;
+    if (!tipo) { showToast('Seleccioná el tipo de costo','red'); return; }
+    if (!descripcion) { showToast('Ingresá una descripción','red'); return; }
+    if (monto<=0) { showToast('Ingresá un monto válido','red'); return; }
+    const item = { id:Date.now(), fecha:new Date().toISOString(), tipo, descripcion, monto, producto };
+    state.costos.push(item); saveLocal(); syncToSupabase('costos',item);
+    ['costo-desc','costo-monto'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('costo-tipo').value=''; document.getElementById('costo-producto').value='';
+    renderCostos(); showToast('✓ Costo registrado','green');
+  });
+
+  // CAJA
+  document.getElementById('btn-save-caja').addEventListener('click', () => {
+    const efectivo = parseFloat(document.getElementById('caja-efectivo').value)||0;
+    const qr = parseFloat(document.getElementById('caja-qr').value)||0;
+    const fecha = document.getElementById('caja-fecha').value || today();
+    if (efectivo===0 && qr===0) { showToast('Ingresá al menos un monto','red'); return; }
+    const existing = state.caja.findIndex(c=>c.fecha===fecha);
+    const item = { fecha, efectivo, qr };
+    if (existing>=0) state.caja[existing]=item; else state.caja.push(item);
+    saveLocal(); syncToSupabase('caja',item);
+    ['caja-efectivo','caja-qr'].forEach(id=>document.getElementById(id).value='');
+    renderCaja(); showToast('✓ Caja guardada','green');
+  });
+
+  // MERMA
+  document.getElementById('btn-add-merma').addEventListener('click', () => {
+    const producto = document.getElementById('merma-producto').value;
+    const cantidad = parseFloat(document.getElementById('merma-cantidad').value)||0;
+    const costo_unitario = parseFloat(document.getElementById('merma-costo').value)||0;
+    const motivo = document.getElementById('merma-motivo').value;
+    if (!producto) { showToast('Seleccioná un producto','red'); return; }
+    if (cantidad<=0) { showToast('Ingresá la cantidad','red'); return; }
+    const item = { id:Date.now(), fecha:new Date().toISOString(), producto, cantidad, costo_unitario, motivo };
+    state.merma.push(item); saveLocal(); syncToSupabase('merma',item);
+    ['merma-cantidad','merma-costo'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('merma-producto').value='';
+    renderMerma(); showToast('✓ Merma registrada','green');
+  });
+
+  // PERSONAL
+  document.getElementById('btn-add-pago').addEventListener('click', () => {
+    const empleado = document.getElementById('pago-empleado').value;
+    const monto = parseFloat(document.getElementById('pago-monto').value)||0;
+    const forma = document.getElementById('pago-forma').value;
+    const concepto = document.getElementById('pago-concepto').value.trim();
+    if (!empleado) { showToast('Seleccioná un empleado','red'); return; }
+    if (monto<=0) { showToast('Ingresá un monto válido','red'); return; }
+    const item = { id:Date.now(), fecha:new Date().toISOString(), empleado, monto, forma, concepto };
+    state.pagos.push(item); saveLocal(); syncToSupabase('pagos',item);
+    ['pago-monto','pago-concepto'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pago-empleado').value='';
+    renderPersonal(); updateCajaSaldos();
+    showToast(`✓ Pago registrado · descontado de ${forma==='efectivo'?'Efectivo':'QR'}`, 'green');
+  });
+
+  // CONFIG
+  document.getElementById('btn-save-cfg').addEventListener('click', async () => {
+    const url = document.getElementById('cfg-url').value.trim();
+    const key = document.getElementById('cfg-key').value.trim();
+    const status = document.getElementById('cfg-status');
+    status.style.display='block';
+    if (!url||!key) { status.textContent='Ingresá la URL y la clave'; status.className='cfg-status err'; return; }
+    localStorage.setItem('sb_url',url); localStorage.setItem('sb_key',key);
+    initSupabase();
+    if (supabase) { status.textContent='✓ Conectado. Cargando datos...'; status.className='cfg-status ok'; await loadFromSupabase(); }
+    else { status.textContent='Error al conectar. Verificá la URL y clave.'; status.className='cfg-status err'; }
+  });
+
+  document.getElementById('btn-add-producto').addEventListener('click', () => {
+    const val = document.getElementById('new-producto').value.trim(); if (!val) return;
+    state.productos.push(val); document.getElementById('new-producto').value='';
+    saveLocal(); populateSelects(); renderConfigLists(); showToast('✓ Producto agregado','green');
+  });
+
+  document.getElementById('btn-add-empleado').addEventListener('click', () => {
+    const val = document.getElementById('new-empleado').value.trim(); if (!val) return;
+    state.empleados.push(val); document.getElementById('new-empleado').value='';
+    saveLocal(); populateSelects(); renderConfigLists(); showToast('✓ Empleado agregado','green');
+  });
+
+  document.getElementById('btn-copy-sql').addEventListener('click', () => {
+    const sql = document.getElementById('sql-block').textContent;
+    navigator.clipboard.writeText(sql).then(()=>showToast('✓ SQL copiado','green'));
+  });
+
+  document.getElementById('btn-clear-data').addEventListener('click', () => {
+    if (!confirm('¿Seguro que querés borrar TODOS los datos guardados? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem('shalom_v2'); localStorage.removeItem('shalom_state');
+    state.produccion=[]; state.costos=[]; state.caja=[]; state.merma=[]; state.pagos=[];
+    state.productos=['Pan Blanco','Pan Integral','Medialunas','Facturas','Torta del Día','Bizcochos'];
+    state.empleados=['Empleado 1'];
+    saveLocal(); populateSelects(); renderAll(); showToast('✓ Datos borrados','green');
+  });
+
+  // INIT
+  populateSelects();
+  renderDashboard();
+  if (supabase) loadFromSupabase();
+});
+</script>
+</body>
+</html>
