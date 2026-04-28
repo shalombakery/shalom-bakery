@@ -1159,16 +1159,21 @@ function renderDashboard(){
   const utilBruta=ventas-costosProd;
   const utilNeta=ventas-totalCostos;
   const margen=ventas>0?((utilNeta/ventas)*100).toFixed(1):0;
-  const costosEf=costos.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const costosQR=costos.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  // Saldo acumulado real (independiente del filtro de período)
   const capitalEf=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalQR=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
+  const todasVentas_ef=(state.caja||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
+  const todasVentas_qr=(state.caja||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
+  const todosPagos_ef=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosPagos_qr=(state.pagos||[]).filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosCostos_ef=(state.costos||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosCostos_qr=(state.costos||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todasCompras_ef=(state.compras||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todasCompras_qr=(state.compras||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsEfDash=(state.movimientos||[]).filter(m=>m.tipo==='retiro_efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsQRDash=(state.movimientos||[]).filter(m=>m.tipo==='transferencia_qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const comprasEfDash=(state.compras||[]).reduce((s,r)=>r.forma==='efectivo'?s+parseFloat(r.monto||0):s,0);
-  const comprasQRDash=(state.compras||[]).reduce((s,r)=>r.forma==='qr'?s+parseFloat(r.monto||0):s,0);
-  const efectivo=capitalEf+cajaHoy.reduce((s,r)=>s+parseFloat(r.efectivo||0),0)-pagos.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)-costosEf-movsEfDash-comprasEfDash;
-  const qr=capitalQR+cajaHoy.reduce((s,r)=>s+parseFloat(r.qr||0),0)-pagos.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)-costosQR-movsQRDash-comprasQRDash;
+  const efectivo=capitalEf+todasVentas_ef-todosPagos_ef-todosCostos_ef-todasCompras_ef-movsEfDash;
+  const qr=capitalQR+todasVentas_qr-todosPagos_qr-todosCostos_qr-todasCompras_qr-movsQRDash;
 
   document.getElementById('kpi-ventas').textContent=fmt(ventas);
   document.getElementById('kpi-bruta').textContent=fmt(utilBruta);
@@ -1399,12 +1404,19 @@ window.deleteItem=function(tabla,idx){
     icon: e.icon, title: e.title,
     msg: 'Esta acción no se puede deshacer.',
     detail: e.detail,
-    onConfirm: ()=>{
+    onConfirm: async ()=>{
+      const registro = state[tabla]?.[idx];
+      const registroId = registro?.id;
       if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
       else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
       else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
       else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
-      saveLocal();showToast('Registro eliminado','green');
+      saveLocal();
+      // Sincronizar eliminación con Supabase
+      if(supabase && registroId){
+        try{ await supabase.from(tabla).delete().eq('id', registroId); }catch(e){ console.warn('Error al eliminar de Supabase:', e); }
+      }
+      showToast('Registro eliminado','green');
     }
   });
 };
@@ -1437,26 +1449,21 @@ function renderCostos(){
 
 function updateCajaSaldos(){
   const td=today();
-  const cajaHoy=state.caja.filter(c=>c.fecha===td);
-  const pagosHoy=state.pagos.filter(p=>(p.fecha||'').split('T')[0]===td);
-  const costosHoy=state.costos.filter(c=>(c.fecha||'').split('T')[0]===td);
+  // Saldo acumulado real = capital + todas las ventas - todos los egresos
   const capitalTotal_ef=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalTotal_qr=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
-  const comprasHoy=(state.compras||[]).filter(c=>(c.fecha||'').split('T')[0]===td);
+  const todasVentas_ef=(state.caja||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
+  const todasVentas_qr=(state.caja||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
+  const todosPagos_ef=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosPagos_qr=(state.pagos||[]).filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosCostos_ef=(state.costos||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todosCostos_qr=(state.costos||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todasCompras_ef=(state.compras||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const todasCompras_qr=(state.compras||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsEf=(state.movimientos||[]).filter(m=>m.tipo==='retiro_efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsQR=(state.movimientos||[]).filter(m=>m.tipo==='transferencia_qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const ef=capitalTotal_ef
-    +cajaHoy.reduce((s,r)=>s+parseFloat(r.efectivo||0),0)
-    -pagosHoy.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -costosHoy.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -comprasHoy.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -movsEf;
-  const qr=capitalTotal_qr
-    +cajaHoy.reduce((s,r)=>s+parseFloat(r.qr||0),0)
-    -pagosHoy.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -costosHoy.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -comprasHoy.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -movsQR;
+  const ef=capitalTotal_ef+todasVentas_ef-todosPagos_ef-todosCostos_ef-todasCompras_ef-movsEf;
+  const qr=capitalTotal_qr+todasVentas_qr-todosPagos_qr-todosCostos_qr-todasCompras_qr-movsQR;
   ['saldo-efectivo-personal','saldo-ef-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(ef);});
   ['saldo-qr-personal','saldo-qr-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(qr);});
   const tot=document.getElementById('res-total');if(tot)tot.textContent=fmt(ef+qr);
@@ -2140,6 +2147,7 @@ initSupabase();
     if(!confirm('¿Seguro que querés borrar TODOS los datos?'))return;
     ['shalom_v3','shalom_v2','shalom_state'].forEach(k=>localStorage.removeItem(k));
     state.produccion=[];state.costos=[];state.caja=[];state.merma=[];state.pagos=[];state.capital=[];state.movimientos=[];
+    state.compras=[];state.catalogo=[];
     state.productos=['Pan Blanco','Pan Integral','Medialunas','Facturas','Torta del Día','Bizcochos'];
     state.empleados=['Empleado 1'];state.ingredientes=[];state.recetas={};
     saveLocal();saveConfigToSupabase();populateSelects();renderAll();showToast('✓ Datos borrados','green');
