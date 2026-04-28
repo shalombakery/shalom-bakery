@@ -228,6 +228,80 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 /* ── SECTION LABELS ── */
 .section-group-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 14px 16px 5px; display: flex; align-items: center; gap: 6px; }
 .section-group-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── CONFIRM MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(30,15,5,0.55);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s;
+}
+.modal-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+.modal-box {
+  background: var(--card-bg, #fff);
+  border-radius: 18px 18px 0 0;
+  padding: 20px 20px 32px;
+  width: 100%; max-width: 480px;
+  transform: translateY(40px);
+  transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow: 0 -4px 32px rgba(30,15,5,0.18);
+}
+.modal-overlay.open .modal-box {
+  transform: translateY(0);
+}
+.modal-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border-color, #e0d0c0);
+  margin: 0 auto 16px;
+}
+.modal-icon {
+  font-size: 36px; text-align: center; display: block; margin-bottom: 10px;
+}
+.modal-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--text-primary, #2C1A0E);
+  text-align: center; margin-bottom: 6px;
+}
+.modal-msg {
+  font-size: 13px; color: var(--muted, #9C7B5A);
+  text-align: center; line-height: 1.5; margin-bottom: 20px;
+}
+.modal-detail {
+  background: var(--wheat-light, #fdf6ea);
+  border: 1px solid var(--border-color, #e8d8c0);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-primary, #2C1A0E);
+  text-align: center; margin-bottom: 18px;
+}
+.modal-actions {
+  display: flex; gap: 10px;
+}
+.modal-btn-cancel {
+  flex: 1; padding: 13px;
+  background: var(--wheat-light, #fdf6ea);
+  border: 1.5px solid var(--border-color, #e0d0c0);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500;
+  color: var(--text-secondary, #6B4226);
+  cursor: pointer; transition: all 0.15s;
+}
+.modal-btn-cancel:hover { background: var(--wheat, #F0E6C8); }
+.modal-btn-confirm {
+  flex: 1; padding: 13px;
+  background: var(--crimson, #B02020);
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: #fff; cursor: pointer; transition: all 0.15s;
+}
+.modal-btn-confirm:hover { background: #8B1A1A; transform: translateY(-1px); }
+.modal-btn-confirm:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
@@ -788,6 +862,21 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </button>
 </nav>
 
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <span class="modal-icon" id="modal-icon">🗑</span>
+    <div class="modal-title" id="modal-title">¿Eliminar registro?</div>
+    <div class="modal-msg" id="modal-msg">Esta acción no se puede deshacer.</div>
+    <div class="modal-detail" id="modal-detail"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-cancel" id="modal-cancel">Cancelar</button>
+      <button class="modal-btn-confirm" id="modal-confirm">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1284,14 +1373,40 @@ function renderProduccion(){
   el.innerHTML=hoy.map((r,i)=>{const mermU=mMapP[r.producto]||0;const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div><div class="list-item-amount">${fmt(r.precio_venta*vendU)}</div><button class="btn-del" onclick="deleteItem('produccion',${i})">🗑</button></div></div>`;}).join('');
 }
 
+// ── CONFIRM MODAL ENGINE ──
+let _modalCallback = null;
+function showConfirm({icon='🗑', title='¿Eliminar registro?', msg='Esta acción no se puede deshacer.', detail='', onConfirm}){
+  document.getElementById('modal-icon').textContent = icon;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').textContent = msg;
+  const det = document.getElementById('modal-detail');
+  det.textContent = detail; det.style.display = detail ? 'block' : 'none';
+  _modalCallback = onConfirm;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); _modalCallback=null; }
+
+
 window.deleteItem=function(tabla,idx){
-  const nombres={produccion:'este registro de producción',costos:'este costo',merma:'esta merma',pagos:'este pago'};
-  if(!confirm('¿Eliminar '+( nombres[tabla]||'este registro')+'? Esta acción no se puede deshacer.'))return;
-  if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
-  else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
-  else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
-  else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
-  saveLocal();showToast('Registro eliminado','green');
+  const etiquetas = {
+    produccion: {icon:'🥐', title:'¿Eliminar producción?', get detail(){ const r=state.produccion[idx]; return r?`${r.producto} — ${r.cantidad_producida} unid.`:''; }},
+    costos:     {icon:'📋', title:'¿Eliminar este costo?', get detail(){ const r=state.costos[idx]; return r?`${r.descripcion} — ${fmt(r.monto)}`:''; }},
+    merma:      {icon:'📦', title:'¿Eliminar esta merma?', get detail(){ const r=state.merma[idx]; return r?`${r.producto} — ${r.cantidad} unid.`:''; }},
+    pagos:      {icon:'👥', title:'¿Eliminar este pago?', get detail(){ const r=state.pagos[idx]; return r?`${r.empleado} — ${fmt(r.monto)}`:''; }},
+  };
+  const e = etiquetas[tabla] || {icon:'🗑', title:'¿Eliminar registro?', detail:''};
+  showConfirm({
+    icon: e.icon, title: e.title,
+    msg: 'Esta acción no se puede deshacer.',
+    detail: e.detail,
+    onConfirm: ()=>{
+      if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
+      else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
+      else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
+      else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
+      saveLocal();showToast('Registro eliminado','green');
+    }
+  });
 };
 
 function renderCostos(){
@@ -1400,11 +1515,18 @@ function renderCatalogo(){
   el.innerHTML=html;
 }
 window.deleteCatalogo=function(tipo,i){
-  if(!confirm('¿Eliminar este ítem del catálogo? También se eliminará de las recetas que lo usen.'))return;
-  const nombre=state.catalogo[i].nombre;
-  state.catalogo.splice(i,1);
-  Object.keys(state.recetas).forEach(p=>{state.recetas[p]=(state.recetas[p]||[]).filter(r=>r.ingrediente!==nombre);});
-  saveLocal();saveConfigToSupabase();populateSelects();renderCatalogo();showToast('Ítem eliminado','green');
+  const c=state.catalogo[i];
+  showConfirm({
+    icon:'📦', title:'¿Eliminar del catálogo?',
+    msg:'También se eliminará de las recetas que lo usen.',
+    detail: c?`${c.nombre} (${c.unidad})`:'',
+    onConfirm:()=>{
+      const nombre=state.catalogo[i].nombre;
+      state.catalogo.splice(i,1);
+      Object.keys(state.recetas).forEach(p=>{state.recetas[p]=(state.recetas[p]||[]).filter(r=>r.ingrediente!==nombre);});
+      saveLocal();saveConfigToSupabase();populateSelects();renderCatalogo();showToast('Ítem eliminado','green');
+    }
+  });
 };
 
 function renderCompras(){
@@ -1418,8 +1540,15 @@ function renderCompras(){
   }).join('');
 }
 window.deleteCompra=function(i){
-  if(!confirm('¿Eliminar esta compra? El stock se actualizará automáticamente.'))return;
-  state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();showToast('Compra eliminada','green');
+  const r=state.compras[i];
+  showConfirm({
+    icon:'🛒', title:'¿Eliminar esta compra?',
+    msg:'El stock se revertirá automáticamente.',
+    detail: r?`${r.item} — ${r.cantidad} ${r.unidad} · ${fmt(r.monto)}`:'',
+    onConfirm:()=>{
+      state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();showToast('Compra eliminada','green');
+    }
+  });
 };
 
 function renderInventario(){
@@ -1474,8 +1603,16 @@ window.toggleReceta=function(header){
 };
 
 window.deleteRecetaItem=function(producto,idx){
-  if(!confirm('¿Eliminar este ingrediente de la receta?'))return;
-  if(state.recetas[producto]){state.recetas[producto].splice(idx,1);saveLocal();saveConfigToSupabase();renderRecetas();showToast('Ingrediente eliminado de la receta','green');}
+  const item=(state.recetas[producto]||[])[idx];
+  showConfirm({
+    icon:'📖', title:'¿Quitar de la receta?',
+    msg:`Se eliminará de la receta de "${producto}".`,
+    detail: item?`${item.ingrediente} — ${item.cantidad} ${item.unidad}`:'',
+    onConfirm:()=>{
+      if(state.recetas[producto]){state.recetas[producto].splice(idx,1);saveLocal();if(typeof saveConfigToSupabase==='function')saveConfigToSupabase();}
+      renderRecetas();showToast('Ingrediente eliminado de la receta','green');
+    }
+  });
 };
 
 function renderMateriales(){
@@ -1679,7 +1816,17 @@ function renderPage(page){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-  loadLocal();initSupabase();
+  loadLocal();
+  // Modal confirm listeners
+  document.getElementById('modal-cancel').addEventListener('click', closeConfirm);
+  document.getElementById('modal-confirm').addEventListener('click', function(){
+    if(_modalCallback) _modalCallback();
+    closeConfirm();
+  });
+  document.getElementById('confirm-modal').addEventListener('click', function(e){
+    if(e.target === this) closeConfirm();
+  });
+initSupabase();
   document.getElementById('header-date').textContent=new Date().toLocaleDateString('es-BO',{weekday:'short',day:'numeric',month:'long'});
 
   document.getElementById('btn-menu').addEventListener('click',openNav);
@@ -1823,8 +1970,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // MOVIMIENTO DE DINERO
   window.deleteMovimiento=function(i){
-    if(!confirm('¿Eliminar este movimiento de dinero?'))return;
-    state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();showToast('Movimiento eliminado','green');
+    const r=state.movimientos?state.movimientos[i]:null;
+    showConfirm({
+      icon:'💸', title:'¿Eliminar este movimiento?',
+      msg:'El saldo de caja se ajustará automáticamente.',
+      detail: r?`${r.tipo==='efectivo'?'💵 Efectivo':'📱 QR'} — ${fmt(r.monto)}${r.concepto?' · '+r.concepto:''}`:'',
+      onConfirm:()=>{
+        state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();showToast('Movimiento eliminado','green');
+      }
+    });
   };
   document.getElementById('btn-add-mov').addEventListener('click',()=>{
     const fecha=document.getElementById('mov-fecha').value||today();
