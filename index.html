@@ -902,7 +902,7 @@ let state = {
 };
 let chartCostos=null, chartMat=null, chartEvol=null;
 
-const fmt = n => 'Bs. ' + parseFloat(n||0).toLocaleString('es-BO',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmt = n => { const v=parseFloat(n||0); return 'Bs. ' + v.toLocaleString('es-BO',{minimumFractionDigits: Number.isInteger(v)?0:2, maximumFractionDigits:2}); };
 const today = () => new Date().toISOString().split('T')[0];
 const weekAgo = () => { const d=new Date(); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; };
 const monthAgo = () => { const d=new Date(); d.setMonth(d.getMonth()-1); return d.toISOString().split('T')[0]; };
@@ -1447,8 +1447,8 @@ function renderCostos(){
     const tipoLabel=COST_LABELS[r.tipo]||r.tipo;
     const fecha=(r.fecha||'').split('T')[0];
     const idx=state.costos.indexOf(r);
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">\${r.descripcion}</div><div class="list-item-sub"><span class="badge \${badgeClass}">\${tipoLabel}\${sub}</span> \${pagoIcon}\${itemInfo} <span style="font-size:10px;color:var(--muted)">\${fecha}</span></div></div><div><div class="list-item-amount negative">\${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('costos',\${idx})">🗑</button></div></div>`;
-  }).join('')+`<div style="text-align:right;font-size:13px;font-weight:600;color:var(--crimson);padding:8px 0 2px">Total: \${fmt(total)}</div>`;
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${badgeClass}">${tipoLabel}${sub}</span> ${pagoIcon}${itemInfo} <span style="font-size:10px;color:var(--muted)">${fecha}</span></div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('costos',${idx})">🗑</button></div></div>`;
+  }).join('')+`<div style="text-align:right;font-size:13px;font-weight:600;color:var(--crimson);padding:8px 0 2px">Total: ${fmt(total)}</div>`;
 }
 
 function updateCajaSaldos(){
