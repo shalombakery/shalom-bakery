@@ -1409,12 +1409,18 @@ window.deleteItem=function(tabla,idx){
     icon: e.icon, title: e.title,
     msg: 'Esta acción no se puede deshacer.',
     detail: e.detail,
-    onConfirm: ()=>{
+    onConfirm: async ()=>{
+      const registro = state[tabla]?.[idx];
+      const registroId = registro?.id;
       if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
       else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
       else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
       else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
-      saveLocal();showToast('Registro eliminado','green');
+      saveLocal();
+      if(supabase && registroId){
+        try{ await supabase.from(tabla).delete().eq('id', registroId); }catch(e){ console.warn('Error eliminando de Supabase:', e); }
+      }
+      showToast('Registro eliminado','green');
     }
   });
 };
@@ -1888,7 +1894,7 @@ initSupabase();
     if(cantidad_producida<=0){showToast('Ingresá la cantidad producida','red');return;}
     const costoReceta=getCostoReceta(producto);
     if(costoReceta>0&&costo_unitario===0)costo_unitario=costoReceta;
-    const item={id:Date.now(),fecha:fecha+'T12:00:00.000Z',producto,cantidad_producida,cantidad_vendida:0,precio_venta,costo_unitario};
+    const item={fecha:fecha+'T12:00:00.000Z',producto,cantidad_producida,cantidad_vendida:0,precio_venta,costo_unitario};
     state.produccion.push(item);saveLocal();syncToSupabase('produccion',item);
     ['prod-cantidad','prod-precio','prod-costo'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('prod-producto').value='';
@@ -1938,7 +1944,7 @@ initSupabase();
       cantidad_usada=parseFloat(document.getElementById('costo-cant-usada')?.value)||0;
       if(!item_catalogo){showToast('Seleccioná el ítem del catálogo','red');return;}
     }
-    const item={id:Date.now(),fecha:fecha+'T12:00:00.000Z',tipo,subcat,descripcion,monto,forma,producto:'',item_catalogo,cantidad_usada};
+    const item={fecha:fecha+'T12:00:00.000Z',tipo,subcat,descripcion,monto,forma,producto:'',item_catalogo,cantidad_usada};
     state.costos.push(item);saveLocal();syncToSupabase('costos',item);
     ['costo-desc','costo-monto'].forEach(id=>document.getElementById(id).value='');
     if(document.getElementById('costo-cant-usada'))document.getElementById('costo-cant-usada').value='';
@@ -1996,7 +2002,7 @@ initSupabase();
     const monto=parseFloat(document.getElementById('mov-monto').value)||0;
     const concepto=document.getElementById('mov-concepto').value.trim();
     if(monto<=0){showToast('Ingresá un monto válido','red');return;}
-    const item={id:Date.now(),fecha:fecha+'T12:00:00.000Z',tipo,monto,concepto};
+    const item={fecha:fecha+'T12:00:00.000Z',tipo,monto,concepto};
     if(!state.movimientos)state.movimientos=[];
     state.movimientos.push(item);saveLocal();syncToSupabase('movimientos',item);
     ['mov-monto','mov-concepto'].forEach(id=>document.getElementById(id).value='');
@@ -2015,7 +2021,7 @@ initSupabase();
     if(!producto){showToast('Seleccioná un producto','red');return;}
     if(cantidad<=0){showToast('Ingresá la cantidad','red');return;}
     const costo_unitario=getCostoReceta(producto)||0;
-    const item={id:Date.now(),fecha:fecha+'T12:00:00.000Z',producto,cantidad,costo_unitario,motivo};
+    const item={fecha:fecha+'T12:00:00.000Z',producto,cantidad,costo_unitario,motivo};
     state.merma.push(item);saveLocal();syncToSupabase('merma',item);
     document.getElementById('merma-cantidad').value='';
     document.getElementById('merma-producto').value='';
@@ -2033,7 +2039,7 @@ initSupabase();
     const concepto=document.getElementById('pago-concepto').value.trim();
     if(!empleado){showToast('Seleccioná un empleado','red');return;}
     if(monto<=0){showToast('Ingresá un monto válido','red');return;}
-    const item={id:Date.now(),fecha:fecha+'T12:00:00.000Z',empleado,monto,forma,tipo,concepto};
+    const item={fecha:fecha+'T12:00:00.000Z',empleado,monto,forma,tipo,concepto};
     state.pagos.push(item);saveLocal();syncToSupabase('pagos',item);
     ['pago-monto','pago-concepto'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('pago-empleado').value='';
@@ -2074,7 +2080,7 @@ initSupabase();
     if(!item){showToast('Seleccioná un ítem del catálogo','red');return;}
     if(cantidad<=0){showToast('Ingresá la cantidad','red');return;}
     if(monto<=0){showToast('Ingresá el monto','red');return;}
-    const compra={id:Date.now(),fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor};
+    const compra={fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor};
     state.compras.push(compra);saveLocal();syncToSupabase('compras',compra);
     ['compra-cantidad','compra-monto','compra-proveedor'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('compra-item').value='';
