@@ -477,8 +477,18 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     <button class="btn-primary" id="btn-add-prod">✚ Registrar Producción</button>
   </div>
   <div class="card">
-    <div class="card-header"><div class="card-title">Registros del día</div></div>
+    <div class="card-header">
+      <div class="card-title">Registros del día</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
+        <input type="date" id="prod-filtro-desde" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
+        <span style="font-size:11px;color:var(--muted)">→</span>
+        <input type="date" id="prod-filtro-hasta" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
+        <button onclick="renderProduccion()" style="padding:4px 10px;border-radius:7px;background:var(--brown);color:var(--wheat);border:none;font-size:11px;cursor:pointer;font-weight:600">Filtrar</button>
+        <button onclick="document.getElementById('prod-filtro-desde').value='';document.getElementById('prod-filtro-hasta').value='';renderProduccion();" style="padding:4px 8px;border-radius:7px;background:var(--wheat-light);color:var(--muted);border:1.5px solid var(--border-med);font-size:11px;cursor:pointer">✕</button>
+      </div>
+    </div>
     <div id="prod-list"></div>
+    <div id="prod-list-total" style="text-align:right;font-size:13px;font-weight:600;color:var(--sage);padding:8px 0 2px;display:none"></div>
   </div>
 </section>
 
@@ -522,7 +532,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
     <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="costo-desc" placeholder="Ej: Bolsas para pan, Factura luz, Flete..."></div>
     <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="costo-monto" placeholder="0" min="0"></div>
-    <div class="form-group">
+    <div class="form-group" id="costo-forma-group">
       <label class="form-label">Forma de pago</label>
       <select class="form-control" id="costo-forma">
         <option value="efectivo">💵 Efectivo</option>
@@ -644,7 +654,16 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     <button class="btn-primary" id="btn-add-merma">✚ Registrar Merma</button>
   </div>
   <div class="card">
-    <div class="card-header"><div class="card-title">Merma de hoy</div></div>
+    <div class="card-header">
+      <div class="card-title">Merma registrada</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
+        <input type="date" id="merma-filtro-desde" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
+        <span style="font-size:11px;color:var(--muted)">→</span>
+        <input type="date" id="merma-filtro-hasta" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
+        <button onclick="renderMerma()" style="padding:4px 10px;border-radius:7px;background:var(--brown);color:var(--wheat);border:none;font-size:11px;cursor:pointer;font-weight:600">Filtrar</button>
+        <button onclick="document.getElementById('merma-filtro-desde').value='';document.getElementById('merma-filtro-hasta').value='';renderMerma();" style="padding:4px 8px;border-radius:7px;background:var(--wheat-light);color:var(--muted);border:1.5px solid var(--border-med);font-size:11px;cursor:pointer">✕</button>
+      </div>
+    </div>
     <div id="merma-list"></div>
   </div>
 </section>
@@ -1119,20 +1138,20 @@ window.editItem = async function(tabla, idx){
       <div class="form-group"><label class="form-label">Categoría</label><select class="form-control" id="ed-tipo">${tipoOpts}</select></div>
       <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="ed-desc" value="${r.descripcion||''}"></div>
       <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" step="0.01"></div>
-      <div class="form-group"><label class="form-label">Forma de pago</label>
+      ${r.tipo!=='insumos_empaques'?`<div class="form-group"><label class="form-label">Forma de pago</label>
         <select class="form-control" id="ed-forma">
           <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
           <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
           <option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option>
         </select>
-      </div>
+      </div>`:'<div class="info-box" style="font-size:11px;padding:8px 10px">💡 Insumo — el pago ya fue registrado en Compras, no descuenta caja</div>'}
     `, async () => {
       const updates = {
         fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
         tipo: document.getElementById('ed-tipo').value,
         descripcion: document.getElementById('ed-desc').value.trim(),
         monto: parseFloat(document.getElementById('ed-monto').value)||0,
-        forma: document.getElementById('ed-forma').value,
+        forma: r.tipo!=='insumos_empaques'?(document.getElementById('ed-forma')?.value||r.forma):'sin_pago',
       };
       Object.assign(state.costos[idx], updates);
       saveLocal(); renderCostos(); updateCajaSaldos();
@@ -1185,8 +1204,46 @@ window.editItem = async function(tabla, idx){
     });
   }
 
-  else if(tabla === 'pagos'){
-    openEditModal('✏️ Editar Pago', `
+  else if(tabla === 'compras'){
+    // Obtener unidades del catálogo para el select
+    const cat = state.catalogo.find(c=>c.nombre===r.item);
+    const unidad = cat?cat.unidad:(r.unidad||'u');
+    openEditModal('✏️ Editar Compra', `
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Ítem</label><input type="text" class="form-control" id="ed-item" value="${r.item||''}" readonly style="background:var(--wheat-light)"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Cantidad (${unidad})</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad||0}" min="0" step="0.01"></div>
+        <div class="form-group"><label class="form-label">Monto Total (Bs.)</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" min="0" step="0.01"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Forma de pago</label>
+        <select class="form-control" id="ed-forma">
+          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
+          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
+          <option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Proveedor</label>
+        <select class="form-control" id="ed-proveedor">
+          <option value="">— Sin proveedor —</option>
+          ${(state.proveedores||[]).map(p=>`<option value="${p}" ${r.proveedor===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+    `, async () => {
+      const updates = {
+        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
+        cantidad: parseFloat(document.getElementById('ed-cantidad').value)||0,
+        monto: parseFloat(document.getElementById('ed-monto').value)||0,
+        forma: document.getElementById('ed-forma').value,
+        proveedor: document.getElementById('ed-proveedor').value,
+      };
+      Object.assign(state.compras[idx], updates);
+      saveLocal(); renderCompras(); renderInventario(); updateCajaSaldos();
+      if(supabase && r.id){ try{ await supabase.from('compras').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      showToast('✓ Compra actualizada','green');
+    });
+  }
+
+  else if(tabla === 'pagos'){    openEditModal('✏️ Editar Pago', `
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Empleado</label><input type="text" class="form-control" id="ed-empleado" value="${r.empleado||''}" readonly style="background:var(--wheat-light)"></div>
       <div class="form-group"><label class="form-label">Monto</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" min="0" step="0.01"></div>
@@ -1645,13 +1702,55 @@ function renderDashboard(){
 }
 
 function renderProduccion(){
-  const fecha=document.getElementById('prod-fecha')&&document.getElementById('prod-fecha').value?document.getElementById('prod-fecha').value:today();
-  const hoy=state.produccion.filter(r=>(r.fecha||'').split('T')[0]===fecha);
+  const fechaInput=document.getElementById('prod-fecha');
+  const fecha=fechaInput&&fechaInput.value?fechaInput.value:today();
+  const desde=document.getElementById('prod-filtro-desde')?.value||null;
+  const hasta=document.getElementById('prod-filtro-hasta')?.value||null;
   const el=document.getElementById('prod-list');if(!el)return;
-  if(!hoy.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">🥖</span>Sin registros para esta fecha</p>';return;}
+  const totalEl=document.getElementById('prod-list-total');
+
+  let lista;
+  let rangoActivo=desde||hasta;
+  if(rangoActivo){
+    lista=state.produccion.filter(r=>{
+      const d=(r.fecha||'').split('T')[0];
+      return(!desde||d>=desde)&&(!hasta||d<=hasta);
+    }).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  } else {
+    lista=state.produccion.filter(r=>(r.fecha||'').split('T')[0]===fecha);
+  }
+
+  if(!lista.length){
+    el.innerHTML='<p class="empty-state"><span class="empty-icon">🥖</span>Sin registros para '+(rangoActivo?'el rango seleccionado':'esta fecha')+'</p>';
+    if(totalEl)totalEl.style.display='none';
+    return;
+  }
+
+  // Construir mapa de merma para el rango o fecha activa
+  const mermaSrc=rangoActivo
+    ? state.merma.filter(r=>{const d=(r.fecha||'').split('T')[0];return(!desde||d>=desde)&&(!hasta||d<=hasta);})
+    : state.merma.filter(m=>(m.fecha||'').split('T')[0]===fecha);
   const mMapP={};
-  state.merma.filter(m=>(m.fecha||'').split('T')[0]===fecha).forEach(m=>{mMapP[m.producto]=(mMapP[m.producto]||0)+parseFloat(m.cantidad||0);});
-  el.innerHTML=hoy.map((r,i)=>{const mermU=mMapP[r.producto]||0;const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(r.precio_venta*vendU)}</div><button class="btn-edit" onclick="editItem('produccion',${i})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${i})">🗑</button></div></div>`;}).join('');
+  mermaSrc.forEach(m=>{mMapP[m.producto]=(mMapP[m.producto]||0)+parseFloat(m.cantidad||0);});
+
+  let totalProd=0,totalVend=0,totalIngresos=0;
+
+  el.innerHTML=lista.map((r,i)=>{
+    const idx=state.produccion.indexOf(r);
+    const mermU=mMapP[r.producto]||0;
+    const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);
+    const ingresos=r.precio_venta*vendU;
+    totalProd+=parseFloat(r.cantidad_producida||0);
+    totalVend+=vendU;
+    totalIngresos+=ingresos;
+    const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${(r.fecha||'').split('T')[0]}</span>`:'';
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(ingresos)}</div><button class="btn-edit" onclick="editItem('produccion',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${idx})">🗑</button></div></div>`;
+  }).join('');
+
+  if(totalEl){
+    totalEl.style.display='block';
+    totalEl.innerHTML=`<span style="color:var(--muted);font-weight:400">Prod: ${totalProd} · Vend: ${totalVend}</span> &nbsp;|&nbsp; Total: ${fmt(totalIngresos)}`;
+  }
 }
 
 // ── CONFIRM MODAL ENGINE ──
@@ -1776,12 +1875,51 @@ function renderCaja(){
 }
 
 function renderMerma(){
-  const fecha=document.getElementById('merma-fecha')&&document.getElementById('merma-fecha').value?document.getElementById('merma-fecha').value:today();
-  const hoy=state.merma.filter(r=>(r.fecha||'').split('T')[0]===fecha);
+  const fechaInput=document.getElementById('merma-fecha');
+  const fecha=fechaInput&&fechaInput.value?fechaInput.value:today();
+  const desde=document.getElementById('merma-filtro-desde')?.value||null;
+  const hasta=document.getElementById('merma-filtro-hasta')?.value||null;
   const el=document.getElementById('merma-list');if(!el)return;
-  if(!hoy.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin merma para esta fecha</p>';return;}
-  const total=hoy.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
-  el.innerHTML=hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}${r.costo_unitario?` · ${fmt(r.costo_unitario)}/u`:''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt((r.costo_unitario||0)*r.cantidad)}</div><button class="btn-edit" onclick="editItem('merma',${i})">✏️</button><button class="btn-del" onclick="deleteItem('merma',${i})">🗑</button></div></div>`).join('')+(total>0?`<div class="merma-total">Pérdida estimada: ${fmt(total)}</div>`:''  );
+
+  let lista;
+  const rangoActivo=desde||hasta;
+  if(rangoActivo){
+    lista=state.merma.filter(r=>{
+      const d=(r.fecha||'').split('T')[0];
+      return(!desde||d>=desde)&&(!hasta||d<=hasta);
+    }).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  } else {
+    lista=state.merma.filter(r=>(r.fecha||'').split('T')[0]===fecha);
+  }
+
+  if(!lista.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin merma para '+(rangoActivo?'el rango seleccionado':'esta fecha')+'</p>';return;}
+
+  const total=lista.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
+  const totalUnidades=lista.reduce((s,r)=>s+parseFloat(r.cantidad||0),0);
+
+  // Agrupar por producto para el resumen en rango
+  let resumenHTML='';
+  if(rangoActivo){
+    const porProducto={};
+    lista.forEach(r=>{
+      if(!porProducto[r.producto])porProducto[r.producto]={cantidad:0,costo:0};
+      porProducto[r.producto].cantidad+=parseFloat(r.cantidad||0);
+      porProducto[r.producto].costo+=(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0));
+    });
+    resumenHTML=`<div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px;border:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px">Resumen por producto</div>
+      ${Object.entries(porProducto).sort((a,b)=>b[1].cantidad-a[1].cantidad).map(([prod,v])=>
+        `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)"><span>${prod}</span><span style="color:var(--crimson);font-weight:600">${v.cantidad} u · ${fmt(v.costo)}</span></div>`
+      ).join('')}
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:6px"><span>Total</span><span style="color:var(--crimson)">${totalUnidades} u · ${fmt(total)}</span></div>
+    </div>`;
+  }
+
+  el.innerHTML=resumenHTML+lista.map((r,i)=>{
+    const idx=state.merma.indexOf(r);
+    const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${(r.fecha||'').split('T')[0]}</span>`:'';
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}${r.costo_unitario?` · ${fmt(r.costo_unitario)}/u`:''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt((r.costo_unitario||0)*r.cantidad)}</div><button class="btn-edit" onclick="editItem('merma',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('merma',${idx})">🗑</button></div></div>`;
+  }).join('')+(total>0&&!rangoActivo?`<div class="merma-total">Pérdida estimada: ${fmt(total)}</div>`:'');
 }
 
 function renderPersonal(){
@@ -1834,7 +1972,7 @@ function renderCompras(){
     const formaIcon=g.forma==='efectivo'?'💵':g.forma==='qr'?'📱':'📋';
     const itemRows=g.items.map(r=>{
       const idx=state.compras.indexOf(r);
-      return `<div class="list-item" style="padding:6px 0;border-bottom:1px dashed var(--border)"><div class="list-item-info"><div class="list-item-name" style="font-size:13px">${r.item}</div><div class="list-item-sub">${r.cantidad} ${r.unidad} · ${fmt(r.monto)}</div></div><div style="display:flex;align-items:center;gap:2px"><button class="btn-del" onclick="deleteCompra(${idx})" style="font-size:11px">🗑</button></div></div>`;
+      return `<div class="list-item" style="padding:6px 0;border-bottom:1px dashed var(--border)"><div class="list-item-info"><div class="list-item-name" style="font-size:13px">${r.item}</div><div class="list-item-sub">${r.cantidad} ${r.unidad} · ${fmt(r.monto)}</div></div><div style="display:flex;align-items:center;gap:2px"><button class="btn-edit" onclick="editItem('compras',${idx})" style="font-size:11px">✏️</button><button class="btn-del" onclick="deleteCompra(${idx})" style="font-size:11px">🗑</button></div></div>`;
     }).join('');
     return `<div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -2202,8 +2340,10 @@ initSupabase();
     const grp=document.getElementById('costo-subcat-group');
     const sel=document.getElementById('costo-subcat');
     const insumoPanel=document.getElementById('costo-insumo-panel');
+    const formaGroup=document.getElementById('costo-forma-group');
     if(tipo==='insumos_empaques'){
       grp.style.display='none';
+      if(formaGroup)formaGroup.style.display='none';
       if(insumoPanel){
         insumoPanel.style.display='block';
         const catSel=document.getElementById('costo-item-cat');
@@ -2239,6 +2379,7 @@ initSupabase();
         }
       }
     } else {
+      if(formaGroup)formaGroup.style.display='block';
       if(insumoPanel)insumoPanel.style.display='none';
       if(SUBCATS[tipo]){sel.innerHTML=SUBCATS[tipo].map(s=>`<option value="${s.v}">${s.l}</option>`).join('');grp.style.display='block';}
       else grp.style.display='none';
@@ -2250,13 +2391,14 @@ initSupabase();
     const tipo=document.getElementById('costo-tipo').value;
     const descripcion=document.getElementById('costo-desc').value.trim();
     const monto=parseFloat(document.getElementById('costo-monto').value)||0;
-    const forma=document.getElementById('costo-forma').value;
     const subcatEl=document.getElementById('costo-subcat');
     const subcat=document.getElementById('costo-subcat-group').style.display!=='none'&&subcatEl?subcatEl.value:'';
     if(!tipo){showToast('Seleccioná la categoría','red');return;}
     if(!descripcion){showToast('Ingresá una descripción','red');return;}
     if(monto<=0){showToast('Ingresá un monto válido','red');return;}
     let item_catalogo='', cantidad_usada=0;
+    // Para insumos el pago ya fue registrado en Compras — no descuenta caja de nuevo
+    const forma=tipo==='insumos_empaques'?'sin_pago':document.getElementById('costo-forma').value;
     if(tipo==='insumos_empaques'){
       item_catalogo=document.getElementById('costo-item-cat')?.value||'';
       cantidad_usada=parseFloat(document.getElementById('costo-cant-usada')?.value)||0;
@@ -2270,8 +2412,9 @@ initSupabase();
     document.getElementById('costo-tipo').value='';
     document.getElementById('costo-subcat-group').style.display='none';
     const ip=document.getElementById('costo-insumo-panel');if(ip)ip.style.display='none';
+    const fg=document.getElementById('costo-forma-group');if(fg)fg.style.display='block';
     renderCostos();renderInventario();updateCajaSaldos();
-    showToast('✓ Costo registrado · '+forma,'green');
+    showToast(tipo==='insumos_empaques'?'✓ Consumo registrado · sin cargo a caja':'✓ Costo registrado · '+forma,'green');
   });
 
   // CAPITAL INICIAL
