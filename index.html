@@ -1501,12 +1501,19 @@ function renderDashboard(){
   const costosQR=costos.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const capitalEf=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalQR=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
+  // Saldo de caja: siempre histórico completo (no filtrado por período)
+  const cajaEfTot=state.caja.reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
+  const cajaQRTot=state.caja.reduce((s,r)=>s+parseFloat(r.qr||0),0);
+  const pagosEfTot=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const pagosQRTot=(state.pagos||[]).filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const costosEfTot=(state.costos||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const costosQRTot=(state.costos||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsEfDash=(state.movimientos||[]).filter(m=>m.tipo==='retiro_efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsQRDash=(state.movimientos||[]).filter(m=>m.tipo==='transferencia_qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const comprasEfDash=(state.compras||[]).reduce((s,r)=>r.forma==='efectivo'?s+parseFloat(r.monto||0):s,0);
-  const comprasQRDash=(state.compras||[]).reduce((s,r)=>r.forma==='qr'?s+parseFloat(r.monto||0):s,0);
-  const efectivo=capitalEf+cajaHoy.reduce((s,r)=>s+parseFloat(r.efectivo||0),0)-pagos.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)-costosEf-movsEfDash-comprasEfDash;
-  const qr=capitalQR+cajaHoy.reduce((s,r)=>s+parseFloat(r.qr||0),0)-pagos.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)-costosQR-movsQRDash-comprasQRDash;
+  const comprasEfDash=(state.compras||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const comprasQRDash=(state.compras||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const efectivo=capitalEf+cajaEfTot-pagosEfTot-costosEfTot-movsEfDash-comprasEfDash;
+  const qr=capitalQR+cajaQRTot-pagosQRTot-costosQRTot-movsQRDash-comprasQRDash;
 
   document.getElementById('kpi-ventas').textContent=fmt(ventas);
   document.getElementById('kpi-bruta').textContent=fmt(utilBruta);
@@ -1822,27 +1829,29 @@ function renderCostos(){
 }
 
 function updateCajaSaldos(){
-  const td=today();
-  const cajaHoy=state.caja.filter(c=>c.fecha===td);
-  const pagosHoy=state.pagos.filter(p=>(p.fecha||'').split('T')[0]===td);
-  const costosHoy=state.costos.filter(c=>(c.fecha||'').split('T')[0]===td);
+  // El saldo de caja es ACUMULATIVO histórico:
+  // Capital inicial + todas las ventas registradas - todos los egresos históricos
   const capitalTotal_ef=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalTotal_qr=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
-  const comprasHoy=(state.compras||[]).filter(c=>(c.fecha||'').split('T')[0]===td);
+
+  // Ingresos: todas las entradas de caja registradas
+  const cajaEf=state.caja.reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
+  const cajaQR=state.caja.reduce((s,r)=>s+parseFloat(r.qr||0),0);
+
+  // Egresos históricos completos
+  const pagosEf=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const pagosQR=(state.pagos||[]).filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  // costos con forma de pago real (sin_pago = insumos ya pagados en compras, no se descuentan aquí)
+  const costosEf=(state.costos||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const costosQR=(state.costos||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const comprasEf=(state.compras||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+  const comprasQR=(state.compras||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsEf=(state.movimientos||[]).filter(m=>m.tipo==='retiro_efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsQR=(state.movimientos||[]).filter(m=>m.tipo==='transferencia_qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const ef=capitalTotal_ef
-    +cajaHoy.reduce((s,r)=>s+parseFloat(r.efectivo||0),0)
-    -pagosHoy.filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -costosHoy.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -comprasHoy.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -movsEf;
-  const qr=capitalTotal_qr
-    +cajaHoy.reduce((s,r)=>s+parseFloat(r.qr||0),0)
-    -pagosHoy.filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -costosHoy.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -comprasHoy.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0)
-    -movsQR;
+
+  const ef=capitalTotal_ef+cajaEf-pagosEf-costosEf-comprasEf-movsEf;
+  const qr=capitalTotal_qr+cajaQR-pagosQR-costosQR-comprasQR-movsQR;
+
   ['saldo-efectivo-personal','saldo-ef-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(ef);});
   ['saldo-qr-personal','saldo-qr-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(qr);});
   const tot=document.getElementById('res-total');if(tot)tot.textContent=fmt(ef+qr);
