@@ -302,6 +302,44 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 }
 .modal-btn-confirm:hover { background: #8B1A1A; transform: translateY(-1px); }
 .modal-btn-confirm:active { transform: scale(0.97); }
+/* ── EDIT MODAL ── */
+.edit-modal-overlay {
+  position: fixed; inset: 0; z-index: 998;
+  background: rgba(30,15,5,0.55);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s;
+}
+.edit-modal-overlay.open { opacity: 1; pointer-events: all; }
+.edit-modal-box {
+  background: #fff; border-radius: 18px 18px 0 0;
+  padding: 20px 20px 32px; width: 100%; max-width: 480px;
+  transform: translateY(40px);
+  transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
+  box-shadow: 0 -4px 32px rgba(30,15,5,0.18);
+  max-height: 85vh; overflow-y: auto;
+}
+.edit-modal-overlay.open .edit-modal-box { transform: translateY(0); }
+.edit-modal-title {
+  font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700;
+  color: var(--brown); margin-bottom: 16px; text-align: center;
+}
+.btn-edit { background: none; border: none; cursor: pointer; font-size: 13px;
+  padding: 5px; opacity: 0.45; transition: opacity 0.12s; border-radius: 5px; color: var(--sage); }
+.btn-edit:hover { opacity: 1; }
+/* ── COMPRA MULTI-ITEM ── */
+.compra-item-row { display:grid; grid-template-columns:1fr 80px 90px 28px; gap:6px; align-items:center; margin-bottom:7px; background:var(--warm-white); border:1px solid var(--border); border-radius:var(--r-sm); padding:8px 10px; }
+.compra-item-row select, .compra-item-row input { padding:7px 9px; border:1.5px solid var(--border-med); border-radius:var(--r-xs); background:white; color:var(--ink); font-size:13px; font-family:'Plus Jakarta Sans',sans-serif; width:100%; }
+.compra-item-row select:focus, .compra-item-row input:focus { outline:none; border-color:var(--amber); }
+.compra-item-unit { font-size:10px; color:var(--muted); text-align:center; margin-top:2px; }
+.btn-remove-row { background:none; border:none; cursor:pointer; color:var(--crimson); font-size:16px; opacity:0.5; padding:2px; border-radius:4px; }
+.btn-remove-row:hover { opacity:1; }
+.edit-btn-row { display: flex; gap: 8px; margin-top: 12px; }
+.edit-btn-save { flex:1; padding:11px; background:var(--brown); color:var(--wheat);
+  border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }
+.edit-btn-save:hover { background: var(--brown-dark); }
+.edit-btn-cancel { flex:1; padding:11px; background:var(--wheat-light);
+  border:1.5px solid var(--border-med); border-radius:10px; font-size:14px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -314,9 +352,12 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <span class="header-date" id="header-date"></span>
     </div>
   </div>
-  <div id="sync-status" style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.5)">
-    <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-block"></span>
-    <span id="sync-label">local</span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button onclick="manualSync()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(237,224,200,0.8);font-size:11px;padding:5px 9px;border-radius:8px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;display:flex;align-items:center;gap:4px" title="Sincronizar con la nube">🔄 Actualizar</button>
+    <div id="sync-status" style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.5)">
+      <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-block"></span>
+      <span id="sync-label">local</span>
+    </div>
   </div>
   <button class="btn-menu" id="btn-menu" aria-label="Menú"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 </header>
@@ -659,15 +700,28 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Compras</h2><div class="page-subtitle">Materia prima e insumos comprados</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:0 16px 4px">📌 Registrá cada compra real. El ítem debe estar creado en <strong>Config → Catálogo</strong>. Cada compra suma al inventario y descuenta de caja según la forma de pago.</div>
+  <div class="info-box" style="margin:0 16px 4px">📌 Seleccioná un proveedor y agregá todos los ítems de una sola vez. Los ítems deben estar creados en <strong>Config → Catálogo</strong>.</div>
+
+  <!-- Gestión de proveedores -->
   <div class="card">
-    <div class="card-header"><div class="card-title">Nueva Compra</div></div>
-    <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="compra-fecha"></div>
-    <div class="form-group"><label class="form-label">Ítem (del catálogo)</label><select class="form-control" id="compra-item"><option value="">— Seleccionar —</option></select></div>
-    <div class="form-group" id="compra-unidad-display" style="display:none"><label class="form-label">Unidad</label><input type="text" class="form-control" id="compra-unidad-val" readonly style="background:var(--wheat-light);color:var(--muted)"></div>
+    <div class="card-header"><div class="card-title">🏪 Proveedores</div></div>
+    <div class="form-row" style="margin-bottom:8px">
+      <input type="text" class="form-control" id="new-proveedor" placeholder="Nombre del proveedor...">
+      <button class="btn-secondary" id="btn-add-proveedor">Agregar</button>
+    </div>
+    <div class="tags-wrap" id="proveedores-list"></div>
+  </div>
+
+  <!-- Nueva compra multiproduto -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">🛒 Nueva Compra</div></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Cantidad</label><input type="number" class="form-control" id="compra-cantidad" placeholder="0" min="0" step="0.01"></div>
-      <div class="form-group"><label class="form-label">Precio total</label><input type="number" class="form-control" id="compra-monto" placeholder="$0" min="0"></div>
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="compra-fecha"></div>
+      <div class="form-group"><label class="form-label">Proveedor</label>
+        <select class="form-control" id="compra-proveedor-sel">
+          <option value="">— Seleccionar —</option>
+        </select>
+      </div>
     </div>
     <div class="form-group"><label class="form-label">Forma de pago</label>
       <select class="form-control" id="compra-forma">
@@ -676,13 +730,40 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
         <option value="credito">📋 Crédito / Fiado</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label">Proveedor (opcional)</label><input type="text" class="form-control" id="compra-proveedor" placeholder="Ej: Distribuidora La Esperanza"></div>
-    <button class="btn-primary" id="btn-add-compra">✚ Registrar Compra</button>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label class="form-label" style="margin:0">Ítems de la compra</label>
+        <button id="btn-add-item-row" style="padding:5px 12px;border-radius:8px;background:var(--sage);color:white;border:none;font-size:12px;font-weight:600;cursor:pointer">✚ Agregar ítem</button>
+      </div>
+      <div id="compra-items-list">
+        <!-- filas dinámicas -->
+      </div>
+    </div>
+    <div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;font-weight:600;color:var(--brown)">Total compra:</span>
+      <span style="font-size:17px;font-weight:700;color:var(--crimson);font-family:'Fraunces',serif" id="compra-total-preview">Bs. 0.00</span>
+    </div>
+    <button class="btn-primary" id="btn-registrar-compra">✚ Registrar Compra Completa</button>
   </div>
+
   <div class="card">
-    <div class="card-header"><div class="card-title">Compras Registradas</div></div>
+    <div class="card-header"><div class="card-title">Compras Registradas</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
+        <select id="compra-filtro-proveedor" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
+          <option value="">Todos los proveedores</option>
+        </select>
+      </div>
+    </div>
     <div id="compras-list"></div>
   </div>
+
+  <!-- hidden legacy inputs para compatibilidad con código existente -->
+  <input type="hidden" id="compra-item">
+  <input type="hidden" id="compra-cantidad">
+  <input type="hidden" id="compra-monto">
+  <input type="hidden" id="compra-proveedor">
+  <div style="display:none" id="compra-unidad-display"><input id="compra-unidad-val"></div>
+  <input type="hidden" id="btn-add-compra">
 </section>
 
 <!-- ====== INVENTARIO ====== -->
@@ -873,6 +954,19 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 </nav>
 
 
+<!-- EDIT MODAL -->
+<div class="edit-modal-overlay" id="edit-modal">
+  <div class="edit-modal-box">
+    <div class="modal-handle"></div>
+    <div class="edit-modal-title" id="edit-modal-title">Editar registro</div>
+    <div id="edit-modal-body"></div>
+    <div class="edit-btn-row">
+      <button class="edit-btn-cancel" id="edit-modal-cancel">Cancelar</button>
+      <button class="edit-btn-save" id="edit-modal-save">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-box">
@@ -897,6 +991,7 @@ let state = {
   ingredientes:[], recetas:{},
   catalogo:[], compras:[],
   capital:[], movimientos:[],
+  proveedores:[],
   filtro:'dia', filtroMat:'semana',
   dashDesde:null, dashHasta:null, matDesde:null, matHasta:null
 };
@@ -942,7 +1037,8 @@ function saveLocal() {
     merma:state.merma, pagos:state.pagos, productos:state.productos,
     empleados:state.empleados, ingredientes:state.ingredientes, recetas:state.recetas,
     catalogo:state.catalogo, compras:state.compras,
-    capital:state.capital, movimientos:state.movimientos
+    capital:state.capital, movimientos:state.movimientos,
+    proveedores:state.proveedores||[]
   }));
 }
 
@@ -957,6 +1053,7 @@ function loadLocal() {
   if(!state.catalogo) state.catalogo=[];
   if(!state.compras) state.compras=[];
   if(!state.movimientos) state.movimientos=[];
+  if(!state.proveedores) state.proveedores=[];
 }
 
 function initSupabase() {
@@ -988,14 +1085,169 @@ function setSyncStatus(status){
   }
 }
 
+// ── EDIT MODAL ENGINE ──
+let _editCallback = null;
+function openEditModal(title, bodyHTML, onSave){
+  document.getElementById('edit-modal-title').textContent = title;
+  document.getElementById('edit-modal-body').innerHTML = bodyHTML;
+  _editCallback = onSave;
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeEditModal(){
+  document.getElementById('edit-modal').classList.remove('open');
+  _editCallback = null;
+}
+
+// ── EDITAR REGISTRO ──
+window.editItem = async function(tabla, idx){
+  const r = state[tabla]?.[idx];
+  if(!r) return;
+
+  if(tabla === 'costos'){
+    const COST_OPTS = [
+      {v:'insumos_empaques',l:'Insumo / Empaque usado'},
+      {v:'arriendo',l:'Arriendo y Mantenimiento'},
+      {v:'servicios',l:'Servicios Públicos'},
+      {v:'transporte',l:'🚚 Transporte'},
+      {v:'tecnologia',l:'Tecnología y Software'},
+      {v:'marketing',l:'Marketing y Publicidad'},
+      {v:'otros_fijos',l:'Otros gastos fijos'},
+    ];
+    const tipoOpts = COST_OPTS.map(o=>`<option value="${o.v}" ${r.tipo===o.v?'selected':''}>${o.l}</option>`).join('');
+    openEditModal('✏️ Editar Costo', `
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Categoría</label><select class="form-control" id="ed-tipo">${tipoOpts}</select></div>
+      <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="ed-desc" value="${r.descripcion||''}"></div>
+      <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Forma de pago</label>
+        <select class="form-control" id="ed-forma">
+          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
+          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
+          <option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option>
+        </select>
+      </div>
+    `, async () => {
+      const updates = {
+        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
+        tipo: document.getElementById('ed-tipo').value,
+        descripcion: document.getElementById('ed-desc').value.trim(),
+        monto: parseFloat(document.getElementById('ed-monto').value)||0,
+        forma: document.getElementById('ed-forma').value,
+      };
+      Object.assign(state.costos[idx], updates);
+      saveLocal(); renderCostos(); updateCajaSaldos();
+      if(supabase && r.id){ try{ await supabase.from('costos').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      showToast('✓ Costo actualizado','green');
+    });
+  }
+
+  else if(tabla === 'produccion'){
+    openEditModal('✏️ Editar Producción', `
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Producto</label><input type="text" class="form-control" id="ed-producto" value="${r.producto||''}" readonly style="background:var(--wheat-light)"></div>
+      <div class="form-group"><label class="form-label">Cantidad Producida</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad_producida||0}" min="0"></div>
+      <div class="form-group"><label class="form-label">Precio de Venta</label><input type="number" class="form-control" id="ed-precio" value="${r.precio_venta||0}" min="0" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Costo Unitario</label><input type="number" class="form-control" id="ed-costo" value="${r.costo_unitario||0}" min="0" step="0.01"></div>
+    `, async () => {
+      const updates = {
+        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
+        cantidad_producida: parseFloat(document.getElementById('ed-cantidad').value)||0,
+        precio_venta: parseFloat(document.getElementById('ed-precio').value)||0,
+        costo_unitario: parseFloat(document.getElementById('ed-costo').value)||0,
+      };
+      Object.assign(state.produccion[idx], updates);
+      saveLocal(); renderProduccion(); renderDashboard();
+      if(supabase && r.id){ try{ await supabase.from('produccion').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      showToast('✓ Producción actualizada','green');
+    });
+  }
+
+  else if(tabla === 'merma'){
+    openEditModal('✏️ Editar Merma', `
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Producto</label><input type="text" class="form-control" id="ed-producto" value="${r.producto||''}" readonly style="background:var(--wheat-light)"></div>
+      <div class="form-group"><label class="form-label">Cantidad</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad||0}" min="0"></div>
+      <div class="form-group"><label class="form-label">Motivo</label>
+        <select class="form-control" id="ed-motivo">
+          ${['sobrante','quemado','vencido','caido','devolucion','otro'].map(m=>`<option value="${m}" ${r.motivo===m?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+    `, async () => {
+      const updates = {
+        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
+        cantidad: parseFloat(document.getElementById('ed-cantidad').value)||0,
+        motivo: document.getElementById('ed-motivo').value,
+      };
+      Object.assign(state.merma[idx], updates);
+      saveLocal(); renderMerma(); renderProduccion();
+      if(supabase && r.id){ try{ await supabase.from('merma').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      showToast('✓ Merma actualizada','green');
+    });
+  }
+
+  else if(tabla === 'pagos'){
+    openEditModal('✏️ Editar Pago', `
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Empleado</label><input type="text" class="form-control" id="ed-empleado" value="${r.empleado||''}" readonly style="background:var(--wheat-light)"></div>
+      <div class="form-group"><label class="form-label">Monto</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" min="0" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Tipo</label>
+        <select class="form-control" id="ed-tipo">
+          ${['sueldo','anticipo','bono','comision','liquidacion'].map(t=>`<option value="${t}" ${r.tipo===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Forma de pago</label>
+        <select class="form-control" id="ed-forma">
+          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
+          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Notas</label><input type="text" class="form-control" id="ed-concepto" value="${r.concepto||''}"></div>
+    `, async () => {
+      const updates = {
+        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
+        monto: parseFloat(document.getElementById('ed-monto').value)||0,
+        tipo: document.getElementById('ed-tipo').value,
+        forma: document.getElementById('ed-forma').value,
+        concepto: document.getElementById('ed-concepto').value.trim(),
+      };
+      Object.assign(state.pagos[idx], updates);
+      saveLocal(); renderPersonal(); updateCajaSaldos();
+      if(supabase && r.id){ try{ await supabase.from('pagos').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      showToast('✓ Pago actualizado','green');
+    });
+  }
+};
+
+// ── SYNC MANUAL (reemplaza Realtime para no consumir cupo gratuito) ──
+async function manualSync(){
+  if(!supabase){showToast('Sin conexión a Supabase','red');return;}
+  setSyncStatus('syncing');
+  showToast('Actualizando datos...','');
+  await loadFromSupabase();
+  showToast('✓ Datos actualizados','green');
+}
+// Alias para no romper referencias
+function startRealtimeSync(){ /* desactivado — usar botón Actualizar */ }
+
 async function syncToSupabase(table,data){
   if(!supabase)return;
   setSyncStatus('syncing');
   try{
-    await supabase.from(table).insert([data]);
+    const {data:res,error}=await supabase.from(table).insert([data]).select().single();
+    if(res&&res.id&&!data.id){
+      // Guardar el id devuelto por Supabase en el registro local
+      const arr=state[table];
+      if(arr){
+        const idx=arr.lastIndexOf(data);
+        if(idx>=0)arr[idx].id=res.id;
+        else{const last=arr[arr.length-1];if(last&&!last.id)last.id=res.id;}
+      }
+      data.id=res.id;
+      saveLocal();
+    }
     setSyncStatus('ok');
   }catch(e){
-    setSyncStatus('ok'); // No mostrar error — dato ya en localStorage
+    setSyncStatus('ok');
   }
 }
 
@@ -1008,7 +1260,8 @@ async function saveConfigToSupabase(){
     {clave:'catalogo',valor:JSON.stringify(state.catalogo)},
     {clave:'recetas',valor:JSON.stringify(state.recetas)},
     {clave:'capital',valor:JSON.stringify(state.capital||[])},
-    {clave:'ingredientes',valor:JSON.stringify(state.ingredientes||[])}
+    {clave:'ingredientes',valor:JSON.stringify(state.ingredientes||[])},
+    {clave:'proveedores',valor:JSON.stringify(state.proveedores||[])}
   ];
   setSyncStatus('syncing');
   try{
@@ -1050,6 +1303,7 @@ async function loadFromSupabase(){
           else if(row.clave==='recetas'&&typeof val==='object')state.recetas=val;
           else if(row.clave==='capital'&&Array.isArray(val))state.capital=val;
           else if(row.clave==='ingredientes'&&Array.isArray(val))state.ingredientes=val;
+          else if(row.clave==='proveedores'&&Array.isArray(val))state.proveedores=val;
         }catch(e){}
       });
     }
@@ -1109,6 +1363,23 @@ function populateSelects(){
     if(prev)compraItem.value=prev;
   }
 }
+
+function renderProveedores(){
+  const pl=document.getElementById('proveedores-list');
+  if(pl)pl.innerHTML=(state.proveedores||[]).map((p,i)=>`<span class="tag">${p}<button onclick="removeProveedor(${i})">✕</button></span>`).join('');
+  // Actualizar selects de proveedor
+  ['compra-proveedor-sel','compra-filtro-proveedor'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    const prev=sel.value;
+    const base=id==='compra-filtro-proveedor'?'<option value="">Todos los proveedores</option>':'<option value="">— Sin proveedor —</option>';
+    sel.innerHTML=base+(state.proveedores||[]).map(p=>`<option value="${p}">${p}</option>`).join('');
+    if(prev)sel.value=prev;
+  });
+}
+window.removeProveedor=function(i){
+  state.proveedores.splice(i,1);
+  saveLocal();saveConfigToSupabase();renderProveedores();
+};
 
 function renderConfigLists(){
   const pl=document.getElementById('productos-list'),el=document.getElementById('empleados-list');
@@ -1380,7 +1651,7 @@ function renderProduccion(){
   if(!hoy.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">🥖</span>Sin registros para esta fecha</p>';return;}
   const mMapP={};
   state.merma.filter(m=>(m.fecha||'').split('T')[0]===fecha).forEach(m=>{mMapP[m.producto]=(mMapP[m.producto]||0)+parseFloat(m.cantidad||0);});
-  el.innerHTML=hoy.map((r,i)=>{const mermU=mMapP[r.producto]||0;const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div><div class="list-item-amount">${fmt(r.precio_venta*vendU)}</div><button class="btn-del" onclick="deleteItem('produccion',${i})">🗑</button></div></div>`;}).join('');
+  el.innerHTML=hoy.map((r,i)=>{const mermU=mMapP[r.producto]||0;const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(r.precio_venta*vendU)}</div><button class="btn-edit" onclick="editItem('produccion',${i})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${i})">🗑</button></div></div>`;}).join('');
 }
 
 // ── CONFIRM MODAL ENGINE ──
@@ -1447,7 +1718,7 @@ function renderCostos(){
     const tipoLabel=COST_LABELS[r.tipo]||r.tipo;
     const fecha=(r.fecha||'').split('T')[0];
     const idx=state.costos.indexOf(r);
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${badgeClass}">${tipoLabel}${sub}</span> ${pagoIcon}${itemInfo} <span style="font-size:10px;color:var(--muted)">${fecha}</span></div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('costos',${idx})">🗑</button></div></div>`;
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${badgeClass}">${tipoLabel}${sub}</span> ${pagoIcon}${itemInfo} <span style="font-size:10px;color:var(--muted)">${fecha}</span></div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-edit" onclick="editItem('costos',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('costos',${idx})">🗑</button></div></div>`;
   }).join('')+`<div style="text-align:right;font-size:13px;font-weight:600;color:var(--crimson);padding:8px 0 2px">Total: ${fmt(total)}</div>`;
 }
 
@@ -1510,14 +1781,14 @@ function renderMerma(){
   const el=document.getElementById('merma-list');if(!el)return;
   if(!hoy.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin merma para esta fecha</p>';return;}
   const total=hoy.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
-  el.innerHTML=hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}${r.costo_unitario?` · ${fmt(r.costo_unitario)}/u`:''}</div></div><div><div class="list-item-amount negative">${fmt((r.costo_unitario||0)*r.cantidad)}</div><button class="btn-del" onclick="deleteItem('merma',${i})">🗑</button></div></div>`).join('')+(total>0?`<div class="merma-total">Pérdida estimada: ${fmt(total)}</div>`:''  );
+  el.innerHTML=hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}${r.costo_unitario?` · ${fmt(r.costo_unitario)}/u`:''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt((r.costo_unitario||0)*r.cantidad)}</div><button class="btn-edit" onclick="editItem('merma',${i})">✏️</button><button class="btn-del" onclick="deleteItem('merma',${i})">🗑</button></div></div>`).join('')+(total>0?`<div class="merma-total">Pérdida estimada: ${fmt(total)}</div>`:''  );
 }
 
 function renderPersonal(){
   const hoy=state.pagos.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
   const el=document.getElementById('pagos-list');if(!el)return;
   if(!hoy.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">👥</span>Sin pagos registrados</p>';return;}
-  el.innerHTML=hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.empleado} <span style="font-size:10px;color:var(--muted);font-weight:400">${r.tipo||''}</span></div><div class="list-item-sub">${r.concepto||''} <span class="badge ${r.forma==='efectivo'?'badge-ef':'badge-qr'}">${r.forma==='efectivo'?'💵 Efectivo':'📱 QR'}</span> <span style="font-size:10px;color:var(--muted)">${(r.fecha||'').split('T')[0]}</span></div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteItem('pagos',${i})">🗑</button></div></div>`).join('');
+  el.innerHTML=hoy.map((r,i)=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.empleado} <span style="font-size:10px;color:var(--muted);font-weight:400">${r.tipo||''}</span></div><div class="list-item-sub">${r.concepto||''} <span class="badge ${r.forma==='efectivo'?'badge-ef':'badge-qr'}">${r.forma==='efectivo'?'💵 Efectivo':'📱 QR'}</span> <span style="font-size:10px;color:var(--muted)">${(r.fecha||'').split('T')[0]}</span></div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-edit" onclick="editItem('pagos',${i})">✏️</button><button class="btn-del" onclick="deleteItem('pagos',${i})">🗑</button></div></div>`).join('');
 }
 
 function renderCatalogo(){
@@ -1547,12 +1818,31 @@ window.deleteCatalogo=function(tipo,i){
 
 function renderCompras(){
   const el=document.getElementById('compras-list');if(!el)return;
-  const sorted=state.compras.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  const filtroProv=document.getElementById('compra-filtro-proveedor')?.value||'';
+  let sorted=state.compras.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  if(filtroProv)sorted=sorted.filter(r=>r.proveedor===filtroProv);
   if(!sorted.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">🛒</span>Sin compras registradas</p>';return;}
-  el.innerHTML=sorted.map((r,i)=>{
-    const formaIcon=r.forma==='efectivo'?'💵':r.forma==='qr'?'📱':'📋';
-    const idx=state.compras.indexOf(r);
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.item}</div><div class="list-item-sub">${r.cantidad} ${r.unidad} · ${(r.fecha||'').split('T')[0]} ${formaIcon}${r.proveedor?' · '+r.proveedor:''}</div></div><div><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-del" onclick="deleteCompra(${idx})">🗑</button></div></div>`;
+  // Agrupar por fecha+proveedor para mostrar compras agrupadas
+  const grupos={};
+  sorted.forEach(r=>{
+    const key=(r.fecha||'').split('T')[0]+'|'+(r.proveedor||'Sin proveedor')+'|'+(r.forma||'');
+    if(!grupos[key])grupos[key]={fecha:(r.fecha||'').split('T')[0],proveedor:r.proveedor||'Sin proveedor',forma:r.forma,items:[],total:0};
+    grupos[key].items.push(r);
+    grupos[key].total+=parseFloat(r.monto||0);
+  });
+  el.innerHTML=Object.values(grupos).map(g=>{
+    const formaIcon=g.forma==='efectivo'?'💵':g.forma==='qr'?'📱':'📋';
+    const itemRows=g.items.map(r=>{
+      const idx=state.compras.indexOf(r);
+      return `<div class="list-item" style="padding:6px 0;border-bottom:1px dashed var(--border)"><div class="list-item-info"><div class="list-item-name" style="font-size:13px">${r.item}</div><div class="list-item-sub">${r.cantidad} ${r.unidad} · ${fmt(r.monto)}</div></div><div style="display:flex;align-items:center;gap:2px"><button class="btn-del" onclick="deleteCompra(${idx})" style="font-size:11px">🗑</button></div></div>`;
+    }).join('');
+    return `<div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div><div style="font-size:13px;font-weight:600;color:var(--brown)">🏪 ${g.proveedor}</div><div style="font-size:11px;color:var(--muted)">${g.fecha} · ${formaIcon} ${g.forma}</div></div>
+        <div style="font-size:15px;font-weight:700;color:var(--crimson);font-family:'Fraunces',serif">${fmt(g.total)}</div>
+      </div>
+      ${itemRows}
+    </div>`;
   }).join('');
 }
 window.deleteCompra=function(i){
@@ -1561,8 +1851,11 @@ window.deleteCompra=function(i){
     icon:'🛒', title:'¿Eliminar esta compra?',
     msg:'El stock se revertirá automáticamente.',
     detail: r?`${r.item} — ${r.cantidad} ${r.unidad} · ${fmt(r.monto)}`:'',
-    onConfirm:()=>{
-      state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();showToast('Compra eliminada','green');
+    onConfirm:async()=>{
+      const rid=r?.id;
+      state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();
+      if(supabase&&rid){try{await supabase.from('compras').delete().eq('id',rid);}catch(e){console.warn('Error eliminando compra:',e);}}
+      showToast('Compra eliminada','green');
     }
   });
 };
@@ -1709,6 +2002,7 @@ function exportCSV(){
 
 function renderConfig(){
   renderConfigLists();
+  renderProveedores();
   const url=localStorage.getItem('sb_url')||'',key=localStorage.getItem('sb_key')||'';
   document.getElementById('cfg-url').value=url;document.getElementById('cfg-key').value=key;
   // Muestra estado de conexión en la pantalla de config al navegar a ella
@@ -1825,7 +2119,7 @@ function renderPage(page){
   else if(page==='personal'){renderPersonal();updateCajaSaldos();}
   else if(page==='materiales')renderMateriales();
   else if(page==='ingredientes'){renderIngredientes();populateSelects();}
-  else if(page==='compras'){renderCompras();populateSelects();}
+  else if(page==='compras'){renderCompras();renderProveedores();populateSelects();initCompraRows();}
   else if(page==='inventario'){renderInventario();}
   else if(page==='recetas'){renderRecetas();populateSelects();}
   else if(page==='config')renderConfig();
@@ -1918,6 +2212,30 @@ initSupabase();
           state.catalogo.filter(c=>c.tipo==='insumo').forEach(c=>{
             const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad})`;catSel.appendChild(o);
           });
+          if(!catSel._hintReady){
+            catSel._hintReady=true;
+            catSel.addEventListener('change',function(){
+              const nombre=this.value;
+              let hintEl=document.getElementById('costo-insumo-hint');
+              if(!hintEl){hintEl=document.createElement('div');hintEl.id='costo-insumo-hint';hintEl.style.cssText='font-size:11px;color:var(--sage);margin-top:4px;padding:4px 8px;background:var(--card-bg);border-radius:6px;border-left:3px solid var(--sage)';catSel.parentNode.appendChild(hintEl);}
+              if(!nombre){hintEl.textContent='';return;}
+              const comprasItem=state.compras.filter(c=>c.item===nombre);
+              if(comprasItem.length>0){
+                const totalMonto=comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0);
+                const totalCant=comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
+                const promedio=totalCant>0?totalMonto/totalCant:0;
+                const ultima=comprasItem.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''))[0];
+                const ultPrecio=ultima&&parseFloat(ultima.cantidad||0)>0?parseFloat(ultima.monto)/parseFloat(ultima.cantidad):0;
+                const cat=state.catalogo.find(c=>c.nombre===nombre);
+                const unidad=cat?cat.unidad:'u';
+                const montoEl=document.getElementById('costo-monto');
+                if(montoEl&&ultPrecio>0)montoEl.value=ultPrecio.toFixed(2);
+                hintEl.textContent=`📦 Última compra: Bs.${ultPrecio.toFixed(2)}/${unidad} · Promedio: Bs.${promedio.toFixed(2)}/${unidad}`;
+              } else {
+                hintEl.textContent='⚠️ Sin compras registradas para este ítem';
+              }
+            });
+          }
         }
       }
     } else {
@@ -1991,8 +2309,11 @@ initSupabase();
       icon:'💸', title:'¿Eliminar este movimiento?',
       msg:'El saldo de caja se ajustará automáticamente.',
       detail: r?`${r.tipo==='efectivo'?'💵 Efectivo':'📱 QR'} — ${fmt(r.monto)}${r.concepto?' · '+r.concepto:''}`:'',
-      onConfirm:()=>{
-        state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();showToast('Movimiento eliminado','green');
+      onConfirm:async()=>{
+        const rid=r?.id;
+        state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();
+        if(supabase&&rid){try{await supabase.from('movimientos').delete().eq('id',rid);}catch(e){console.warn('Error eliminando movimiento:',e);}}
+        showToast('Movimiento eliminado','green');
       }
     });
   };
@@ -2061,32 +2382,104 @@ initSupabase();
   });
 
   // COMPRAS
+  // ── COMPRAS MULTIPRODUTO ──
   document.getElementById('compra-fecha').value=today();
-  document.getElementById('compra-item').addEventListener('change',function(){
-    const cat=state.catalogo.find(c=>c.nombre===this.value);
-    const uv=document.getElementById('compra-unidad-val');
-    const udisplay=document.getElementById('compra-unidad-display');
-    if(cat&&uv){uv.value=cat.unidad;udisplay.style.display='block';}
-    else if(udisplay)udisplay.style.display='none';
+
+  // Proveedores — agregar
+  document.getElementById('btn-add-proveedor').addEventListener('click',()=>{
+    const val=document.getElementById('new-proveedor').value.trim();
+    if(!val){showToast('Ingresá el nombre del proveedor','red');return;}
+    if(state.proveedores.includes(val)){showToast('Ese proveedor ya existe','red');return;}
+    state.proveedores.push(val);
+    document.getElementById('new-proveedor').value='';
+    saveLocal();saveConfigToSupabase();renderProveedores();showToast('✓ Proveedor agregado','green');
   });
-  document.getElementById('btn-add-compra').addEventListener('click',()=>{
+
+  // Fila de ítem vacía
+  function crearFilaItem(){
+    const id='row-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    const opts=state.catalogo.map(c=>`<option value="${c.nombre}" data-unidad="${c.unidad}">${c.nombre} (${c.unidad})</option>`).join('');
+    const div=document.createElement('div');
+    div.className='compra-item-row';
+    div.id=id;
+    div.innerHTML=`
+      <div>
+        <select class="ci-item" onchange="onCIItemChange(this)">
+          <option value="">— Ítem —</option>${opts}
+        </select>
+        <div class="compra-item-unit ci-unit"></div>
+      </div>
+      <input type="number" class="ci-cantidad" placeholder="Cant." min="0" step="0.01" oninput="recalcTotal()">
+      <input type="number" class="ci-monto" placeholder="Precio" min="0" step="0.01" oninput="recalcTotal()">
+      <button class="btn-remove-row" onclick="document.getElementById('${id}').remove();recalcTotal()">✕</button>
+    `;
+    document.getElementById('compra-items-list').appendChild(div);
+    return div;
+  }
+
+  window.onCIItemChange=function(sel){
+    const opt=sel.selectedOptions[0];
+    const unidad=opt?opt.dataset.unidad:'';
+    const unitEl=sel.closest('.compra-item-row').querySelector('.ci-unit');
+    if(unitEl)unitEl.textContent=unidad?`Unidad: ${unidad}`:'';
+  };
+
+  window.recalcTotal=function(){
+    const rows=document.querySelectorAll('#compra-items-list .compra-item-row');
+    let total=0;
+    rows.forEach(row=>{
+      const monto=parseFloat(row.querySelector('.ci-monto')?.value)||0;
+      total+=monto;
+    });
+    const el=document.getElementById('compra-total-preview');
+    if(el)el.textContent='Bs. '+total.toFixed(2);
+  };
+
+  document.getElementById('btn-add-item-row').addEventListener('click',()=>{
+    if(!state.catalogo.length){showToast('Primero agregá ítems en Config → Catálogo','red');return;}
+    crearFilaItem();
+  });
+
+  // Iniciar con una fila vacía al cargar la página de compras
+  function initCompraRows(){
+    const lista=document.getElementById('compra-items-list');
+    if(lista&&lista.children.length===0)crearFilaItem();
+  }
+
+  // Registrar compra completa
+  document.getElementById('btn-registrar-compra').addEventListener('click',async()=>{
     const fecha=document.getElementById('compra-fecha').value||today();
-    const item=document.getElementById('compra-item').value;
-    const cantidad=parseFloat(document.getElementById('compra-cantidad').value)||0;
-    const monto=parseFloat(document.getElementById('compra-monto').value)||0;
+    const proveedor=document.getElementById('compra-proveedor-sel').value;
     const forma=document.getElementById('compra-forma').value;
-    const proveedor=document.getElementById('compra-proveedor').value.trim();
-    const cat=state.catalogo.find(c=>c.nombre===item);
-    if(!item){showToast('Seleccioná un ítem del catálogo','red');return;}
-    if(cantidad<=0){showToast('Ingresá la cantidad','red');return;}
-    if(monto<=0){showToast('Ingresá el monto','red');return;}
-    const compra={fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor};
-    state.compras.push(compra);saveLocal();syncToSupabase('compras',compra);
-    ['compra-cantidad','compra-monto','compra-proveedor'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('compra-item').value='';
-    document.getElementById('compra-unidad-display').style.display='none';
+    const rows=document.querySelectorAll('#compra-items-list .compra-item-row');
+    const items=[];
+    let valido=true;
+    rows.forEach(row=>{
+      const item=row.querySelector('.ci-item')?.value;
+      const cantidad=parseFloat(row.querySelector('.ci-cantidad')?.value)||0;
+      const monto=parseFloat(row.querySelector('.ci-monto')?.value)||0;
+      if(item&&cantidad>0&&monto>0){
+        const cat=state.catalogo.find(c=>c.nombre===item);
+        items.push({fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor});
+      } else if(item||cantidad>0||monto>0){
+        valido=false;
+      }
+    });
+    if(!valido){showToast('Completá todos los campos de cada ítem','red');return;}
+    if(!items.length){showToast('Agregá al menos un ítem a la compra','red');return;}
+    setSyncStatus('syncing');
+    for(const compra of items){
+      state.compras.push(compra);
+      await syncToSupabase('compras',compra);
+    }
+    saveLocal();
+    // Limpiar filas
+    document.getElementById('compra-items-list').innerHTML='';
+    crearFilaItem();
+    recalcTotal();
+    document.getElementById('compra-proveedor-sel').value='';
     renderCompras();renderInventario();updateCajaSaldos();
-    showToast(`✓ Compra registrada · ${cantidad} ${cat?cat.unidad:''} de ${item}`,'green');
+    showToast(`✓ ${items.length} ítem${items.length>1?'s':''} registrado${items.length>1?'s':''} · ${fmt(items.reduce((s,i)=>s+i.monto,0))} total`,'green');
   });
 
   // INGREDIENTES (legacy - kept for compatibility)
@@ -2135,7 +2528,7 @@ initSupabase();
     if(!url||!key){status.textContent='Ingresá la URL y la clave';status.className='cfg-status err';return;}
     localStorage.setItem('sb_url',url);localStorage.setItem('sb_key',key);
     initSupabase();
-    if(supabase){status.textContent='✓ Conectado. Sincronizando configuración y datos...';status.className='cfg-status ok';await loadFromSupabase();status.textContent='✅ Sincronizado. Catálogo, recetas y datos cargados desde la nube.';setSyncStatus('ok');}
+    if(supabase){status.textContent='✓ Conectado. Sincronizando configuración y datos...';status.className='cfg-status ok';await loadFromSupabase();startRealtimeSync();status.textContent='✅ Sincronizado. Catálogo, recetas y datos cargados desde la nube.';setSyncStatus('ok');}
     else{status.textContent='Error al conectar. Verificá la URL y clave.';status.className='cfg-status err';}
   });
   document.getElementById('btn-add-producto').addEventListener('click',()=>{
@@ -2179,7 +2572,8 @@ initSupabase();
         productos: state.productos,
         empleados: state.empleados,
         ingredientes: state.ingredientes,
-        recetas: state.recetas
+        recetas: state.recetas,
+        proveedores: state.proveedores||[]
       }
     };
     const json = JSON.stringify(exportData, null, 2);
@@ -2215,6 +2609,7 @@ initSupabase();
         if(d.empleados && d.empleados.length) state.empleados = d.empleados;
         if(d.ingredientes) state.ingredientes = d.ingredientes;
         if(d.recetas) state.recetas = d.recetas;
+        if(d.proveedores && d.proveedores.length) state.proveedores = d.proveedores;
         saveLocal();
         // Si hay Supabase conectado, sincronizar también a la nube
         if(supabase){ saveConfigToSupabase(); showToast('✓ Datos importados y sincronizados a Supabase','green'); }
@@ -2229,9 +2624,23 @@ initSupabase();
     reader.readAsText(file);
   });
 
+  // Edit modal listeners
+  document.getElementById('edit-modal-cancel').addEventListener('click', closeEditModal);
+  document.getElementById('edit-modal-save').addEventListener('click', function(){
+    if(_editCallback) _editCallback();
+    closeEditModal();
+  });
+  document.getElementById('edit-modal').addEventListener('click', function(e){
+    if(e.target === this) closeEditModal();
+  });
+
+  // Filtro proveedor en compras
+  const cfp=document.getElementById('compra-filtro-proveedor');
+  if(cfp)cfp.addEventListener('change',renderCompras);
+
   populateSelects();
   renderDashboard();
-  if(supabase)loadFromSupabase();
+  if(supabase){ loadFromSupabase().then(()=>startRealtimeSync()); }
 });
 </script>
 </body>
