@@ -10,36 +10,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js" onerror="console.warn('Supabase no disponible')"></script>
 <style>
 :root {
-  --cream: #FDF8F2;
-  --warm-white: #FFFCF8;
-  --wheat: #EDE0C8;
-  --wheat-light: #F5EDD8;
-  --amber: #C4832A;
-  --amber-light: #E8A84C;
-  --amber-pale: #FDF0DC;
-  --brown: #6B3D1E;
-  --brown-mid: #8B5230;
-  --brown-dark: #3D1F0A;
-  --sage: #5C7A5C;
-  --sage-light: #EBF2EB;
-  --crimson: #B33030;
-  --crimson-light: #FDF0F0;
-  --slate: #4A5568;
-  --slate-light: #EEF0F4;
-  --ink: #1A1209;
-  --muted: #7A6652;
-  --border: rgba(107,61,30,0.12);
-  --border-med: rgba(107,61,30,0.2);
-  --shadow-sm: 0 1px 4px rgba(61,31,10,0.06);
-  --shadow: 0 2px 12px rgba(61,31,10,0.08);
-  --shadow-lg: 0 8px 32px rgba(61,31,10,0.12);
-  --r: 14px; --r-sm: 10px; --r-xs: 7px;
+  --cream: #FDF8F2; --warm-white: #FFFCF8; --wheat: #EDE0C8; --wheat-light: #F5EDD8;
+  --amber: #C4832A; --amber-light: #E8A84C; --amber-pale: #FDF0DC;
+  --brown: #6B3D1E; --brown-mid: #8B5230; --brown-dark: #3D1F0A;
+  --sage: #5C7A5C; --sage-light: #EBF2EB; --crimson: #B33030; --crimson-light: #FDF0F0;
+  --slate: #4A5568; --slate-light: #EEF0F4; --ink: #1A1209; --muted: #7A6652;
+  --border: rgba(107,61,30,0.12); --border-med: rgba(107,61,30,0.2);
+  --shadow-sm: 0 1px 4px rgba(61,31,10,0.06); --shadow: 0 2px 12px rgba(61,31,10,0.08);
+  --shadow-lg: 0 8px 32px rgba(61,31,10,0.12); --r: 14px; --r-sm: 10px; --r-xs: 7px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 
-/* ── HEADER ── */
 .app-header { position: sticky; top: 0; z-index: 100; background: var(--brown-dark); padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .header-brand { display: flex; align-items: center; gap: 10px; }
 .brand-icon { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
@@ -48,7 +31,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .btn-menu { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: var(--wheat); font-size: 18px; width: 36px; height: 36px; border-radius: var(--r-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
 .btn-menu:hover { background: rgba(255,255,255,0.16); }
 
-/* ── SIDE NAV ── */
 .side-nav { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
 .side-nav.open { pointer-events: all; }
 .nav-overlay { position: absolute; inset: 0; background: rgba(26,18,9,0); transition: background 0.25s; }
@@ -66,24 +48,20 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .nav-item-icon svg { width: 16px; height: 16px; stroke: rgba(237,224,200,0.6); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.15s; }
 .nav-item:hover .nav-item-icon svg, .nav-item.active .nav-item-icon svg { stroke: var(--amber-light); }
 
-/* ── BOTTOM NAV ── */
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--brown-dark); display: flex; align-items: center; justify-content: space-around; padding: 7px 4px max(8px, env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.bnav-item.active { background: rgba(196,131,42,0.12); border-radius: 10px; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--brown-dark); display: flex; align-items: center; justify-content: space-around; padding: 7px 4px max(8px, env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,0.06); }
 .bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 8px; border-radius: 10px; cursor: pointer; transition: all 0.15s; border: none; background: none; color: rgba(237,224,200,0.45); min-width: 50px; }
-.bnav-item.active { color: var(--amber-light); }
+.bnav-item.active { background: rgba(196,131,42,0.12); color: var(--amber-light); }
 .bnav-item .bnav-icon { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s; }
 .bnav-item .bnav-icon svg { width: 22px; height: 22px; stroke: rgba(237,224,200,0.45); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: all 0.15s; }
 .bnav-item.active .bnav-icon svg { stroke: var(--amber-light); }
 .bnav-item.active .bnav-icon { transform: scale(1.1); }
 .bnav-item .bnav-label { font-size: 9px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
 
-/* ── MAIN ── */
 .main-content { padding: 0 0 90px; max-width: 480px; margin: 0 auto; }
 .page { display: none; animation: fadeIn 0.18s ease; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
-/* ── PAGE HEADER ── */
 .page-header { padding: 18px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
 .page-header-left { display: flex; align-items: center; gap: 10px; }
 .page-header-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
@@ -91,24 +69,20 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .page-header h2 { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 700; color: var(--brown); line-height: 1.1; }
 .page-subtitle { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
-/* ── FILTERS ── */
 .filter-row { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; padding: 0 16px 12px; }
 .filter-btn { padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border-med); background: transparent; color: var(--muted); font-size: 11.5px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .filter-btn.active { background: var(--brown); color: var(--wheat); border-color: var(--brown); }
-.filter-btn:hover:not(.active) { border-color: var(--amber); color: var(--amber); }
 .date-range-row { display: none; gap: 8px; align-items: center; padding: 0 16px 12px; flex-wrap: wrap; }
 .date-range-row.visible { display: flex; }
 .date-range-row label { font-size: 11px; color: var(--muted); font-weight: 500; }
 .date-range-row input[type="date"] { padding: 5px 9px; border: 1.5px solid var(--border-med); border-radius: var(--r-sm); background: white; color: var(--ink); font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .btn-apply-range { padding: 6px 13px; border-radius: var(--r-sm); background: var(--brown); color: var(--wheat); border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
 
-/* ── CARDS ── */
 .card { background: white; border-radius: var(--r); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin: 0 16px 12px; padding: 16px; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .card-title { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--brown); }
 .card-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; font-weight: 500; }
 
-/* ── KPIs ── */
 .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 0 16px 12px; }
 .kpi-card { background: white; border-radius: var(--r-sm); border: 1px solid var(--border); padding: 13px 14px; box-shadow: var(--shadow-sm); }
 .kpi-icon { font-size: 16px; margin-bottom: 6px; display: block; }
@@ -116,7 +90,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .kpi-value { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.1; font-family: 'Fraunces', serif; }
 .kpi-value.green { color: var(--sage); } .kpi-value.red { color: var(--crimson); } .kpi-value.amber { color: var(--amber); }
 
-/* ── SALDO ── */
 .saldo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 12px; }
 .saldo-box { border-radius: var(--r-sm); padding: 13px; text-align: center; }
 .saldo-box.ef { background: var(--sage-light); border: 1px solid rgba(92,122,92,0.2); }
@@ -125,7 +98,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .saldo-box.ef .saldo-val { color: var(--sage); } .saldo-box.qr .saldo-val { color: var(--slate); }
 .saldo-box .saldo-lbl { font-size: 10px; font-weight: 500; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-/* ── COST DISTRIBUTION ── */
 .cost-dist-row { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-bottom: 1px solid var(--border); }
 .cost-dist-row:last-child { border-bottom: none; }
 .cost-dist-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -137,11 +109,9 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .cost-dist-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
 .cost-dist-pct { font-size: 11px; font-weight: 600; color: var(--muted); min-width: 34px; text-align: right; }
 
-/* ── CHARTS ── */
 .chart-wrap { position: relative; height: 185px; margin-top: 8px; }
 .chart-wrap-tall { position: relative; height: 210px; margin-top: 8px; }
 
-/* ── PRODUCT ROWS ── */
 .prod-row { display: flex; align-items: center; gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .prod-row:last-of-type { border-bottom: none; }
 .prod-bar-wrap { flex: 1; min-width: 0; }
@@ -152,7 +122,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .prod-margin { font-size: 15px; font-weight: 600; color: var(--sage); font-family: 'Fraunces', serif; }
 .prod-margin.neg { color: var(--crimson); }
 
-/* ── FORMS ── */
 .form-group { margin-bottom: 11px; }
 .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--brown-mid); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
 .form-control { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border-med); border-radius: var(--r-sm); background: var(--warm-white); color: var(--ink); font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; transition: border-color 0.15s, box-shadow 0.15s; -webkit-appearance: none; }
@@ -160,11 +129,9 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .btn-primary { width: 100%; padding: 13px; background: var(--brown); color: var(--wheat); border: none; border-radius: var(--r-sm); font-size: 14px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 7px; }
 .btn-primary:hover { background: var(--brown-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
-.btn-primary:active { transform: none; }
 .btn-secondary { padding: 9px 14px; background: transparent; color: var(--brown); border: 1.5px solid var(--border-med); border-radius: var(--r-sm); font-size: 13px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
 .btn-secondary:hover { border-color: var(--brown); background: var(--wheat-light); }
 
-/* ── LIST ITEMS ── */
 .list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .list-item:last-of-type { border-bottom: none; }
 .list-item-info { flex: 1; min-width: 0; }
@@ -173,7 +140,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .list-item-amount { font-size: 14px; font-weight: 600; color: var(--ink); text-align: right; font-family: 'Fraunces', serif; }
 .list-item-amount.negative { color: var(--crimson); }
 
-/* ── BADGES ── */
 .badge { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
 .badge-prod { background: var(--amber-pale); color: var(--amber); }
 .badge-op { background: var(--slate-light); color: var(--slate); }
@@ -181,7 +147,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .badge-qr { background: var(--slate-light); color: var(--slate); }
 .badge-new { background: var(--sage-light); color: var(--sage); font-size: 9px; padding: 2px 6px; vertical-align: middle; }
 
-/* ── TAGS ── */
 .tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .tag { display: inline-flex; align-items: center; gap: 6px; background: var(--wheat-light); border: 1px solid var(--border); padding: 5px 10px; border-radius: 20px; font-size: 12px; color: var(--brown-mid); }
 .tag button { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 12px; padding: 0; line-height: 1; transition: color 0.12s; }
@@ -189,16 +154,13 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .btn-del { background: none; border: none; cursor: pointer; font-size: 13px; padding: 5px; opacity: 0.4; transition: opacity 0.12s; border-radius: 5px; }
 .btn-del:hover { opacity: 1; }
 
-/* ── EMPTY STATE ── */
 .empty-state { text-align: center; padding: 28px 16px; color: var(--muted); font-size: 13px; }
 .empty-icon { font-size: 28px; display: block; margin-bottom: 8px; opacity: 0.5; }
 
-/* ── TOAST ── */
 .toast { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--brown-dark); color: var(--wheat); padding: 11px 20px; border-radius: 24px; font-size: 13px; font-weight: 500; z-index: 500; opacity: 0; transition: all 0.25s; white-space: nowrap; pointer-events: none; box-shadow: var(--shadow-lg); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.green { background: var(--sage); } .toast.red { background: var(--crimson); }
 
-/* ── CONFIG ── */
 .cfg-status { font-size: 13px; font-weight: 500; margin-top: 8px; padding: 9px 12px; border-radius: var(--r-sm); }
 .cfg-status.ok { background: var(--sage-light); color: var(--sage); border: 1px solid rgba(92,122,92,0.25); }
 .cfg-status.err { background: var(--crimson-light); color: var(--crimson); border: 1px solid rgba(179,48,48,0.2); }
@@ -207,14 +169,12 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .info-box { background: var(--amber-pale); border: 1px solid rgba(196,131,42,0.2); border-radius: var(--r-sm); padding: 11px 13px; font-size: 12px; color: var(--brown-mid); margin-bottom: 12px; line-height: 1.5; }
 .merma-total { padding: 9px 0 2px; font-size: 13px; font-weight: 600; color: var(--crimson); text-align: right; }
 
-/* ── INGREDIENTS ── */
 .ingredient-row { display: flex; align-items: center; gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .ingredient-row:last-child { border-bottom: none; }
 .ingredient-name { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; }
 .ingredient-unit { font-size: 11px; color: var(--muted); }
 .ingredient-price { font-size: 13px; font-weight: 600; color: var(--brown); font-family: 'Fraunces', serif; min-width: 70px; text-align: right; }
 
-/* ── RECIPES ── */
 .recipe-product { margin-bottom: 10px; }
 .recipe-product-header { display: flex; align-items: center; justify-content: space-between; background: var(--wheat-light); border-radius: var(--r-sm); padding: 10px 13px; cursor: pointer; border: 1px solid var(--border); }
 .recipe-product-header.open { border-radius: var(--r-sm) var(--r-sm) 0 0; }
@@ -225,121 +185,59 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 .recipe-ing-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 6px; }
 .recipe-ing-row:last-child { border-bottom: none; }
 
-/* ── SECTION LABELS ── */
 .section-group-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 14px 16px 5px; display: flex; align-items: center; gap: 6px; }
 .section-group-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* ── CONFIRM MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(30,15,5,0.55);
-  display: flex; align-items: flex-end; justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.22s;
-}
-.modal-overlay.open {
-  opacity: 1; pointer-events: all;
-}
-.modal-box {
-  background: var(--card-bg, #fff);
-  border-radius: 18px 18px 0 0;
-  padding: 20px 20px 32px;
-  width: 100%; max-width: 480px;
-  transform: translateY(40px);
-  transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
-  box-shadow: 0 -4px 32px rgba(30,15,5,0.18);
-}
-.modal-overlay.open .modal-box {
-  transform: translateY(0);
-}
-.modal-handle {
-  width: 36px; height: 4px; border-radius: 2px;
-  background: var(--border-color, #e0d0c0);
-  margin: 0 auto 16px;
-}
-.modal-icon {
-  font-size: 36px; text-align: center; display: block; margin-bottom: 10px;
-}
-.modal-title {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 17px; font-weight: 700;
-  color: var(--text-primary, #2C1A0E);
-  text-align: center; margin-bottom: 6px;
-}
-.modal-msg {
-  font-size: 13px; color: var(--muted, #9C7B5A);
-  text-align: center; line-height: 1.5; margin-bottom: 20px;
-}
-.modal-detail {
-  background: var(--wheat-light, #fdf6ea);
-  border: 1px solid var(--border-color, #e8d8c0);
-  border-radius: 10px; padding: 10px 14px;
-  font-size: 13px; font-weight: 500;
-  color: var(--text-primary, #2C1A0E);
-  text-align: center; margin-bottom: 18px;
-}
-.modal-actions {
-  display: flex; gap: 10px;
-}
-.modal-btn-cancel {
-  flex: 1; padding: 13px;
-  background: var(--wheat-light, #fdf6ea);
-  border: 1.5px solid var(--border-color, #e0d0c0);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px; font-weight: 500;
-  color: var(--text-secondary, #6B4226);
-  cursor: pointer; transition: all 0.15s;
-}
+.modal-overlay { position: fixed; inset: 0; z-index: 999; background: rgba(30,15,5,0.55); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box { background: var(--card-bg, #fff); border-radius: 18px 18px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 480px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 -4px 32px rgba(30,15,5,0.18); }
+.modal-overlay.open .modal-box { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border-color, #e0d0c0); margin: 0 auto 16px; }
+.modal-icon { font-size: 36px; text-align: center; display: block; margin-bottom: 10px; }
+.modal-title { font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--text-primary, #2C1A0E); text-align: center; margin-bottom: 6px; }
+.modal-msg { font-size: 13px; color: var(--muted, #9C7B5A); text-align: center; line-height: 1.5; margin-bottom: 20px; }
+.modal-detail { background: var(--wheat-light, #fdf6ea); border: 1px solid var(--border-color, #e8d8c0); border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: var(--text-primary, #2C1A0E); text-align: center; margin-bottom: 18px; }
+.modal-actions { display: flex; gap: 10px; }
+.modal-btn-cancel { flex: 1; padding: 13px; background: var(--wheat-light, #fdf6ea); border: 1.5px solid var(--border-color, #e0d0c0); border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-secondary, #6B4226); cursor: pointer; transition: all 0.15s; }
 .modal-btn-cancel:hover { background: var(--wheat, #F0E6C8); }
-.modal-btn-confirm {
-  flex: 1; padding: 13px;
-  background: var(--crimson, #B02020);
-  border: none; border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px; font-weight: 600;
-  color: #fff; cursor: pointer; transition: all 0.15s;
-}
+.modal-btn-confirm { flex: 1; padding: 13px; background: var(--crimson, #B02020); border: none; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; transition: all 0.15s; }
 .modal-btn-confirm:hover { background: #8B1A1A; transform: translateY(-1px); }
-.modal-btn-confirm:active { transform: scale(0.97); }
-/* ── EDIT MODAL ── */
-.edit-modal-overlay {
-  position: fixed; inset: 0; z-index: 998;
-  background: rgba(30,15,5,0.55);
-  display: flex; align-items: flex-end; justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.22s;
-}
+
+.edit-modal-overlay { position: fixed; inset: 0; z-index: 998; background: rgba(30,15,5,0.55); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
 .edit-modal-overlay.open { opacity: 1; pointer-events: all; }
-.edit-modal-box {
-  background: #fff; border-radius: 18px 18px 0 0;
-  padding: 20px 20px 32px; width: 100%; max-width: 480px;
-  transform: translateY(40px);
-  transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
-  box-shadow: 0 -4px 32px rgba(30,15,5,0.18);
-  max-height: 85vh; overflow-y: auto;
-}
+.edit-modal-box { background: #fff; border-radius: 18px 18px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 480px; transform: translateY(40px); transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 -4px 32px rgba(30,15,5,0.18); max-height: 85vh; overflow-y: auto; }
 .edit-modal-overlay.open .edit-modal-box { transform: translateY(0); }
-.edit-modal-title {
-  font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700;
-  color: var(--brown); margin-bottom: 16px; text-align: center;
-}
-.btn-edit { background: none; border: none; cursor: pointer; font-size: 13px;
-  padding: 5px; opacity: 0.45; transition: opacity 0.12s; border-radius: 5px; color: var(--sage); }
+.edit-modal-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700; color: var(--brown); margin-bottom: 16px; text-align: center; }
+.btn-edit { background: none; border: none; cursor: pointer; font-size: 13px; padding: 5px; opacity: 0.45; transition: opacity 0.12s; border-radius: 5px; color: var(--sage); }
 .btn-edit:hover { opacity: 1; }
-/* ── COMPRA MULTI-ITEM ── */
+
 .compra-item-row { display:grid; grid-template-columns:1fr 80px 90px 28px; gap:6px; align-items:center; margin-bottom:7px; background:var(--warm-white); border:1px solid var(--border); border-radius:var(--r-sm); padding:8px 10px; }
 .compra-item-row select, .compra-item-row input { padding:7px 9px; border:1.5px solid var(--border-med); border-radius:var(--r-xs); background:white; color:var(--ink); font-size:13px; font-family:'Plus Jakarta Sans',sans-serif; width:100%; }
-.compra-item-row select:focus, .compra-item-row input:focus { outline:none; border-color:var(--amber); }
 .compra-item-unit { font-size:10px; color:var(--muted); text-align:center; margin-top:2px; }
 .btn-remove-row { background:none; border:none; cursor:pointer; color:var(--crimson); font-size:16px; opacity:0.5; padding:2px; border-radius:4px; }
 .btn-remove-row:hover { opacity:1; }
 .edit-btn-row { display: flex; gap: 8px; margin-top: 12px; }
-.edit-btn-save { flex:1; padding:11px; background:var(--brown); color:var(--wheat);
-  border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }
+.edit-btn-save { flex:1; padding:11px; background:var(--brown); color:var(--wheat); border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }
 .edit-btn-save:hover { background: var(--brown-dark); }
-.edit-btn-cancel { flex:1; padding:11px; background:var(--wheat-light);
-  border:1.5px solid var(--border-med); border-radius:10px; font-size:14px; cursor:pointer; }
+.edit-btn-cancel { flex:1; padding:11px; background:var(--wheat-light); border:1.5px solid var(--border-med); border-radius:10px; font-size:14px; cursor:pointer; }
+
+/* ── CONTEO FÍSICO ── */
+.inv-conteo-row { display:grid; grid-template-columns:1fr 90px 90px 50px; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+.inv-conteo-row:last-child { border-bottom:none; }
+.inv-conteo-name { font-size:12px; font-weight:500; color:var(--ink); }
+.inv-conteo-teorico { font-size:11px; color:var(--muted); text-align:center; }
+.inv-conteo-input { padding:6px 8px; border:1.5px solid var(--border-med); border-radius:var(--r-xs); background:white; color:var(--ink); font-size:13px; font-family:'Plus Jakarta Sans',sans-serif; width:100%; text-align:center; }
+.inv-conteo-input:focus { outline:none; border-color:var(--amber); }
+.inv-conteo-unit { font-size:10px; color:var(--muted); text-align:center; }
+.inv-hist-card { background:white; border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:10px; overflow:hidden; }
+.inv-hist-header { background:var(--wheat-light); padding:10px 13px; display:flex; justify-content:space-between; align-items:center; }
+.inv-hist-meta { font-size:12px; color:var(--brown); font-weight:600; }
+.inv-hist-sub { font-size:11px; color:var(--muted); }
+.inv-hist-item { display:flex; justify-content:space-between; align-items:center; padding:7px 13px; border-bottom:1px solid var(--border); font-size:12px; }
+.inv-hist-item:last-child { border-bottom:none; }
+.inv-diff-pos { color:var(--sage); font-weight:600; }
+.inv-diff-neg { color:var(--crimson); font-weight:600; }
+.inv-diff-zero { color:var(--muted); font-weight:500; }
 </style>
 </head>
 <body>
@@ -353,7 +251,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
-    <button onclick="manualSync()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(237,224,200,0.8);font-size:11px;padding:5px 9px;border-radius:8px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;display:flex;align-items:center;gap:4px" title="Sincronizar con la nube">🔄 Actualizar</button>
+    <button onclick="manualSync()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(237,224,200,0.8);font-size:11px;padding:5px 9px;border-radius:8px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;display:flex;align-items:center;gap:4px">🔄 Actualizar</button>
     <div id="sync-status" style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.5)">
       <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-block"></span>
       <span id="sync-label">local</span>
@@ -371,6 +269,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     <span class="nav-section-label">Compras e Inventario</span>
     <a class="nav-item" data-page="compras"><span class="nav-item-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span> Compras</a>
     <a class="nav-item" data-page="inventario"><span class="nav-item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6"/></svg></span> Inventario</a>
+    <a class="nav-item" data-page="conteo-fisico"><span class="nav-item-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> Conteo Físico</a>
     <a class="nav-item" data-page="recetas"><span class="nav-item-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span> Recetas</a>
     <span class="nav-section-label">Sistema</span>
     <a class="nav-item" data-page="config"><span class="nav-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Configuración</a>
@@ -428,8 +327,10 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     <div class="card-header"><div class="card-title">🗑 Merma del Período</div></div>
     <div id="merma-dash"></div>
   </div>
-
-  <!-- INDICADORES EXTRA -->
+  <div class="card" style="border:1.5px solid rgba(179,48,48,0.2)">
+    <div class="card-header"><div class="card-title">📉 Pérdidas de Inventario</div><span class="badge badge-prod">Conteos físicos</span></div>
+    <div id="perdida-inv-dash"><p class="empty-state"><span class="empty-icon">✅</span>Sin pérdidas de inventario registradas</p></div>
+  </div>
   <div class="section-group-label">Indicadores de gestión</div>
   <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px 8px">
     <div class="kpi-card"><div class="kpi-label">Costo/u Prom.</div><div class="kpi-value" id="kpi-costo-u" style="font-size:16px">$0</div></div>
@@ -446,7 +347,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card">
     <div class="card-header"><div class="card-title">🌾 Costo Promedio de Materia Prima</div><span class="badge badge-new">Bs./unidad</span></div>
-    <div class="info-box" style="margin-bottom:8px">Precio promedio ponderado según las compras registradas. Subidas de precio se reflejan automáticamente.</div>
+    <div class="info-box" style="margin-bottom:8px">Precio promedio ponderado según las compras registradas.</div>
     <div id="costo-mp-list"><p class="empty-state"><span class="empty-icon">🌾</span>Registrá compras para ver el costo promedio</p></div>
   </div>
   <div class="card">
@@ -464,13 +365,13 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Producción</h2><div class="page-subtitle">Registrá lo que elaboraste</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:8px 16px 0">📌 Registrá lo que <strong>producís</strong> a la mañana. Al cierre, anotá en <strong>Merma</strong> lo que sobró. La app calcula las ventas sola: <strong>Vendido = Producido − Merma</strong>.</div>
+  <div class="info-box" style="margin:8px 16px 0">📌 Registrá lo que <strong>producís</strong> a la mañana en <strong>unidades totales</strong>. Al cierre, anotá en <strong>Merma</strong> lo que sobró. La app calcula: <strong>Vendido = Producido − Merma</strong>.</div>
   <div class="card" style="margin-top:12px">
     <div class="card-header"><div class="card-title">Nuevo registro</div></div>
     <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="prod-fecha"></div>
     <div class="form-group"><label class="form-label">Producto</label><select class="form-control" id="prod-producto"><option value="">— Seleccionar —</option></select></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Cant. Producida</label><input type="number" class="form-control" id="prod-cantidad" placeholder="0" min="0"></div>
+      <div class="form-group"><label class="form-label">Cant. Producida (unidades)</label><input type="number" class="form-control" id="prod-cantidad" placeholder="0" min="0"></div>
       <div class="form-group"><label class="form-label">Precio de Venta</label><input type="number" class="form-control" id="prod-precio" placeholder="$0" min="0"></div>
     </div>
     <div class="form-group"><label class="form-label">Costo Unitario <span style="font-weight:400;color:var(--muted)">(auto si tiene receta)</span></label><input type="number" class="form-control" id="prod-costo" placeholder="Se calcula con la receta" min="0"></div>
@@ -478,7 +379,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card">
     <div class="card-header">
-      <div class="card-title">Registros del día</div>
+      <div class="card-title">Registros</div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
         <input type="date" id="prod-filtro-desde" style="padding:4px 8px;border:1.5px solid var(--border-med);border-radius:7px;font-size:11px;background:white;color:var(--ink)">
         <span style="font-size:11px;color:var(--muted)">→</span>
@@ -500,7 +401,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Costos</h2><div class="page-subtitle">Gastos fijos e insumos usados</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:8px 16px 0">📌 Registrá <strong>gastos fijos</strong> (arriendo, servicios, transporte) e <strong>insumos del catálogo</strong> que se hayan usado (se descontarán del inventario). Los sueldos van en <strong>Personal</strong>.</div>
+  <div class="info-box" style="margin:8px 16px 0">📌 Registrá <strong>gastos fijos</strong> (arriendo, servicios, transporte) e <strong>insumos del catálogo</strong> que se hayan usado. Los sueldos van en <strong>Personal</strong>.</div>
   <div class="card" style="margin-top:12px">
     <div class="card-header"><div class="card-title">Nuevo Costo</div></div>
     <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="costo-fecha"></div>
@@ -530,7 +431,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div class="form-group"><label class="form-label">Ítem del catálogo</label><select class="form-control" id="costo-item-cat"><option value="">— Seleccionar —</option></select></div>
       <div class="form-group"><label class="form-label">Cantidad usada</label><input type="number" class="form-control" id="costo-cant-usada" placeholder="0" min="0" step="0.01"></div>
     </div>
-    <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="costo-desc" placeholder="Ej: Bolsas para pan, Factura luz, Flete..."></div>
+    <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="costo-desc" placeholder="Ej: Bolsas para pan, Factura luz..."></div>
     <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="costo-monto" placeholder="0" min="0"></div>
     <div class="form-group" id="costo-forma-group">
       <label class="form-label">Forma de pago</label>
@@ -576,7 +477,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card">
     <div class="card-header"><div class="card-title">💰 Capital inicial / Apertura</div></div>
-    <div class="info-box" style="margin-bottom:10px">📌 Registrá el dinero con el que arrancás. Esto se suma al saldo como punto de partida. Solo necesitás hacerlo una vez (o al inicio de cada mes).</div>
+    <div class="info-box" style="margin-bottom:10px">📌 Registrá el dinero con el que arrancás. Solo necesitás hacerlo una vez.</div>
     <div class="form-group"><label class="form-label">Fecha de apertura</label><input type="date" class="form-control" id="capital-fecha"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">💵 Efectivo inicial</label><input type="number" class="form-control" id="capital-efectivo" placeholder="$0" min="0"></div>
@@ -604,20 +505,19 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
     <div id="caja-historial"></div>
   </div>
-  <!-- MOVIMIENTO DE DINERO -->
   <div class="card" style="border:1.5px solid rgba(92,122,92,0.3)">
     <div class="card-header"><div class="card-title">💸 Movimiento de Dinero</div></div>
-    <div class="info-box" style="margin-bottom:10px">Usá esta sección para <strong>retirar efectivo</strong> de caja o registrar una <strong>transferencia QR a cuenta bancaria</strong> (ahorro, retiro personal, etc.). El monto se descuenta del saldo de caja.</div>
+    <div class="info-box" style="margin-bottom:10px">Retiros de efectivo o transferencias QR a cuenta bancaria.</div>
     <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="mov-fecha"></div>
     <div class="form-group">
       <label class="form-label">Tipo de movimiento</label>
       <select class="form-control" id="mov-tipo">
         <option value="retiro_efectivo">💵 Retiro de Efectivo</option>
-        <option value="transferencia_qr">📱 Transferencia QR (a cuenta / ahorro)</option>
+        <option value="transferencia_qr">📱 Transferencia QR</option>
       </select>
     </div>
     <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="mov-monto" placeholder="0" min="0"></div>
-    <div class="form-group"><label class="form-label">Motivo / Detalle (opcional)</label><input type="text" class="form-control" id="mov-concepto" placeholder="Ej: Ahorro semanal, Pago proveedor, Retiro personal..."></div>
+    <div class="form-group"><label class="form-label">Motivo / Detalle (opcional)</label><input type="text" class="form-control" id="mov-concepto" placeholder="Ej: Ahorro semanal, Retiro personal..."></div>
     <button class="btn-primary" id="btn-add-mov" style="background:var(--sage)">💸 Registrar Movimiento</button>
   </div>
   <div class="card">
@@ -634,7 +534,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Merma</h2><div class="page-subtitle">Lo que sobró sin vender</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:8px 16px 0">📌 Registrá al cierre del día lo que sobró. El costo se toma automáticamente de la receta. La app calcula: <strong>Vendido = Producido − Merma</strong>.</div>
+  <div class="info-box" style="margin:8px 16px 0">📌 Registrá al cierre del día lo que sobró. La app calcula: <strong>Vendido = Producido − Merma</strong>.</div>
   <div class="card" style="margin-top:12px">
     <div class="card-header"><div class="card-title">Registrar merma</div></div>
     <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="merma-fecha"></div>
@@ -676,7 +576,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Personal</h2><div class="page-subtitle">Pagos de sueldos y anticipos</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:8px 16px 0">📌 Acá van <strong>todos</strong> los pagos laborales. Se descuentan de la caja automáticamente según la forma de pago.</div>
+  <div class="info-box" style="margin:8px 16px 0">📌 Todos los pagos laborales se descuentan de caja automáticamente.</div>
   <div class="card" style="margin-top:12px">
     <div class="card-header"><div class="card-title">Saldo disponible en caja</div></div>
     <div class="saldo-row">
@@ -711,7 +611,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
 </section>
 
-<!-- ====== INGREDIENTES ====== -->
+<!-- ====== COMPRAS ====== -->
 <section class="page" id="page-compras">
   <div class="page-header">
     <div class="page-header-left">
@@ -719,9 +619,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Compras</h2><div class="page-subtitle">Materia prima e insumos comprados</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:0 16px 4px">📌 Seleccioná un proveedor y agregá todos los ítems de una sola vez. Los ítems deben estar creados en <strong>Config → Catálogo</strong>.</div>
-
-  <!-- Gestión de proveedores -->
+  <div class="info-box" style="margin:0 16px 4px">📌 Seleccioná un proveedor y agregá todos los ítems de una sola vez.</div>
   <div class="card">
     <div class="card-header"><div class="card-title">🏪 Proveedores</div></div>
     <div class="form-row" style="margin-bottom:8px">
@@ -730,16 +628,12 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
     <div class="tags-wrap" id="proveedores-list"></div>
   </div>
-
-  <!-- Nueva compra multiproduto -->
   <div class="card">
     <div class="card-header"><div class="card-title">🛒 Nueva Compra</div></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="compra-fecha"></div>
       <div class="form-group"><label class="form-label">Proveedor</label>
-        <select class="form-control" id="compra-proveedor-sel">
-          <option value="">— Seleccionar —</option>
-        </select>
+        <select class="form-control" id="compra-proveedor-sel"><option value="">— Seleccionar —</option></select>
       </div>
     </div>
     <div class="form-group"><label class="form-label">Forma de pago</label>
@@ -754,9 +648,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
         <label class="form-label" style="margin:0">Ítems de la compra</label>
         <button id="btn-add-item-row" style="padding:5px 12px;border-radius:8px;background:var(--sage);color:white;border:none;font-size:12px;font-weight:600;cursor:pointer">✚ Agregar ítem</button>
       </div>
-      <div id="compra-items-list">
-        <!-- filas dinámicas -->
-      </div>
+      <div id="compra-items-list"></div>
     </div>
     <div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
       <span style="font-size:13px;font-weight:600;color:var(--brown)">Total compra:</span>
@@ -764,7 +656,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
     <button class="btn-primary" id="btn-registrar-compra">✚ Registrar Compra Completa</button>
   </div>
-
   <div class="card">
     <div class="card-header"><div class="card-title">Compras Registradas</div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
@@ -775,8 +666,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     </div>
     <div id="compras-list"></div>
   </div>
-
-  <!-- hidden legacy inputs para compatibilidad con código existente -->
   <input type="hidden" id="compra-item">
   <input type="hidden" id="compra-cantidad">
   <input type="hidden" id="compra-monto">
@@ -793,7 +682,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Inventario</h2><div class="page-subtitle">Stock disponible en tiempo real</div></div>
     </div>
   </div>
-  <div class="info-box" style="margin:0 16px 4px">📌 El stock se calcula automáticamente: <strong>Compras − Consumo en Producción − Insumos usados en Costos</strong>. Es de solo lectura.</div>
+  <div class="info-box" style="margin:0 16px 4px">📌 Stock calculado: <strong>Compras − Consumo en Producción (por lotes) − Insumos usados en Costos</strong>.</div>
   <div class="card">
     <div class="card-header"><div class="card-title">Materia Prima</div></div>
     <div id="inv-mp"><p class="empty-state"><span class="empty-icon">🌾</span>Sin materia prima registrada</p></div>
@@ -804,20 +693,49 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
 </section>
 
+<!-- ====== CONTEO FÍSICO ====== -->
+<section class="page" id="page-conteo-fisico">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon ph-sage">✅</div>
+      <div><h2>Conteo Físico</h2><div class="page-subtitle">Verificación real del inventario</div></div>
+    </div>
+  </div>
+  <div class="info-box" style="margin:0 16px 8px">📌 Contá físicamente lo que tenés en el almacén y comparalo con el stock teórico. Las diferencias se resaltan para detectar mermas no registradas.</div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Nuevo Conteo</div></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="conteo-fecha"></div>
+      <div class="form-group"><label class="form-label">Responsable</label>
+        <select class="form-control" id="conteo-empleado"><option value="">— Seleccionar —</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Notas (opcional)</label><input type="text" class="form-control" id="conteo-notas" placeholder="Observaciones del conteo..."></div>
+    <div id="conteo-form-items"></div>
+    <button class="btn-primary" id="btn-save-conteo" style="margin-top:12px">✅ Guardar Conteo</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Historial de Conteos</div></div>
+    <div id="conteo-historial"></div>
+  </div>
+</section>
+
 <!-- ====== RECETAS ====== -->
 <section class="page" id="page-recetas">
   <div class="page-header">
     <div class="page-header-left">
       <div class="page-header-icon ph-brown">📖</div>
-      <div><h2>Recetas</h2><div class="page-subtitle">Ingredientes por producto</div></div>
+      <div><h2>Recetas</h2><div class="page-subtitle">Ingredientes por lote de producción</div></div>
     </div>
   </div>
+  <div class="info-box" style="margin:0 16px 8px">📌 Las recetas ahora son <strong>por lote</strong>. Ingresá las cantidades reales de cada lote (ej: 1 kg de harina para 30 empanadas). La app calcula el costo unitario y el consumo de inventario automáticamente.</div>
   <div class="card">
     <div class="card-header"><div class="card-title">Agregar a receta</div></div>
     <div class="form-group"><label class="form-label">Producto</label><select class="form-control" id="rec-producto"><option value="">— Seleccionar producto —</option></select></div>
+    <div class="form-group"><label class="form-label">Rendimiento del lote (unidades que produce)</label><input type="number" class="form-control" id="rec-rendimiento" placeholder="Ej: 30" min="1"></div>
     <div class="form-group"><label class="form-label">Ingrediente (Materia Prima)</label><select class="form-control" id="rec-ingrediente"><option value="">— Seleccionar —</option></select></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Cantidad por unidad</label><input type="number" class="form-control" id="rec-cantidad" placeholder="0.00" min="0" step="0.001"></div>
+      <div class="form-group"><label class="form-label">Cantidad por lote</label><input type="number" class="form-control" id="rec-cantidad" placeholder="0.00" min="0" step="0.001"></div>
       <div class="form-group"><label class="form-label">Unidad</label><input type="text" class="form-control" id="rec-unidad-val" placeholder="kg, ud..." readonly style="background:var(--wheat-light)"></div>
     </div>
     <button class="btn-primary" id="btn-add-rec">✚ Agregar a Receta</button>
@@ -869,9 +787,9 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
       <div><h2>Configuración</h2><div class="page-subtitle">Ajustes del sistema</div></div>
     </div>
   </div>
-    <div class="card">
+  <div class="card">
     <div class="card-header"><div class="card-title">📦 Catálogo de Ítems</div></div>
-    <div class="info-box" style="margin-bottom:10px">Creá acá cada materia prima e insumo individualmente. Luego los usás en Compras y Recetas.</div>
+    <div class="info-box" style="margin-bottom:10px">Creá cada materia prima e insumo individualmente.</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Nombre del ítem</label><input type="text" class="form-control" id="cat-nombre" placeholder="Ej: Harina de trigo"></div>
       <div class="form-group"><label class="form-label">Tipo</label>
@@ -900,7 +818,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card">
     <div class="card-header"><div class="card-title">☁️ Supabase — Nube</div></div>
-    <div class="info-box">Conectá Supabase para guardar datos en la nube y sincronizar entre dispositivos. Sin esto los datos solo existen en este navegador.</div>
+    <div class="info-box">Conectá Supabase para guardar datos en la nube y sincronizar entre dispositivos.</div>
     <div class="form-group"><label class="form-label">URL del Proyecto</label><input type="text" class="form-control" id="cfg-url" placeholder="https://xxx.supabase.co"></div>
     <div class="form-group"><label class="form-label">Anon Key</label><input type="text" class="form-control" id="cfg-key" placeholder="eyJhbGci..."></div>
     <button class="btn-primary" id="btn-save-cfg">🔗 Conectar a Supabase</button>
@@ -928,7 +846,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card" style="border:1.5px solid rgba(92,122,92,0.3)">
     <div class="card-header"><div class="card-title">📤 Exportar / Importar datos</div></div>
-    <div class="info-box" style="margin-bottom:12px">Usá esto para <strong>migrar todos tus datos</strong> de un dispositivo a otro. Exportá desde el celular principal y luego importá en el nuevo dispositivo.</div>
+    <div class="info-box" style="margin-bottom:12px">Exportá desde el celular principal e importá en el nuevo dispositivo.</div>
     <button class="btn-primary" id="btn-export-data" style="background:var(--sage);margin-bottom:10px">📤 Exportar todos los datos (JSON)</button>
     <div style="margin-bottom:10px">
       <label class="form-label">Importar desde archivo JSON</label>
@@ -938,7 +856,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
   <div class="card">
     <div class="card-header"><div class="card-title" style="color:var(--crimson)">⚠️ Zona de peligro</div></div>
-    <div class="info-box" style="background:var(--crimson-light);border-color:rgba(179,48,48,0.2);color:var(--crimson)">Esta acción borra TODOS los datos guardados localmente. No se puede deshacer.</div>
+    <div class="info-box" style="background:var(--crimson-light);border-color:rgba(179,48,48,0.2);color:var(--crimson)">Esta acción borra TODOS los datos. No se puede deshacer.</div>
     <button class="btn-secondary" id="btn-clear-data" style="color:var(--crimson);border-color:var(--crimson);width:100%">🗑 Borrar todos los datos</button>
   </div>
 </section>
@@ -946,34 +864,14 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 </main>
 
 <nav class="bottom-nav">
-  <button class="bnav-item active" data-page="dashboard">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
-    <span class="bnav-label">Inicio</span>
-  </button>
-  <button class="bnav-item" data-page="produccion">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.38c-.23.37.18.78.55.55C7.17 18.1 13.34 16 15 8"/><path d="M4 22c0-4 2-8 6-10"/><path d="M22 2s-4 0-8 4c-4.5 4.5-3 9.5-3 9.5S16.5 17 21 12.5c4-4 1-10.5 1-10.5z"/></svg></span>
-    <span class="bnav-label">Producción</span>
-  </button>
-  <button class="bnav-item" data-page="costos">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-    <span class="bnav-label">Costos</span>
-  </button>
-  <button class="bnav-item" data-page="caja">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
-    <span class="bnav-label">Caja</span>
-  </button>
-  <button class="bnav-item" data-page="merma">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></span>
-    <span class="bnav-label">Merma</span>
-  </button>
-  <button class="bnav-item" data-page="personal">
-    <span class="bnav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-    <span class="bnav-label">Personal</span>
-  </button>
+  <button class="bnav-item active" data-page="dashboard"><span class="bnav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="bnav-label">Inicio</span></button>
+  <button class="bnav-item" data-page="produccion"><span class="bnav-icon"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.38c-.23.37.18.78.55.55C7.17 18.1 13.34 16 15 8"/><path d="M4 22c0-4 2-8 6-10"/><path d="M22 2s-4 0-8 4c-4.5 4.5-3 9.5-3 9.5S16.5 17 21 12.5c4-4 1-10.5 1-10.5z"/></svg></span><span class="bnav-label">Producción</span></button>
+  <button class="bnav-item" data-page="costos"><span class="bnav-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="bnav-label">Costos</span></button>
+  <button class="bnav-item" data-page="caja"><span class="bnav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span class="bnav-label">Caja</span></button>
+  <button class="bnav-item" data-page="merma"><span class="bnav-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></span><span class="bnav-label">Merma</span></button>
+  <button class="bnav-item" data-page="personal"><span class="bnav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="bnav-label">Personal</span></button>
 </nav>
 
-
-<!-- EDIT MODAL -->
 <div class="edit-modal-overlay" id="edit-modal">
   <div class="edit-modal-box">
     <div class="modal-handle"></div>
@@ -986,7 +884,6 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-box">
     <div class="modal-handle"></div>
@@ -1004,19 +901,35 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
 
 <script>
 let supabase = null;
+
+// ── RENDIMIENTOS POR LOTE (unidades que produce cada receta) ──
+const LOTE_RENDIMIENTO = {
+  'Empanada de Queso': 30,
+  'Empanada de Cebolla': 30,
+  'Empanada integral': 33,
+  'Cuñape': 40,
+  'Rollo de Queso': 25,
+  'Rosca Selecta': 60,
+  'Tortilla': 33,
+  'Empanada Tortilla': 33,
+  'Empanada Jamón y Queso': 24
+};
+
 let state = {
   produccion:[], costos:[], caja:[], merma:[], pagos:[],
   productos:[], empleados:[],
-  ingredientes:[], recetas:{},
+  ingredientes:[], recetas:{}, rendimientos:{},
   catalogo:[], compras:[],
   capital:[], movimientos:[],
   proveedores:[],
+  conteosFisicos:[],
+  ajustesInventario:[],
   filtro:'dia', filtroMat:'semana',
   dashDesde:null, dashHasta:null, matDesde:null, matHasta:null
 };
 let chartCostos=null, chartMat=null, chartEvol=null;
 
-const fmt = n => { const v=parseFloat(n||0); return 'Bs. ' + v.toLocaleString('es-BO',{minimumFractionDigits: Number.isInteger(v)?0:2, maximumFractionDigits:2}); };
+const fmt = n => { const v=parseFloat(n||0); return 'Bs. ' + v.toLocaleString('es-BO',{minimumFractionDigits:Number.isInteger(v)?0:2,maximumFractionDigits:2}); };
 const today = () => new Date().toISOString().split('T')[0];
 const weekAgo = () => { const d=new Date(); d.setDate(d.getDate()-7); return d.toISOString().split('T')[0]; };
 const monthAgo = () => { const d=new Date(); d.setMonth(d.getMonth()-1); return d.toISOString().split('T')[0]; };
@@ -1055,10 +968,36 @@ function saveLocal() {
     produccion:state.produccion, costos:state.costos, caja:state.caja,
     merma:state.merma, pagos:state.pagos, productos:state.productos,
     empleados:state.empleados, ingredientes:state.ingredientes, recetas:state.recetas,
+    rendimientos:state.rendimientos,
     catalogo:state.catalogo, compras:state.compras,
     capital:state.capital, movimientos:state.movimientos,
-    proveedores:state.proveedores||[]
+    proveedores:state.proveedores||[],
+    conteosFisicos:state.conteosFisicos||[],
+    ajustesInventario:state.ajustesInventario||[]
   }));
+}
+
+// ── MIGRACIÓN DE RECETAS: por unidad → por lote ──
+function migrateRecetasALote() {
+  let migrated = false;
+  Object.keys(LOTE_RENDIMIENTO).forEach(producto => {
+    const receta = state.recetas[producto];
+    if (!receta || !receta.length) return;
+    // Si ya tiene rendimiento guardado, no migrar de nuevo
+    if (state.rendimientos && state.rendimientos[producto]) return;
+    const rend = LOTE_RENDIMIENTO[producto];
+    // Multiplicar cantidades × rendimiento
+    receta.forEach(item => {
+      item.cantidad = parseFloat((item.cantidad * rend).toFixed(6));
+    });
+    if (!state.rendimientos) state.rendimientos = {};
+    state.rendimientos[producto] = rend;
+    migrated = true;
+  });
+  if (migrated) {
+    saveLocal();
+    console.log('Recetas migradas a sistema de lotes');
+  }
 }
 
 function loadLocal() {
@@ -1068,11 +1007,16 @@ function loadLocal() {
   if(!state.empleados||!state.empleados.length) state.empleados=['Empleado 1'];
   if(!state.ingredientes) state.ingredientes=[];
   if(!state.recetas) state.recetas={};
+  if(!state.rendimientos) state.rendimientos={};
   if(!state.capital) state.capital=[];
   if(!state.catalogo) state.catalogo=[];
   if(!state.compras) state.compras=[];
   if(!state.movimientos) state.movimientos=[];
   if(!state.proveedores) state.proveedores=[];
+  if(!state.conteosFisicos) state.conteosFisicos=[];
+  if(!state.ajustesInventario) state.ajustesInventario=[];
+  // Migrar recetas al sistema de lotes si no están migradas
+  migrateRecetasALote();
 }
 
 function initSupabase() {
@@ -1080,235 +1024,128 @@ function initSupabase() {
   if(url&&key&&window.supabase){
     try{
       supabase=window.supabase.createClient(url,key);
-      // Actualiza indicador visual en el header
-      const dot=document.getElementById('sync-dot');
-      const lbl=document.getElementById('sync-label');
-      if(dot){dot.style.background='#6BC67E';}
-      if(lbl){lbl.textContent='☁ conectado';}
-      lbl.style.color='rgba(150,255,170,0.85)';
+      setSyncStatus('ok');
     }catch(e){supabase=null;}
   }
 }
 
-// Actualiza el indicador visual de sincronización en el header
 function setSyncStatus(status){
-  const dot=document.getElementById('sync-dot');
-  const lbl=document.getElementById('sync-label');
+  const dot=document.getElementById('sync-dot'), lbl=document.getElementById('sync-label');
   if(!dot||!lbl)return;
-  if(status==='ok'){
-    dot.style.background='#6BC67E';lbl.textContent='☁ conectado';lbl.style.color='rgba(150,255,170,0.85)';
-  } else if(status==='syncing'){
-    dot.style.background='#F5A623';lbl.textContent='↑ sincronizando...';lbl.style.color='rgba(245,166,35,0.9)';
-  } else {
-    dot.style.background='rgba(255,255,255,0.25)';lbl.textContent='local';lbl.style.color='rgba(255,255,255,0.5)';
-  }
+  if(status==='ok'){dot.style.background='#6BC67E';lbl.textContent='☁ conectado';lbl.style.color='rgba(150,255,170,0.85)';}
+  else if(status==='syncing'){dot.style.background='#F5A623';lbl.textContent='↑ sincronizando...';lbl.style.color='rgba(245,166,35,0.9)';}
+  else{dot.style.background='rgba(255,255,255,0.25)';lbl.textContent='local';lbl.style.color='rgba(255,255,255,0.5)';}
 }
 
-// ── EDIT MODAL ENGINE ──
+// ── EDIT MODAL ──
 let _editCallback = null;
 function openEditModal(title, bodyHTML, onSave){
-  document.getElementById('edit-modal-title').textContent = title;
-  document.getElementById('edit-modal-body').innerHTML = bodyHTML;
-  _editCallback = onSave;
+  document.getElementById('edit-modal-title').textContent=title;
+  document.getElementById('edit-modal-body').innerHTML=bodyHTML;
+  _editCallback=onSave;
   document.getElementById('edit-modal').classList.add('open');
 }
-function closeEditModal(){
-  document.getElementById('edit-modal').classList.remove('open');
-  _editCallback = null;
-}
+function closeEditModal(){ document.getElementById('edit-modal').classList.remove('open'); _editCallback=null; }
 
-// ── EDITAR REGISTRO ──
 window.editItem = async function(tabla, idx){
-  const r = state[tabla]?.[idx];
-  if(!r) return;
-
-  if(tabla === 'costos'){
-    const COST_OPTS = [
-      {v:'insumos_empaques',l:'Insumo / Empaque usado'},
-      {v:'arriendo',l:'Arriendo y Mantenimiento'},
-      {v:'servicios',l:'Servicios Públicos'},
-      {v:'transporte',l:'🚚 Transporte'},
-      {v:'tecnologia',l:'Tecnología y Software'},
-      {v:'marketing',l:'Marketing y Publicidad'},
-      {v:'otros_fijos',l:'Otros gastos fijos'},
-    ];
-    const tipoOpts = COST_OPTS.map(o=>`<option value="${o.v}" ${r.tipo===o.v?'selected':''}>${o.l}</option>`).join('');
-    openEditModal('✏️ Editar Costo', `
+  const r=state[tabla]?.[idx]; if(!r)return;
+  if(tabla==='costos'){
+    const COST_OPTS=[{v:'insumos_empaques',l:'Insumo / Empaque usado'},{v:'arriendo',l:'Arriendo y Mantenimiento'},{v:'servicios',l:'Servicios Públicos'},{v:'transporte',l:'🚚 Transporte'},{v:'tecnologia',l:'Tecnología y Software'},{v:'marketing',l:'Marketing y Publicidad'},{v:'otros_fijos',l:'Otros gastos fijos'}];
+    const tipoOpts=COST_OPTS.map(o=>`<option value="${o.v}" ${r.tipo===o.v?'selected':''}>${o.l}</option>`).join('');
+    openEditModal('✏️ Editar Costo',`
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Categoría</label><select class="form-control" id="ed-tipo">${tipoOpts}</select></div>
       <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-control" id="ed-desc" value="${r.descripcion||''}"></div>
       <div class="form-group"><label class="form-label">Monto (Bs.)</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" step="0.01"></div>
-      ${r.tipo!=='insumos_empaques'?`<div class="form-group"><label class="form-label">Forma de pago</label>
-        <select class="form-control" id="ed-forma">
-          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
-          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
-          <option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option>
-        </select>
-      </div>`:'<div class="info-box" style="font-size:11px;padding:8px 10px">💡 Insumo — el pago ya fue registrado en Compras, no descuenta caja</div>'}
-    `, async () => {
-      const updates = {
-        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
-        tipo: document.getElementById('ed-tipo').value,
-        descripcion: document.getElementById('ed-desc').value.trim(),
-        monto: parseFloat(document.getElementById('ed-monto').value)||0,
-        forma: r.tipo!=='insumos_empaques'?(document.getElementById('ed-forma')?.value||r.forma):'sin_pago',
-      };
-      Object.assign(state.costos[idx], updates);
-      saveLocal(); renderCostos(); updateCajaSaldos();
-      if(supabase && r.id){ try{ await supabase.from('costos').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      ${r.tipo!=='insumos_empaques'?`<div class="form-group"><label class="form-label">Forma de pago</label><select class="form-control" id="ed-forma"><option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option><option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option><option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option></select></div>`:'<div class="info-box" style="font-size:11px;padding:8px 10px">💡 Insumo — el pago ya fue registrado en Compras</div>'}
+    `, async()=>{
+      const updates={fecha:document.getElementById('ed-fecha').value+'T12:00:00.000Z',tipo:document.getElementById('ed-tipo').value,descripcion:document.getElementById('ed-desc').value.trim(),monto:parseFloat(document.getElementById('ed-monto').value)||0,forma:r.tipo!=='insumos_empaques'?(document.getElementById('ed-forma')?.value||r.forma):'sin_pago'};
+      Object.assign(state.costos[idx],updates);saveLocal();renderCostos();updateCajaSaldos();
+      if(supabase&&r.id){try{await supabase.from('costos').update(updates).eq('id',r.id);}catch(e){}}
       showToast('✓ Costo actualizado','green');
     });
-  }
-
-  else if(tabla === 'produccion'){
-    openEditModal('✏️ Editar Producción', `
+  } else if(tabla==='produccion'){
+    openEditModal('✏️ Editar Producción',`
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Producto</label><input type="text" class="form-control" id="ed-producto" value="${r.producto||''}" readonly style="background:var(--wheat-light)"></div>
-      <div class="form-group"><label class="form-label">Cantidad Producida</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad_producida||0}" min="0"></div>
+      <div class="form-group"><label class="form-label">Cantidad Producida (unidades)</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad_producida||0}" min="0"></div>
       <div class="form-group"><label class="form-label">Precio de Venta</label><input type="number" class="form-control" id="ed-precio" value="${r.precio_venta||0}" min="0" step="0.01"></div>
       <div class="form-group"><label class="form-label">Costo Unitario</label><input type="number" class="form-control" id="ed-costo" value="${r.costo_unitario||0}" min="0" step="0.01"></div>
-    `, async () => {
-      const updates = {
-        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
-        cantidad_producida: parseFloat(document.getElementById('ed-cantidad').value)||0,
-        precio_venta: parseFloat(document.getElementById('ed-precio').value)||0,
-        costo_unitario: parseFloat(document.getElementById('ed-costo').value)||0,
-      };
-      Object.assign(state.produccion[idx], updates);
-      saveLocal(); renderProduccion(); renderDashboard();
-      if(supabase && r.id){ try{ await supabase.from('produccion').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+    `, async()=>{
+      const updates={fecha:document.getElementById('ed-fecha').value+'T12:00:00.000Z',cantidad_producida:parseFloat(document.getElementById('ed-cantidad').value)||0,precio_venta:parseFloat(document.getElementById('ed-precio').value)||0,costo_unitario:parseFloat(document.getElementById('ed-costo').value)||0};
+      Object.assign(state.produccion[idx],updates);saveLocal();renderProduccion();renderDashboard();
+      if(supabase&&r.id){try{await supabase.from('produccion').update(updates).eq('id',r.id);}catch(e){}}
       showToast('✓ Producción actualizada','green');
     });
-  }
-
-  else if(tabla === 'merma'){
-    openEditModal('✏️ Editar Merma', `
+  } else if(tabla==='merma'){
+    openEditModal('✏️ Editar Merma',`
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Producto</label><input type="text" class="form-control" id="ed-producto" value="${r.producto||''}" readonly style="background:var(--wheat-light)"></div>
       <div class="form-group"><label class="form-label">Cantidad</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad||0}" min="0"></div>
-      <div class="form-group"><label class="form-label">Motivo</label>
-        <select class="form-control" id="ed-motivo">
-          ${['sobrante','quemado','vencido','caido','devolucion','otro'].map(m=>`<option value="${m}" ${r.motivo===m?'selected':''}>${m}</option>`).join('')}
-        </select>
-      </div>
-    `, async () => {
-      const updates = {
-        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
-        cantidad: parseFloat(document.getElementById('ed-cantidad').value)||0,
-        motivo: document.getElementById('ed-motivo').value,
-      };
-      Object.assign(state.merma[idx], updates);
-      saveLocal(); renderMerma(); renderProduccion();
-      if(supabase && r.id){ try{ await supabase.from('merma').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      <div class="form-group"><label class="form-label">Motivo</label><select class="form-control" id="ed-motivo">${['sobrante','quemado','vencido','caido','devolucion','otro'].map(m=>`<option value="${m}" ${r.motivo===m?'selected':''}>${m}</option>`).join('')}</select></div>
+    `, async()=>{
+      const updates={fecha:document.getElementById('ed-fecha').value+'T12:00:00.000Z',cantidad:parseFloat(document.getElementById('ed-cantidad').value)||0,motivo:document.getElementById('ed-motivo').value};
+      Object.assign(state.merma[idx],updates);saveLocal();renderMerma();renderProduccion();
+      if(supabase&&r.id){try{await supabase.from('merma').update(updates).eq('id',r.id);}catch(e){}}
       showToast('✓ Merma actualizada','green');
     });
-  }
-
-  else if(tabla === 'compras'){
-    // Obtener unidades del catálogo para el select
-    const cat = state.catalogo.find(c=>c.nombre===r.item);
-    const unidad = cat?cat.unidad:(r.unidad||'u');
-    openEditModal('✏️ Editar Compra', `
+  } else if(tabla==='compras'){
+    const cat=state.catalogo.find(c=>c.nombre===r.item);
+    const unidad=cat?cat.unidad:(r.unidad||'u');
+    openEditModal('✏️ Editar Compra',`
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Ítem</label><input type="text" class="form-control" id="ed-item" value="${r.item||''}" readonly style="background:var(--wheat-light)"></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Cantidad (${unidad})</label><input type="number" class="form-control" id="ed-cantidad" value="${r.cantidad||0}" min="0" step="0.01"></div>
         <div class="form-group"><label class="form-label">Monto Total (Bs.)</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" min="0" step="0.01"></div>
       </div>
-      <div class="form-group"><label class="form-label">Forma de pago</label>
-        <select class="form-control" id="ed-forma">
-          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
-          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
-          <option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Proveedor</label>
-        <select class="form-control" id="ed-proveedor">
-          <option value="">— Sin proveedor —</option>
-          ${(state.proveedores||[]).map(p=>`<option value="${p}" ${r.proveedor===p?'selected':''}>${p}</option>`).join('')}
-        </select>
-      </div>
-    `, async () => {
-      const updates = {
-        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
-        cantidad: parseFloat(document.getElementById('ed-cantidad').value)||0,
-        monto: parseFloat(document.getElementById('ed-monto').value)||0,
-        forma: document.getElementById('ed-forma').value,
-        proveedor: document.getElementById('ed-proveedor').value,
-      };
-      Object.assign(state.compras[idx], updates);
-      saveLocal(); renderCompras(); renderInventario(); updateCajaSaldos();
-      if(supabase && r.id){ try{ await supabase.from('compras').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+      <div class="form-group"><label class="form-label">Forma de pago</label><select class="form-control" id="ed-forma"><option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option><option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option><option value="credito" ${r.forma==='credito'?'selected':''}>📋 Crédito</option></select></div>
+      <div class="form-group"><label class="form-label">Proveedor</label><select class="form-control" id="ed-proveedor"><option value="">— Sin proveedor —</option>${(state.proveedores||[]).map(p=>`<option value="${p}" ${r.proveedor===p?'selected':''}>${p}</option>`).join('')}</select></div>
+    `, async()=>{
+      const updates={fecha:document.getElementById('ed-fecha').value+'T12:00:00.000Z',cantidad:parseFloat(document.getElementById('ed-cantidad').value)||0,monto:parseFloat(document.getElementById('ed-monto').value)||0,forma:document.getElementById('ed-forma').value,proveedor:document.getElementById('ed-proveedor').value};
+      Object.assign(state.compras[idx],updates);saveLocal();renderCompras();renderInventario();updateCajaSaldos();
+      if(supabase&&r.id){try{await supabase.from('compras').update(updates).eq('id',r.id);}catch(e){}}
       showToast('✓ Compra actualizada','green');
     });
-  }
-
-  else if(tabla === 'pagos'){    openEditModal('✏️ Editar Pago', `
+  } else if(tabla==='pagos'){
+    openEditModal('✏️ Editar Pago',`
       <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-control" id="ed-fecha" value="${(r.fecha||'').split('T')[0]}"></div>
       <div class="form-group"><label class="form-label">Empleado</label><input type="text" class="form-control" id="ed-empleado" value="${r.empleado||''}" readonly style="background:var(--wheat-light)"></div>
       <div class="form-group"><label class="form-label">Monto</label><input type="number" class="form-control" id="ed-monto" value="${r.monto||0}" min="0" step="0.01"></div>
-      <div class="form-group"><label class="form-label">Tipo</label>
-        <select class="form-control" id="ed-tipo">
-          ${['sueldo','anticipo','bono','comision','liquidacion'].map(t=>`<option value="${t}" ${r.tipo===t?'selected':''}>${t}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Forma de pago</label>
-        <select class="form-control" id="ed-forma">
-          <option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option>
-          <option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option>
-        </select>
-      </div>
+      <div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="ed-tipo">${['sueldo','anticipo','bono','comision','liquidacion'].map(t=>`<option value="${t}" ${r.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Forma de pago</label><select class="form-control" id="ed-forma"><option value="efectivo" ${r.forma==='efectivo'?'selected':''}>💵 Efectivo</option><option value="qr" ${r.forma==='qr'?'selected':''}>📱 QR</option></select></div>
       <div class="form-group"><label class="form-label">Notas</label><input type="text" class="form-control" id="ed-concepto" value="${r.concepto||''}"></div>
-    `, async () => {
-      const updates = {
-        fecha: document.getElementById('ed-fecha').value+'T12:00:00.000Z',
-        monto: parseFloat(document.getElementById('ed-monto').value)||0,
-        tipo: document.getElementById('ed-tipo').value,
-        forma: document.getElementById('ed-forma').value,
-        concepto: document.getElementById('ed-concepto').value.trim(),
-      };
-      Object.assign(state.pagos[idx], updates);
-      saveLocal(); renderPersonal(); updateCajaSaldos();
-      if(supabase && r.id){ try{ await supabase.from('pagos').update(updates).eq('id',r.id); }catch(e){ console.warn(e); } }
+    `, async()=>{
+      const updates={fecha:document.getElementById('ed-fecha').value+'T12:00:00.000Z',monto:parseFloat(document.getElementById('ed-monto').value)||0,tipo:document.getElementById('ed-tipo').value,forma:document.getElementById('ed-forma').value,concepto:document.getElementById('ed-concepto').value.trim()};
+      Object.assign(state.pagos[idx],updates);saveLocal();renderPersonal();updateCajaSaldos();
+      if(supabase&&r.id){try{await supabase.from('pagos').update(updates).eq('id',r.id);}catch(e){}}
       showToast('✓ Pago actualizado','green');
     });
   }
 };
 
-// ── SYNC MANUAL (reemplaza Realtime para no consumir cupo gratuito) ──
 async function manualSync(){
   if(!supabase){showToast('Sin conexión a Supabase','red');return;}
-  setSyncStatus('syncing');
-  showToast('Actualizando datos...','');
+  setSyncStatus('syncing'); showToast('Actualizando datos...','');
   await loadFromSupabase();
   showToast('✓ Datos actualizados','green');
 }
-// Alias para no romper referencias
-function startRealtimeSync(){ /* desactivado — usar botón Actualizar */ }
+function startRealtimeSync(){}
 
 async function syncToSupabase(table,data){
   if(!supabase)return;
   setSyncStatus('syncing');
   try{
-    const {data:res,error}=await supabase.from(table).insert([data]).select().single();
+    const{data:res}=await supabase.from(table).insert([data]).select().single();
     if(res&&res.id&&!data.id){
-      // Guardar el id devuelto por Supabase en el registro local
       const arr=state[table];
-      if(arr){
-        const idx=arr.lastIndexOf(data);
-        if(idx>=0)arr[idx].id=res.id;
-        else{const last=arr[arr.length-1];if(last&&!last.id)last.id=res.id;}
-      }
-      data.id=res.id;
-      saveLocal();
+      if(arr){const last=arr[arr.length-1];if(last&&!last.id)last.id=res.id;}
+      data.id=res.id; saveLocal();
     }
     setSyncStatus('ok');
-  }catch(e){
-    setSyncStatus('ok');
-  }
+  }catch(e){setSyncStatus('ok');}
 }
 
-// Guarda la configuración completa (catálogo, productos, empleados, recetas, capital) en Supabase
 async function saveConfigToSupabase(){
   if(!supabase)return;
   const configs=[
@@ -1316,17 +1153,14 @@ async function saveConfigToSupabase(){
     {clave:'empleados',valor:JSON.stringify(state.empleados)},
     {clave:'catalogo',valor:JSON.stringify(state.catalogo)},
     {clave:'recetas',valor:JSON.stringify(state.recetas)},
+    {clave:'rendimientos',valor:JSON.stringify(state.rendimientos||{})},
     {clave:'capital',valor:JSON.stringify(state.capital||[])},
     {clave:'ingredientes',valor:JSON.stringify(state.ingredientes||[])},
     {clave:'proveedores',valor:JSON.stringify(state.proveedores||[])}
   ];
   setSyncStatus('syncing');
-  try{
-    for(const cfg of configs){
-      await supabase.from('config').upsert([cfg],{onConflict:'clave'});
-    }
-    setSyncStatus('ok');
-  }catch(e){setSyncStatus('ok');console.warn('saveConfigToSupabase error:',e);}
+  try{for(const cfg of configs){await supabase.from('config').upsert([cfg],{onConflict:'clave'});}setSyncStatus('ok');}
+  catch(e){setSyncStatus('ok');}
 }
 
 async function loadFromSupabase(){
@@ -1349,7 +1183,6 @@ async function loadFromSupabase(){
     if(pa.data)state.pagos=pa.data;
     if(mv.data)state.movimientos=mv.data;
     if(cmp.data)state.compras=cmp.data;
-    // Load config (productos, empleados, catalogo, recetas, capital, ingredientes)
     if(cfg.data&&cfg.data.length){
       cfg.data.forEach(row=>{
         try{
@@ -1358,73 +1191,50 @@ async function loadFromSupabase(){
           else if(row.clave==='empleados'&&Array.isArray(val)&&val.length)state.empleados=val;
           else if(row.clave==='catalogo'&&Array.isArray(val))state.catalogo=val;
           else if(row.clave==='recetas'&&typeof val==='object')state.recetas=val;
+          else if(row.clave==='rendimientos'&&typeof val==='object')state.rendimientos=val;
           else if(row.clave==='capital'&&Array.isArray(val))state.capital=val;
           else if(row.clave==='ingredientes'&&Array.isArray(val))state.ingredientes=val;
           else if(row.clave==='proveedores'&&Array.isArray(val))state.proveedores=val;
         }catch(e){}
       });
     }
-    saveLocal();populateSelects();renderAll();
-    setSyncStatus('ok');
-  }catch(e){setSyncStatus('local');console.warn('loadFromSupabase error:',e);}
+    saveLocal();populateSelects();renderAll();setSyncStatus('ok');
+  }catch(e){setSyncStatus('local');}
 }
 
 function navigate(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.bnav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.bnav-item,.nav-item').forEach(n=>n.classList.remove('active'));
   const pg=document.getElementById('page-'+page);
   if(pg)pg.classList.add('active');
   document.querySelectorAll(`[data-page="${page}"]`).forEach(el=>el.classList.add('active'));
   closeNav();
   setTimeout(()=>renderPage(page),50);
 }
-
 function openNav(){document.getElementById('side-nav').classList.add('open');document.body.style.overflow='hidden';}
 function closeNav(){document.getElementById('side-nav').classList.remove('open');document.body.style.overflow='';}
 
 function populateSelects(){
   ['prod-producto','merma-producto'].forEach(id=>{
     const sel=document.getElementById(id);if(!sel)return;
-    const isOpt=id==='costo-producto', prev=sel.value;
-    sel.innerHTML=isOpt?'<option value="">General</option>':'<option value="">— Seleccionar —</option>';
+    const prev=sel.value;
+    sel.innerHTML='<option value="">— Seleccionar —</option>';
     state.productos.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
     if(prev)sel.value=prev;
   });
   const pagSel=document.getElementById('pago-empleado');
-  if(pagSel){
-    const prev=pagSel.value;
-    pagSel.innerHTML='<option value="">— Seleccionar —</option>';
-    state.empleados.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;pagSel.appendChild(o);});
-    if(prev)pagSel.value=prev;
-  }
+  if(pagSel){const prev=pagSel.value;pagSel.innerHTML='<option value="">— Seleccionar —</option>';state.empleados.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;pagSel.appendChild(o);});if(prev)pagSel.value=prev;}
+  const conteoSel=document.getElementById('conteo-empleado');
+  if(conteoSel){const prev=conteoSel.value;conteoSel.innerHTML='<option value="">— Seleccionar —</option>';state.empleados.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;conteoSel.appendChild(o);});if(prev)conteoSel.value=prev;}
   const recProd=document.getElementById('rec-producto');
-  if(recProd){
-    const prev=recProd.value;
-    recProd.innerHTML='<option value="">— Seleccionar producto —</option>';
-    state.productos.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;recProd.appendChild(o);});
-    if(prev)recProd.value=prev;
-  }
+  if(recProd){const prev=recProd.value;recProd.innerHTML='<option value="">— Seleccionar producto —</option>';state.productos.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;recProd.appendChild(o);});if(prev)recProd.value=prev;}
   const recIng=document.getElementById('rec-ingrediente');
-  if(recIng){
-    const prev=recIng.value;
-    recIng.innerHTML='<option value="">— Seleccionar —</option>';
-    state.catalogo.filter(c=>c.tipo==='materia_prima').forEach(c=>{const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad})`;recIng.appendChild(o);});
-    if(prev)recIng.value=prev;
-  }
-  const compraItem=document.getElementById('compra-item');
-  if(compraItem){
-    const prev=compraItem.value;
-    compraItem.innerHTML='<option value="">— Seleccionar —</option>';
-    state.catalogo.forEach(c=>{const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad}) · ${c.tipo==='materia_prima'?'Materia Prima':'Insumo'}`;compraItem.appendChild(o);});
-    if(prev)compraItem.value=prev;
-  }
+  if(recIng){const prev=recIng.value;recIng.innerHTML='<option value="">— Seleccionar —</option>';state.catalogo.filter(c=>c.tipo==='materia_prima').forEach(c=>{const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad})`;recIng.appendChild(o);});if(prev)recIng.value=prev;}
 }
 
 function renderProveedores(){
   const pl=document.getElementById('proveedores-list');
   if(pl)pl.innerHTML=(state.proveedores||[]).map((p,i)=>`<span class="tag">${p}<button onclick="removeProveedor(${i})">✕</button></span>`).join('');
-  // Actualizar selects de proveedor
   ['compra-proveedor-sel','compra-filtro-proveedor'].forEach(id=>{
     const sel=document.getElementById(id);if(!sel)return;
     const prev=sel.value;
@@ -1433,10 +1243,7 @@ function renderProveedores(){
     if(prev)sel.value=prev;
   });
 }
-window.removeProveedor=function(i){
-  state.proveedores.splice(i,1);
-  saveLocal();saveConfigToSupabase();renderProveedores();
-};
+window.removeProveedor=function(i){state.proveedores.splice(i,1);saveLocal();saveConfigToSupabase();renderProveedores();};
 
 function renderConfigLists(){
   const pl=document.getElementById('productos-list'),el=document.getElementById('empleados-list');
@@ -1446,62 +1253,87 @@ function renderConfigLists(){
 window.removeProducto=i=>{state.productos.splice(i,1);saveLocal();saveConfigToSupabase();populateSelects();renderConfigLists();};
 window.removeEmpleado=i=>{state.empleados.splice(i,1);saveLocal();saveConfigToSupabase();populateSelects();renderConfigLists();};
 
+// ── COSTO DE RECETA POR LOTE ──
+// Devuelve el costo unitario de un producto usando el sistema de lotes
 function getCostoReceta(producto){
   const receta=state.recetas[producto];
-  if(!receta||!receta.length)return 0;
-  return receta.reduce((sum,item)=>{
-    // costo unitario = últimas compras / cantidad
+  if(!receta||!receta.length) return 0;
+  const rendimiento=state.rendimientos[producto]||LOTE_RENDIMIENTO[producto]||1;
+  const costoLote=receta.reduce((sum,item)=>{
     const comprasItem=state.compras.filter(c=>c.item===item.ingrediente);
-    const costoUnitario=comprasItem.length>0?comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0)/comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),1):0;
-    // fallback a ingredientes legacy
+    const totalMonto=comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0);
+    const totalCant=comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
+    const costoUnitario=totalCant>0.0001?(totalMonto/totalCant):0;
     const ing=state.ingredientes.find(i=>i.nombre===item.ingrediente);
     const costo=costoUnitario>0?costoUnitario:(ing?parseFloat(ing.costo||0):0);
     return sum+(costo*parseFloat(item.cantidad||0));
   },0);
+  return rendimiento>0?(costoLote/rendimiento):0;
 }
 
-// Calcular stock disponible de un ítem
+// ── STOCK: usa cantidades de receta por lote ──
 function getStock(nombreItem){
   const comprado=state.compras.filter(c=>c.item===nombreItem).reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
-  // consumido en producción via recetas
   let consumido=0;
   state.produccion.forEach(p=>{
     const receta=state.recetas[p.producto]||[];
-    receta.forEach(r=>{if(r.ingrediente===nombreItem)consumido+=parseFloat(r.cantidad||0)*parseFloat(p.cantidad_producida||0);});
+    const rendimiento=state.rendimientos[p.producto]||LOTE_RENDIMIENTO[p.producto]||1;
+    const unidadesProducidas=parseFloat(p.cantidad_producida||0);
+    const lotes=rendimiento>0?(unidadesProducidas/rendimiento):0;
+    receta.forEach(r=>{if(r.ingrediente===nombreItem)consumido+=parseFloat(r.cantidad||0)*lotes;});
   });
-  // consumido en costos como insumo
   const consumidoCostos=state.costos.filter(c=>c.item_catalogo===nombreItem).reduce((s,c)=>s+parseFloat(c.cantidad_usada||0),0);
   return Math.max(0,comprado-consumido-consumidoCostos);
 }
 
-const COST_LABELS={materia_prima:'Materia Prima',insumos_empaques:'Insumos/Empaques',arriendo:'Arriendo',servicios:'Servicios',transporte:'Transporte',agua:'Agua',luz:'Luz/Energía',gas:'Gas',internet:'Internet',telefono:'Teléfono',tecnologia:'Tecnología',marketing:'Marketing',otros_fijos:'Otros Gastos'};
+const COST_LABELS={materia_prima:'Materia Prima',insumos_empaques:'Insumos/Empaques',arriendo:'Arriendo',servicios:'Servicios',transporte:'Transporte',agua:'Agua',luz:'Luz/Energía',gas:'Gas',internet:'Internet',telefono:'Teléfono',tecnologia:'Tecnología',marketing:'Marketing',otros_fijos:'Otros Gastos',personal:'Personal',perdida_inventario:'Pérdida Inventario'};
 const PROD_CATS=['insumos_empaques'];
-const COST_DOTS={materia_prima:'#C4832A',insumos_empaques:'#E8A84C',arriendo:'#4A5568',servicios:'#3B8BD4',transporte:'#9B59B6',agua:'#3B8BD4',luz:'#F5A623',gas:'#E86B2A',internet:'#7B61FF',telefono:'#34C789',tecnologia:'#7A9E7A',marketing:'#A0AEC0',otros_fijos:'#9E9E9E'};
-const ALL_COLORS=['#C4832A','#E8A84C','#4A5568','#3B8BD4','#F5A623','#E86B2A','#7B61FF','#7A9E7A','#A0AEC0','#9E9E9E'];
+const COST_DOTS={materia_prima:'#C4832A',insumos_empaques:'#E8A84C',arriendo:'#4A5568',servicios:'#3B8BD4',transporte:'#9B59B6',agua:'#3B8BD4',luz:'#F5A623',gas:'#E86B2A',internet:'#7B61FF',telefono:'#34C789',tecnologia:'#7A9E7A',marketing:'#A0AEC0',otros_fijos:'#9E9E9E',personal:'#5C7A5C',perdida_inventario:'#B33030'};
+const ALL_COLORS=['#C4832A','#E8A84C','#4A5568','#3B8BD4','#F5A623','#E86B2A','#7B61FF','#7A9E7A','#5C7A5C','#A0AEC0','#9E9E9E','#B33030'];
 
+// ── DASHBOARD ──
 function renderDashboard(){
   const prod=filterByPeriod(state.produccion);
   const costos=filterByPeriod(state.costos);
   const pagos=filterByPeriod(state.pagos);
   const merma=filterByPeriod(state.merma);
-  const cajaHoy=state.caja.filter(c=>c.fecha===today());
 
-  // Vendido = Producido - Merma por producto
+  // ── FIX: mermaMap agrupado por producto para el período ──
   const mermaMap={};
   merma.forEach(m=>{mermaMap[m.producto]=(mermaMap[m.producto]||0)+parseFloat(m.cantidad||0);});
-  const ventas=prod.reduce((s,r)=>{const vend=Math.max(0,parseFloat(r.cantidad_producida||0)-(mermaMap[r.producto]||0));return s+(r.precio_venta*vend);},0);
-  const costosProd=prod.reduce((s,r)=>s+(r.costo_unitario*r.cantidad_producida),0);
+
+  // ── FIX: ventas = producido total del período - merma total del período por producto ──
+  const byProd={};
+  prod.forEach(r=>{
+    if(!byProd[r.producto])byProd[r.producto]={producido:0,costos:0,precio:parseFloat(r.precio_venta||0),cu:parseFloat(r.costo_unitario||0)};
+    byProd[r.producto].producido+=parseFloat(r.cantidad_producida||0);
+    byProd[r.producto].costos+=parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad_producida||0);
+    byProd[r.producto].precio=parseFloat(r.precio_venta||0);
+    byProd[r.producto].cu=parseFloat(r.costo_unitario||0);
+  });
+  let ventas=0;
+  Object.entries(byProd).forEach(([nombre,v])=>{
+    const mermaProd=mermaMap[nombre]||0;
+    const vendido=Math.max(0,v.producido-mermaProd);
+    v.vendido=vendido;
+    v.ingresos=v.precio*vendido;
+    ventas+=v.ingresos;
+  });
+
+  const costosProd=prod.reduce((s,r)=>s+parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad_producida||0),0);
   const costosReg=costos.reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const totalPagos=pagos.reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const totalCostos=costosProd+costosReg+totalPagos;
+  // Pérdidas de inventario del período (ajustes de conteo físico)
+  const ajustesPeriodo=filterByPeriod(state.ajustesInventario||[]);
+  const totalPerdidaInv=ajustesPeriodo.reduce((s,a)=>s+parseFloat(a.costo_total||0),0);
+  const totalCostos=costosProd+costosReg+totalPagos+totalPerdidaInv;
   const utilBruta=ventas-costosProd;
   const utilNeta=ventas-totalCostos;
   const margen=ventas>0?((utilNeta/ventas)*100).toFixed(1):0;
-  const costosEf=costos.filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  const costosQR=costos.filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
+
+  // Saldo caja histórico
   const capitalEf=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalQR=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
-  // Saldo de caja: siempre histórico completo (no filtrado por período)
   const cajaEfTot=state.caja.reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const cajaQRTot=state.caja.reduce((s,r)=>s+parseFloat(r.qr||0),0);
   const pagosEfTot=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
@@ -1525,21 +1357,21 @@ function renderDashboard(){
   document.getElementById('dash-efectivo').textContent=fmt(efectivo);
   document.getElementById('dash-qr').textContent=fmt(qr);
 
-  // Distribución de costos
+  // ── FIX: Distribución de costos INCLUYE PERSONAL Y PÉRDIDAS INVENTARIO ──
   const byType={};
   costos.forEach(c=>{const t=c.tipo||'otro';byType[t]=(byType[t]||0)+parseFloat(c.monto||0);});
+  if(totalPagos>0) byType['personal']=(byType['personal']||0)+totalPagos;
+  if(totalPerdidaInv>0) byType['perdida_inventario']=(byType['perdida_inventario']||0)+totalPerdidaInv;
 
   const distEl=document.getElementById('costos-dist-list');
   if(distEl){
     const allCats=[
       {key:'insumos_empaques',label:'Insumos y Empaques',tipo:'prod'},
+      {key:'personal',label:'👥 Personal',tipo:'op'},
+      {key:'perdida_inventario',label:'📉 Pérdida Inventario',tipo:'op'},
       {key:'arriendo',label:'Arriendo y Mantenimiento',tipo:'op'},
       {key:'servicios',label:'Servicios Públicos',tipo:'op'},
       {key:'transporte',label:'Transporte',tipo:'op'},
-      {key:'agua',label:'  · Agua',tipo:'op'},
-      {key:'luz',label:'  · Luz / Energía',tipo:'op'},
-      {key:'gas',label:'  · Gas',tipo:'op'},
-      {key:'internet',label:'  · Internet',tipo:'op'},
       {key:'tecnologia',label:'Tecnología y Software',tipo:'op'},
       {key:'marketing',label:'Marketing y Publicidad',tipo:'op'},
       {key:'otros_fijos',label:'Otros Gastos Fijos',tipo:'op'},
@@ -1563,58 +1395,70 @@ function renderDashboard(){
   const ctx=document.getElementById('costos-chart');
   if(ctx){
     if(chartCostos)chartCostos.destroy();
-    if(chartLabels.length){
-      chartCostos=new Chart(ctx,{type:'doughnut',data:{labels:chartLabels,datasets:[{data:chartData,backgroundColor:ALL_COLORS.slice(0,chartData.length),borderWidth:2,borderColor:'#FFFCF8'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10,family:"'Plus Jakarta Sans'"},padding:10,boxWidth:10}},tooltip:{callbacks:{label:c=>`${fmt(c.raw)}`}}},cutout:'60%'}});
-    }
+    if(chartLabels.length){chartCostos=new Chart(ctx,{type:'doughnut',data:{labels:chartLabels,datasets:[{data:chartData,backgroundColor:ALL_COLORS.slice(0,chartData.length),borderWidth:2,borderColor:'#FFFCF8'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10,family:"'Plus Jakarta Sans'"},padding:10,boxWidth:10}},tooltip:{callbacks:{label:c=>`${fmt(c.raw)}`}}},cutout:'60%'}});}
   }
 
-  // Productos
+  // ── FIX: Rentabilidad por Producto — una fila por producto, margen correcto ──
   const prodEl=document.getElementById('productos-table');
   if(prodEl){
-    if(!prod.length){prodEl.innerHTML='<p class="empty-state"><span class="empty-icon">🏆</span>Sin datos en el período</p>';}
+    if(!Object.keys(byProd).length){prodEl.innerHTML='<p class="empty-state"><span class="empty-icon">🏆</span>Sin datos en el período</p>';}
     else{
-      const byProd={};
-      prod.forEach(r=>{if(!byProd[r.producto])byProd[r.producto]={ventas:0,costos:0};const vend2=Math.max(0,parseFloat(r.cantidad_producida||0)-(mermaMap[r.producto]||0));byProd[r.producto].ventas+=r.precio_venta*vend2;byProd[r.producto].costos+=r.costo_unitario*parseFloat(r.cantidad_producida||0);});
-      const maxV=Math.max(...Object.values(byProd).map(v=>v.ventas),1);
-      // Enrich byProd with costo unitario y precio unitario
-      const cuPorProd={};
-      prod.forEach(r=>{if(!cuPorProd[r.producto]){cuPorProd[r.producto]={cu:parseFloat(r.costo_unitario||0),pv:parseFloat(r.precio_venta||0),uds:0};} cuPorProd[r.producto].uds+=parseFloat(r.cantidad_producida||0);});
-      prodEl.innerHTML=Object.entries(byProd).sort((a,b)=>b[1].ventas-a[1].ventas).map(([n,v])=>{
-        const m=v.ventas>0?((v.ventas-v.costos)/v.ventas*100).toFixed(1):0;
-        const pct=(v.ventas/maxV*100).toFixed(1);
-        const cu=cuPorProd[n]?.cu||0;
-        const pv=cuPorProd[n]?.pv||0;
-        const ganUn=pv>0?(pv-cu):0;
-        const mColor=parseFloat(m)>=20?'var(--sage)':parseFloat(m)>=0?'var(--amber)':'var(--crimson)';
-        return `<div class="prod-row"><div class="prod-bar-wrap"><div class="prod-name">${n}</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:10px"><span>${fmt(v.ventas)} ventas</span><span>C/u: ${fmt(cu)}</span><span>P/u: ${fmt(pv)}</span><span style="color:${ganUn>=0?'var(--sage)':'var(--crimson)'}">Gan/u: ${fmt(ganUn)}</span></div></div><div class="prod-stats"><div class="prod-margin ${parseFloat(m)<0?'neg':''}" style="color:${mColor}">${m}%</div><div style="font-size:10px;color:var(--muted)">margen</div></div></div>`;
+      const maxV=Math.max(...Object.values(byProd).map(v=>v.ingresos),1);
+      prodEl.innerHTML=Object.entries(byProd).sort((a,b)=>b[1].ingresos-a[1].ingresos).map(([nombre,v])=>{
+        const margenProd=v.ingresos>0?((v.ingresos-v.costos)/v.ingresos*100).toFixed(1):0;
+        const pct=(v.ingresos/maxV*100).toFixed(1);
+        const ganUn=v.precio-v.cu;
+        const mColor=parseFloat(margenProd)>=20?'var(--sage)':parseFloat(margenProd)>=0?'var(--amber)':'var(--crimson)';
+        return `<div class="prod-row"><div class="prod-bar-wrap"><div class="prod-name">${nombre}</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap"><span>Prod: ${v.producido}</span><span>Vend: ${v.vendido}</span><span>${fmt(v.ingresos)}</span><span>C/u: ${fmt(v.cu)}</span><span style="color:${ganUn>=0?'var(--sage)':'var(--crimson)'}">Gan/u: ${fmt(ganUn)}</span></div></div><div class="prod-stats"><div class="prod-margin ${parseFloat(margenProd)<0?'neg':''}" style="color:${mColor}">${margenProd}%</div><div style="font-size:10px;color:var(--muted)">margen</div></div></div>`;
       }).join('');
     }
   }
 
-  // Merma
+  // Merma del período agrupada
   const mermaEl=document.getElementById('merma-dash');
   if(mermaEl){
     if(!merma.length){mermaEl.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin merma registrada</p>';}
     else{
-      const total=merma.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
-      mermaEl.innerHTML=merma.map(r=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}</div></div><div class="list-item-amount negative">${fmt(r.costo_unitario*r.cantidad)}</div></div>`).join('')+`<div class="merma-total">Total pérdida: ${fmt(total)}</div>`;
+      // Agrupar por producto
+      const mermaAgrup={};
+      merma.forEach(r=>{
+        if(!mermaAgrup[r.producto])mermaAgrup[r.producto]={cantidad:0,costo:0};
+        mermaAgrup[r.producto].cantidad+=parseFloat(r.cantidad||0);
+        mermaAgrup[r.producto].costo+=parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0);
+      });
+      const total=Object.values(mermaAgrup).reduce((s,v)=>s+v.costo,0);
+      mermaEl.innerHTML=Object.entries(mermaAgrup).map(([prod,v])=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${prod}</div><div class="list-item-sub">${v.cantidad} unid.</div></div><div class="list-item-amount negative">${fmt(v.costo)}</div></div>`).join('')+`<div class="merma-total">Total pérdida: ${fmt(total)}</div>`;
+    }
+  }
+
+  // Pérdidas de inventario del período
+  const perdidaEl=document.getElementById('perdida-inv-dash');
+  if(perdidaEl){
+    if(!ajustesPeriodo.length){perdidaEl.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin pérdidas de inventario registradas</p>';}
+    else{
+      const porItem={};
+      ajustesPeriodo.forEach(a=>{
+        Object.entries(a.items||{}).forEach(([nombre,v])=>{
+          if(!porItem[nombre])porItem[nombre]={cantidad:0,costo:0,unidad:v.unidad||''};
+          porItem[nombre].cantidad+=parseFloat(v.cantidad_faltante||0);
+          porItem[nombre].costo+=parseFloat(v.costo_total||0);
+        });
+      });
+      perdidaEl.innerHTML=Object.entries(porItem).map(([nombre,v])=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">${nombre}</div><div class="list-item-sub">Faltante: ${v.cantidad.toFixed(3)} ${v.unidad}</div></div><div class="list-item-amount negative">${fmt(v.costo)}</div></div>`).join('')+`<div class="merma-total">Total pérdida MP: ${fmt(totalPerdidaInv)}</div>`;
     }
   }
 
   // ── INDICADORES EXTRA ──
-  // 1. Costo promedio por unidad producida
   const totalUnid=prod.reduce((s,r)=>s+parseFloat(r.cantidad_producida||0),0);
   const costoUProm=totalUnid>0?(costosProd/totalUnid):0;
   const kuEl=document.getElementById('kpi-costo-u');if(kuEl)kuEl.textContent=fmt(costoUProm);
 
-  // 2. % merma sobre producción
   const totalProd2=prod.reduce((s,r)=>s+parseFloat(r.cantidad_producida||0),0);
   const totalMerma2=merma.reduce((s,r)=>s+parseFloat(r.cantidad||0),0);
   const pctMerma=totalProd2>0?((totalMerma2/totalProd2)*100).toFixed(1):0;
   const pmEl=document.getElementById('kpi-pct-merma');
   if(pmEl){pmEl.textContent=pctMerma+'%';pmEl.className='kpi-value '+(parseFloat(pctMerma)>10?'red':parseFloat(pctMerma)>5?'amber':'green');}
 
-  // 3. Mejor día de ventas (últimos 30 días)
   const ventasPorDia={};
   state.produccion.forEach(r=>{
     const d=(r.fecha||'').split('T')[0];
@@ -1624,9 +1468,8 @@ function renderDashboard(){
   });
   const mejorDia=Object.entries(ventasPorDia).sort((a,b)=>b[1]-a[1])[0];
   const mdEl=document.getElementById('kpi-mejor-dia');
-  if(mdEl&&mejorDia){const [f,v]=mejorDia;mdEl.textContent=f.slice(5)+' · '+fmt(v);}
+  if(mdEl&&mejorDia){const[f,v]=mejorDia;mdEl.textContent=f.slice(5)+' · '+fmt(v);}
 
-  // 4. Alertas de stock bajo
   const alertasEl=document.getElementById('stock-alertas');
   if(alertasEl&&state.catalogo.length){
     const alertas=state.catalogo.filter(c=>c.minimo>0&&getStock(c.nombre)<parseFloat(c.minimo||0));
@@ -1634,20 +1477,20 @@ function renderDashboard(){
     else{alertasEl.innerHTML=alertas.map(c=>{const stock=getStock(c.nombre);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name" style="color:var(--crimson)">${c.nombre}</div><div class="list-item-sub">Stock: ${stock.toFixed(2)} ${c.unidad} · Mínimo: ${c.minimo} ${c.unidad}</div></div><span class="badge badge-prod">⚠️ Bajo</span></div>`;}).join('');}
   }
 
-  // 5. Mayor rotación de materia prima (más consumida en producción)
   const rotEl=document.getElementById('mayor-rotacion');
   if(rotEl&&state.catalogo.length){
     const consumoPorItem={};
     state.produccion.forEach(p=>{
       const receta=state.recetas[p.producto]||[];
-      receta.forEach(r=>{consumoPorItem[r.ingrediente]=(consumoPorItem[r.ingrediente]||0)+parseFloat(r.cantidad||0)*parseFloat(p.cantidad_producida||0);});
+      const rendimiento=state.rendimientos[p.producto]||LOTE_RENDIMIENTO[p.producto]||1;
+      const lotes=rendimiento>0?(parseFloat(p.cantidad_producida||0)/rendimiento):0;
+      receta.forEach(r=>{consumoPorItem[r.ingrediente]=(consumoPorItem[r.ingrediente]||0)+parseFloat(r.cantidad||0)*lotes;});
     });
     const sorted=Object.entries(consumoPorItem).sort((a,b)=>b[1]-a[1]).slice(0,3);
     if(!sorted.length){rotEl.innerHTML='<p class="empty-state"><span class="empty-icon">📦</span>Sin datos suficientes</p>';}
-    else{rotEl.innerHTML=sorted.map(([nombre,cant],i)=>{const cat=state.catalogo.find(c=>c.nombre===nombre);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${['🥇','🥈','🥉'][i]} ${nombre}</div><div class="list-item-sub">Consumo total: ${cant.toFixed(2)} ${cat?cat.unidad:''}</div></div></div>`;}).join('');}
+    else{rotEl.innerHTML=sorted.map(([nombre,cant],i)=>{const cat=state.catalogo.find(c=>c.nombre===nombre);return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${['🥇','🥈','🥉'][i]} ${nombre}</div><div class="list-item-sub">Consumo total: ${cant.toFixed(3)} ${cat?cat.unidad:''}</div></div></div>`;}).join('');}
   }
 
-  // 6. Costo promedio ponderado de materia prima por ítem
   const mpEl=document.getElementById('costo-mp-list');
   if(mpEl){
     const comprasPorItem={};
@@ -1659,55 +1502,37 @@ function renderDashboard(){
     });
     const items=Object.entries(comprasPorItem).filter(([,v])=>v.totalCant>0);
     if(!items.length){mpEl.innerHTML='<p class="empty-state"><span class="empty-icon">🌾</span>Registrá compras para ver el costo promedio</p>';}
-    else{
-      mpEl.innerHTML=items.sort((a,b)=>b[1].totalMonto-a[1].totalMonto).map(([nombre,v])=>{
-        const prom=v.totalCant>0?(v.totalMonto/v.totalCant):0;
-        const cat=state.catalogo.find(c=>c.nombre===nombre);
-        const unidad=cat?cat.unidad:v.unidad;
-        const stockActual=getStock(nombre);
-        const variacion=v.compras>1?'':'—';
-        return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${nombre}</div><div class="list-item-sub">${v.compras} compra${v.compras>1?'s':''} · Stock: ${stockActual.toFixed(2)} ${unidad}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--brown);font-family:'Fraunces',serif">${fmt(prom)}</div><div style="font-size:10px;color:var(--muted)">por ${unidad}</div></div></div>`;
-      }).join('');
-    }
+    else{mpEl.innerHTML=items.sort((a,b)=>b[1].totalMonto-a[1].totalMonto).map(([nombre,v])=>{
+      const prom=v.totalCant>0.0001?(v.totalMonto/v.totalCant):0;
+      const cat=state.catalogo.find(c=>c.nombre===nombre);
+      const unidad=cat?cat.unidad:v.unidad;
+      const stockActual=getStock(nombre);
+      return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${nombre}</div><div class="list-item-sub">${v.compras} compra${v.compras>1?'s':''} · Stock: ${stockActual.toFixed(2)} ${unidad}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--brown);font-family:'Fraunces',serif">${fmt(prom)}</div><div style="font-size:10px;color:var(--muted)">por ${unidad}</div></div></div>`;
+    }).join('');}
   }
 
-  // 7. Punto de equilibrio (break-even)
   const beEl=document.getElementById('breakeven-info');
   if(beEl){
     const gastosFijos=costos.filter(c=>!PROD_CATS.includes(c.tipo)).reduce((s,r)=>s+parseFloat(r.monto||0),0)+totalPagos;
     const margenBruto=ventas>0?((ventas-costosProd)/ventas):0;
-    if(gastosFijos<=0||margenBruto<=0){
-      beEl.innerHTML='<p class="empty-state"><span class="empty-icon">⚖️</span>Registrá costos fijos y producción para calcular el punto de equilibrio</p>';
-    } else {
-      const breakEven=margenBruto>0?gastosFijos/margenBruto:0;
+    if(gastosFijos<=0||margenBruto<=0){beEl.innerHTML='<p class="empty-state"><span class="empty-icon">⚖️</span>Registrá costos fijos y producción para calcular el punto de equilibrio</p>';}
+    else{
+      const breakEven=margenBruto>0?(gastosFijos/margenBruto):0;
       const cobertura=ventas>0?((ventas/breakEven)*100).toFixed(0):0;
       const cubriendoBE=ventas>=breakEven;
       const colorBE=cubriendoBE?'var(--sage)':'var(--crimson)';
-      beEl.innerHTML=`
-        <div style="padding:4px 0 8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:13px;color:var(--muted)">Gastos fijos del período</span>
-            <span style="font-weight:600;font-size:14px">${fmt(gastosFijos)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:13px;color:var(--muted)">Margen bruto %</span>
-            <span style="font-weight:600;font-size:14px">${(margenBruto*100).toFixed(1)}%</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <span style="font-size:13px;font-weight:600">Necesitás vender</span>
-            <span style="font-weight:700;font-size:18px;font-family:'Fraunces',serif;color:var(--brown)">${fmt(breakEven)}</span>
-          </div>
-          <div style="background:rgba(0,0,0,0.04);border-radius:8px;overflow:hidden;height:10px;margin-bottom:6px">
-            <div style="height:100%;width:${Math.min(100,parseFloat(cobertura))}%;background:${colorBE};border-radius:8px;transition:width 0.4s"></div>
-          </div>
-          <div style="font-size:12px;color:${colorBE};font-weight:600;text-align:center">
-            ${cubriendoBE?`✅ Cubrís el equilibrio (${cobertura}% del objetivo)`:`⚠️ Alcanzás el ${cobertura}% del punto de equilibrio`}
-          </div>
-        </div>`;
+      beEl.innerHTML=`<div style="padding:4px 0 8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;color:var(--muted)">Gastos fijos del período</span><span style="font-weight:600;font-size:14px">${fmt(gastosFijos)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;color:var(--muted)">Margen bruto %</span><span style="font-weight:600;font-size:14px">${(margenBruto*100).toFixed(1)}%</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:13px;font-weight:600">Necesitás vender</span><span style="font-weight:700;font-size:18px;font-family:'Fraunces',serif;color:var(--brown)">${fmt(breakEven)}</span></div>
+        <div style="background:rgba(0,0,0,0.04);border-radius:8px;overflow:hidden;height:10px;margin-bottom:6px"><div style="height:100%;width:${Math.min(100,parseFloat(cobertura))}%;background:${colorBE};border-radius:8px;transition:width 0.4s"></div></div>
+        <div style="font-size:12px;color:${colorBE};font-weight:600;text-align:center">${cubriendoBE?`✅ Cubrís el equilibrio (${cobertura}% del objetivo)`:`⚠️ Alcanzás el ${cobertura}% del punto de equilibrio`}</div>
+      </div>`;
     }
   }
 }
 
+// ── PRODUCCIÓN — FIX CRÍTICO: merma por fecha exacta de cada registro ──
 function renderProduccion(){
   const fechaInput=document.getElementById('prod-fecha');
   const fecha=fechaInput&&fechaInput.value?fechaInput.value:today();
@@ -1715,14 +1540,11 @@ function renderProduccion(){
   const hasta=document.getElementById('prod-filtro-hasta')?.value||null;
   const el=document.getElementById('prod-list');if(!el)return;
   const totalEl=document.getElementById('prod-list-total');
+  const rangoActivo=desde||hasta;
 
   let lista;
-  let rangoActivo=desde||hasta;
   if(rangoActivo){
-    lista=state.produccion.filter(r=>{
-      const d=(r.fecha||'').split('T')[0];
-      return(!desde||d>=desde)&&(!hasta||d<=hasta);
-    }).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+    lista=state.produccion.filter(r=>{const d=(r.fecha||'').split('T')[0];return(!desde||d>=desde)&&(!hasta||d<=hasta);}).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
   } else {
     lista=state.produccion.filter(r=>(r.fecha||'').split('T')[0]===fecha);
   }
@@ -1733,25 +1555,24 @@ function renderProduccion(){
     return;
   }
 
-  // Construir mapa de merma para el rango o fecha activa
-  const mermaSrc=rangoActivo
-    ? state.merma.filter(r=>{const d=(r.fecha||'').split('T')[0];return(!desde||d>=desde)&&(!hasta||d<=hasta);})
-    : state.merma.filter(m=>(m.fecha||'').split('T')[0]===fecha);
-  const mMapP={};
-  mermaSrc.forEach(m=>{mMapP[m.producto]=(mMapP[m.producto]||0)+parseFloat(m.cantidad||0);});
-
   let totalProd=0,totalVend=0,totalIngresos=0;
 
-  el.innerHTML=lista.map((r,i)=>{
+  el.innerHTML=lista.map(r=>{
     const idx=state.produccion.indexOf(r);
-    const mermU=mMapP[r.producto]||0;
-    const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermU);
+    const dProd=(r.fecha||'').split('T')[0];
+
+    // ── FIX: merma filtrada por fecha exacta del registro Y producto ──
+    const mermaDelDia=state.merma
+      .filter(m=>(m.fecha||'').split('T')[0]===dProd && m.producto===r.producto)
+      .reduce((s,m)=>s+parseFloat(m.cantidad||0),0);
+
+    const vendU=Math.max(0,parseFloat(r.cantidad_producida||0)-mermaDelDia);
     const ingresos=r.precio_venta*vendU;
     totalProd+=parseFloat(r.cantidad_producida||0);
     totalVend+=vendU;
     totalIngresos+=ingresos;
-    const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${(r.fecha||'').split('T')[0]}</span>`:'';
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermU} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(ingresos)}</div><button class="btn-edit" onclick="editItem('produccion',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${idx})">🗑</button></div></div>`;
+    const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${dProd}</span>`:'';
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermaDelDia} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(ingresos)}</div><button class="btn-edit" onclick="editItem('produccion',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${idx})">🗑</button></div></div>`;
   }).join('');
 
   if(totalEl){
@@ -1760,46 +1581,38 @@ function renderProduccion(){
   }
 }
 
-// ── CONFIRM MODAL ENGINE ──
+// ── CONFIRM MODAL ──
 let _modalCallback = null;
-function showConfirm({icon='🗑', title='¿Eliminar registro?', msg='Esta acción no se puede deshacer.', detail='', onConfirm}){
-  document.getElementById('modal-icon').textContent = icon;
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-msg').textContent = msg;
-  const det = document.getElementById('modal-detail');
-  det.textContent = detail; det.style.display = detail ? 'block' : 'none';
-  _modalCallback = onConfirm;
+function showConfirm({icon='🗑',title='¿Eliminar registro?',msg='Esta acción no se puede deshacer.',detail='',onConfirm}){
+  document.getElementById('modal-icon').textContent=icon;
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-msg').textContent=msg;
+  const det=document.getElementById('modal-detail');
+  det.textContent=detail;det.style.display=detail?'block':'none';
+  _modalCallback=onConfirm;
   document.getElementById('confirm-modal').classList.add('open');
 }
-function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); _modalCallback=null; }
-
+function closeConfirm(){document.getElementById('confirm-modal').classList.remove('open');_modalCallback=null;}
 
 window.deleteItem=function(tabla,idx){
-  const etiquetas = {
-    produccion: {icon:'🥐', title:'¿Eliminar producción?', get detail(){ const r=state.produccion[idx]; return r?`${r.producto} — ${r.cantidad_producida} unid.`:''; }},
-    costos:     {icon:'📋', title:'¿Eliminar este costo?', get detail(){ const r=state.costos[idx]; return r?`${r.descripcion} — ${fmt(r.monto)}`:''; }},
-    merma:      {icon:'📦', title:'¿Eliminar esta merma?', get detail(){ const r=state.merma[idx]; return r?`${r.producto} — ${r.cantidad} unid.`:''; }},
-    pagos:      {icon:'👥', title:'¿Eliminar este pago?', get detail(){ const r=state.pagos[idx]; return r?`${r.empleado} — ${fmt(r.monto)}`:''; }},
+  const etiquetas={
+    produccion:{icon:'🥐',title:'¿Eliminar producción?',get detail(){const r=state.produccion[idx];return r?`${r.producto} — ${r.cantidad_producida} unid.`:''}},
+    costos:{icon:'📋',title:'¿Eliminar este costo?',get detail(){const r=state.costos[idx];return r?`${r.descripcion} — ${fmt(r.monto)}`:''}},
+    merma:{icon:'📦',title:'¿Eliminar esta merma?',get detail(){const r=state.merma[idx];return r?`${r.producto} — ${r.cantidad} unid.`:''}},
+    pagos:{icon:'👥',title:'¿Eliminar este pago?',get detail(){const r=state.pagos[idx];return r?`${r.empleado} — ${fmt(r.monto)}`:''}},
   };
-  const e = etiquetas[tabla] || {icon:'🗑', title:'¿Eliminar registro?', detail:''};
-  showConfirm({
-    icon: e.icon, title: e.title,
-    msg: 'Esta acción no se puede deshacer.',
-    detail: e.detail,
-    onConfirm: async ()=>{
-      const registro = state[tabla]?.[idx];
-      const registroId = registro?.id;
-      if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
-      else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
-      else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
-      else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
-      saveLocal();
-      if(supabase && registroId){
-        try{ await supabase.from(tabla).delete().eq('id', registroId); }catch(e){ console.warn('Error eliminando de Supabase:', e); }
-      }
-      showToast('Registro eliminado','green');
-    }
-  });
+  const e=etiquetas[tabla]||{icon:'🗑',title:'¿Eliminar registro?',detail:''};
+  showConfirm({icon:e.icon,title:e.title,msg:'Esta acción no se puede deshacer.',detail:e.detail,onConfirm:async()=>{
+    const registro=state[tabla]?.[idx];
+    const registroId=registro?.id;
+    if(tabla==='produccion'){state.produccion.splice(idx,1);renderProduccion();renderDashboard();}
+    else if(tabla==='costos'){state.costos.splice(idx,1);renderCostos();updateCajaSaldos();}
+    else if(tabla==='merma'){state.merma.splice(idx,1);renderMerma();renderProduccion();}
+    else if(tabla==='pagos'){state.pagos.splice(idx,1);renderPersonal();updateCajaSaldos();}
+    saveLocal();
+    if(supabase&&registroId){try{await supabase.from(tabla).delete().eq('id',registroId);}catch(e){}}
+    showToast('Registro eliminado','green');
+  }});
 };
 
 function renderCostos(){
@@ -1808,50 +1621,36 @@ function renderCostos(){
   const hasta=document.getElementById('costo-filtro-hasta')?.value||null;
   let lista=state.costos.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
   if(desde||hasta){lista=lista.filter(r=>{const d=(r.fecha||'').split('T')[0];return(!desde||d>=desde)&&(!hasta||d<=hasta);});}
-  else{
-    const fecha=document.getElementById('costo-fecha')?.value||today();
-    lista=lista.filter(r=>(r.fecha||'').split('T')[0]===fecha);
-  }
+  else{const fecha=document.getElementById('costo-fecha')?.value||today();lista=lista.filter(r=>(r.fecha||'').split('T')[0]===fecha);}
   if(!lista.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">📋</span>Sin costos para el período seleccionado</p>';return;}
   const total=lista.reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  el.innerHTML=lista.map((r,i)=>{
+  el.innerHTML=lista.map(r=>{
     const esInsumo=r.tipo==='insumos_empaques';
-    const esTransp=r.tipo==='transporte';
-    const sub=r.subcat?` · ${COST_LABELS[r.subcat]||r.subcat}`:'';
     const pagoIcon=r.forma==='efectivo'?'💵':r.forma==='qr'?'📱':'📋';
     const itemInfo=r.item_catalogo?` · 📦 ${r.item_catalogo} (${r.cantidad_usada||0} u.)`:'';
-    const badgeClass=esInsumo?'badge-prod':esTransp?'badge-qr':'badge-op';
+    const badgeClass=esInsumo?'badge-prod':'badge-op';
     const tipoLabel=COST_LABELS[r.tipo]||r.tipo;
     const fecha=(r.fecha||'').split('T')[0];
     const idx=state.costos.indexOf(r);
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${badgeClass}">${tipoLabel}${sub}</span> ${pagoIcon}${itemInfo} <span style="font-size:10px;color:var(--muted)">${fecha}</span></div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-edit" onclick="editItem('costos',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('costos',${idx})">🗑</button></div></div>`;
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.descripcion}</div><div class="list-item-sub"><span class="badge ${badgeClass}">${tipoLabel}</span> ${pagoIcon}${itemInfo} <span style="font-size:10px;color:var(--muted)">${fecha}</span></div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt(r.monto)}</div><button class="btn-edit" onclick="editItem('costos',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('costos',${idx})">🗑</button></div></div>`;
   }).join('')+`<div style="text-align:right;font-size:13px;font-weight:600;color:var(--crimson);padding:8px 0 2px">Total: ${fmt(total)}</div>`;
 }
 
 function updateCajaSaldos(){
-  // El saldo de caja es ACUMULATIVO histórico:
-  // Capital inicial + todas las ventas registradas - todos los egresos históricos
   const capitalTotal_ef=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const capitalTotal_qr=(state.capital||[]).reduce((s,r)=>s+parseFloat(r.qr||0),0);
-
-  // Ingresos: todas las entradas de caja registradas
   const cajaEf=state.caja.reduce((s,r)=>s+parseFloat(r.efectivo||0),0);
   const cajaQR=state.caja.reduce((s,r)=>s+parseFloat(r.qr||0),0);
-
-  // Egresos históricos completos
   const pagosEf=(state.pagos||[]).filter(p=>p.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const pagosQR=(state.pagos||[]).filter(p=>p.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-  // costos con forma de pago real (sin_pago = insumos ya pagados en compras, no se descuentan aquí)
   const costosEf=(state.costos||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const costosQR=(state.costos||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const comprasEf=(state.compras||[]).filter(c=>c.forma==='efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const comprasQR=(state.compras||[]).filter(c=>c.forma==='qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsEf=(state.movimientos||[]).filter(m=>m.tipo==='retiro_efectivo').reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const movsQR=(state.movimientos||[]).filter(m=>m.tipo==='transferencia_qr').reduce((s,r)=>s+parseFloat(r.monto||0),0);
-
   const ef=capitalTotal_ef+cajaEf-pagosEf-costosEf-comprasEf-movsEf;
   const qr=capitalTotal_qr+cajaQR-pagosQR-costosQR-comprasQR-movsQR;
-
   ['saldo-efectivo-personal','saldo-ef-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(ef);});
   ['saldo-qr-personal','saldo-qr-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(qr);});
   const tot=document.getElementById('res-total');if(tot)tot.textContent=fmt(ef+qr);
@@ -1872,7 +1671,6 @@ function renderCaja(){
   const cajaItems=hist.map(r=>`<div class="list-item"><div class="list-item-info"><div class="list-item-name">📅 ${r.fecha}</div><div class="list-item-sub">💵 ${fmt(r.efectivo)} · 📱 ${fmt(r.qr)}</div></div><div class="list-item-amount">${fmt(parseFloat(r.efectivo||0)+parseFloat(r.qr||0))}</div></div>`).join('');
   if(!capItems&&!cajaItems){el.innerHTML='<p class="empty-state"><span class="empty-icon">💰</span>Sin registros</p>';return;}
   el.innerHTML=capItems+cajaItems;
-  // render movimientos
   const movEl=document.getElementById('mov-list');if(!movEl)return;
   const movs=(state.movimientos||[]).slice().reverse();
   if(!movs.length){movEl.innerHTML='<p class="empty-state"><span class="empty-icon">💸</span>Sin movimientos registrados</p>';return;}
@@ -1889,42 +1687,24 @@ function renderMerma(){
   const desde=document.getElementById('merma-filtro-desde')?.value||null;
   const hasta=document.getElementById('merma-filtro-hasta')?.value||null;
   const el=document.getElementById('merma-list');if(!el)return;
-
-  let lista;
   const rangoActivo=desde||hasta;
-  if(rangoActivo){
-    lista=state.merma.filter(r=>{
-      const d=(r.fecha||'').split('T')[0];
-      return(!desde||d>=desde)&&(!hasta||d<=hasta);
-    }).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
-  } else {
-    lista=state.merma.filter(r=>(r.fecha||'').split('T')[0]===fecha);
-  }
-
+  let lista;
+  if(rangoActivo){lista=state.merma.filter(r=>{const d=(r.fecha||'').split('T')[0];return(!desde||d>=desde)&&(!hasta||d<=hasta);}).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));}
+  else{lista=state.merma.filter(r=>(r.fecha||'').split('T')[0]===fecha);}
   if(!lista.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin merma para '+(rangoActivo?'el rango seleccionado':'esta fecha')+'</p>';return;}
-
   const total=lista.reduce((s,r)=>s+(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0)),0);
   const totalUnidades=lista.reduce((s,r)=>s+parseFloat(r.cantidad||0),0);
-
-  // Agrupar por producto para el resumen en rango
   let resumenHTML='';
   if(rangoActivo){
     const porProducto={};
-    lista.forEach(r=>{
-      if(!porProducto[r.producto])porProducto[r.producto]={cantidad:0,costo:0};
-      porProducto[r.producto].cantidad+=parseFloat(r.cantidad||0);
-      porProducto[r.producto].costo+=(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0));
-    });
+    lista.forEach(r=>{if(!porProducto[r.producto])porProducto[r.producto]={cantidad:0,costo:0};porProducto[r.producto].cantidad+=parseFloat(r.cantidad||0);porProducto[r.producto].costo+=(parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad||0));});
     resumenHTML=`<div style="background:var(--wheat-light);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px;border:1px solid var(--border)">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:6px">Resumen por producto</div>
-      ${Object.entries(porProducto).sort((a,b)=>b[1].cantidad-a[1].cantidad).map(([prod,v])=>
-        `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)"><span>${prod}</span><span style="color:var(--crimson);font-weight:600">${v.cantidad} u · ${fmt(v.costo)}</span></div>`
-      ).join('')}
+      ${Object.entries(porProducto).sort((a,b)=>b[1].cantidad-a[1].cantidad).map(([prod,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)"><span>${prod}</span><span style="color:var(--crimson);font-weight:600">${v.cantidad} u · ${fmt(v.costo)}</span></div>`).join('')}
       <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:6px"><span>Total</span><span style="color:var(--crimson)">${totalUnidades} u · ${fmt(total)}</span></div>
     </div>`;
   }
-
-  el.innerHTML=resumenHTML+lista.map((r,i)=>{
+  el.innerHTML=resumenHTML+lista.map(r=>{
     const idx=state.merma.indexOf(r);
     const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${(r.fecha||'').split('T')[0]}</span>`:'';
     return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">${r.cantidad} unid. · ${r.motivo}${r.costo_unitario?` · ${fmt(r.costo_unitario)}/u`:''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount negative">${fmt((r.costo_unitario||0)*r.cantidad)}</div><button class="btn-edit" onclick="editItem('merma',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('merma',${idx})">🗑</button></div></div>`;
@@ -1944,23 +1724,18 @@ function renderCatalogo(){
   const mp=state.catalogo.filter(c=>c.tipo==='materia_prima');
   const ins=state.catalogo.filter(c=>c.tipo==='insumo');
   let html='';
-  if(mp.length){html+='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:8px 0 4px">Materia Prima</div>';html+=mp.map((c,i)=>`<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit">${c.unidad}${c.minimo>0?' · mín: '+c.minimo+' '+c.unidad:''}</div></div><button class="btn-del" onclick="deleteCatalogo('materia_prima',${state.catalogo.indexOf(c)})">🗑</button></div>`).join('');}
-  if(ins.length){html+='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:10px 0 4px">Insumos</div>';html+=ins.map((c,i)=>`<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit">${c.unidad}${c.minimo>0?' · mín: '+c.minimo+' '+c.unidad:''}</div></div><button class="btn-del" onclick="deleteCatalogo('insumo',${state.catalogo.indexOf(c)})">🗑</button></div>`).join('');}
+  if(mp.length){html+='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:8px 0 4px">Materia Prima</div>';html+=mp.map(c=>`<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit">${c.unidad}${c.minimo>0?' · mín: '+c.minimo+' '+c.unidad:''}</div></div><button class="btn-del" onclick="deleteCatalogo('materia_prima',${state.catalogo.indexOf(c)})">🗑</button></div>`).join('');}
+  if(ins.length){html+='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:10px 0 4px">Insumos</div>';html+=ins.map(c=>`<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit">${c.unidad}${c.minimo>0?' · mín: '+c.minimo+' '+c.unidad:''}</div></div><button class="btn-del" onclick="deleteCatalogo('insumo',${state.catalogo.indexOf(c)})">🗑</button></div>`).join('');}
   el.innerHTML=html;
 }
 window.deleteCatalogo=function(tipo,i){
   const c=state.catalogo[i];
-  showConfirm({
-    icon:'📦', title:'¿Eliminar del catálogo?',
-    msg:'También se eliminará de las recetas que lo usen.',
-    detail: c?`${c.nombre} (${c.unidad})`:'',
-    onConfirm:()=>{
-      const nombre=state.catalogo[i].nombre;
-      state.catalogo.splice(i,1);
-      Object.keys(state.recetas).forEach(p=>{state.recetas[p]=(state.recetas[p]||[]).filter(r=>r.ingrediente!==nombre);});
-      saveLocal();saveConfigToSupabase();populateSelects();renderCatalogo();showToast('Ítem eliminado','green');
-    }
-  });
+  showConfirm({icon:'📦',title:'¿Eliminar del catálogo?',msg:'También se eliminará de las recetas que lo usen.',detail:c?`${c.nombre} (${c.unidad})`:'',onConfirm:()=>{
+    const nombre=state.catalogo[i].nombre;
+    state.catalogo.splice(i,1);
+    Object.keys(state.recetas).forEach(p=>{state.recetas[p]=(state.recetas[p]||[]).filter(r=>r.ingrediente!==nombre);});
+    saveLocal();saveConfigToSupabase();populateSelects();renderCatalogo();showToast('Ítem eliminado','green');
+  }});
 };
 
 function renderCompras(){
@@ -1969,13 +1744,11 @@ function renderCompras(){
   let sorted=state.compras.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
   if(filtroProv)sorted=sorted.filter(r=>r.proveedor===filtroProv);
   if(!sorted.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">🛒</span>Sin compras registradas</p>';return;}
-  // Agrupar por fecha+proveedor para mostrar compras agrupadas
   const grupos={};
   sorted.forEach(r=>{
     const key=(r.fecha||'').split('T')[0]+'|'+(r.proveedor||'Sin proveedor')+'|'+(r.forma||'');
     if(!grupos[key])grupos[key]={fecha:(r.fecha||'').split('T')[0],proveedor:r.proveedor||'Sin proveedor',forma:r.forma,items:[],total:0};
-    grupos[key].items.push(r);
-    grupos[key].total+=parseFloat(r.monto||0);
+    grupos[key].items.push(r);grupos[key].total+=parseFloat(r.monto||0);
   });
   el.innerHTML=Object.values(grupos).map(g=>{
     const formaIcon=g.forma==='efectivo'?'💵':g.forma==='qr'?'📱':'📋';
@@ -1987,51 +1760,147 @@ function renderCompras(){
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <div><div style="font-size:13px;font-weight:600;color:var(--brown)">🏪 ${g.proveedor}</div><div style="font-size:11px;color:var(--muted)">${g.fecha} · ${formaIcon} ${g.forma}</div></div>
         <div style="font-size:15px;font-weight:700;color:var(--crimson);font-family:'Fraunces',serif">${fmt(g.total)}</div>
-      </div>
-      ${itemRows}
-    </div>`;
+      </div>${itemRows}</div>`;
   }).join('');
 }
 window.deleteCompra=function(i){
   const r=state.compras[i];
-  showConfirm({
-    icon:'🛒', title:'¿Eliminar esta compra?',
-    msg:'El stock se revertirá automáticamente.',
-    detail: r?`${r.item} — ${r.cantidad} ${r.unidad} · ${fmt(r.monto)}`:'',
-    onConfirm:async()=>{
-      const rid=r?.id;
-      state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();
-      if(supabase&&rid){try{await supabase.from('compras').delete().eq('id',rid);}catch(e){console.warn('Error eliminando compra:',e);}}
-      showToast('Compra eliminada','green');
-    }
-  });
+  showConfirm({icon:'🛒',title:'¿Eliminar esta compra?',msg:'El stock se revertirá automáticamente.',detail:r?`${r.item} — ${r.cantidad} ${r.unidad} · ${fmt(r.monto)}`:'',onConfirm:async()=>{
+    const rid=r?.id;state.compras.splice(i,1);saveLocal();renderCompras();renderInventario();updateCajaSaldos();
+    if(supabase&&rid){try{await supabase.from('compras').delete().eq('id',rid);}catch(e){}}
+    showToast('Compra eliminada','green');
+  }});
 };
 
 function renderInventario(){
-  const mpEl=document.getElementById('inv-mp');
-  const insEl=document.getElementById('inv-insumos');
+  const mpEl=document.getElementById('inv-mp'),insEl=document.getElementById('inv-insumos');
   const mp=state.catalogo.filter(c=>c.tipo==='materia_prima');
   const ins=state.catalogo.filter(c=>c.tipo==='insumo');
   function makeRow(c){
     const stock=getStock(c.nombre);
     const bajo=c.minimo>0&&stock<parseFloat(c.minimo||0);
-    return `<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit" style="color:${bajo?'var(--crimson)':'var(--muted)'}">${bajo?'⚠️ ':''} ${stock.toFixed(2)} ${c.unidad} disponible${c.minimo>0?' · mín: '+c.minimo:''}</div></div><span class="badge ${bajo?'badge-prod':'badge-ef'}">${bajo?'Bajo':'OK'}</span></div>`;
+    return `<div class="ingredient-row"><div><div class="ingredient-name">${c.nombre}</div><div class="ingredient-unit" style="color:${bajo?'var(--crimson)':'var(--muted)'}">${bajo?'⚠️ ':''} ${stock.toFixed(3)} ${c.unidad} disponible${c.minimo>0?' · mín: '+c.minimo:''}</div></div><span class="badge ${bajo?'badge-prod':'badge-ef'}">${bajo?'Bajo':'OK'}</span></div>`;
   }
   if(mpEl){if(!mp.length){mpEl.innerHTML='<p class="empty-state"><span class="empty-icon">🌾</span>Sin ítems. Agregá en Config → Catálogo</p>';}else{mpEl.innerHTML=mp.map(makeRow).join('');}}
   if(insEl){if(!ins.length){insEl.innerHTML='<p class="empty-state"><span class="empty-icon">📦</span>Sin ítems. Agregá en Config → Catálogo</p>';}else{insEl.innerHTML=ins.map(makeRow).join('');}}
 }
 
-function renderIngredientes(){
-  const el=document.getElementById('ing-list');if(!el)return;
-  if(!state.ingredientes.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">🌾</span>Sin ingredientes. Agregá harina, queso, levadura...</p>';return;}
-  el.innerHTML=state.ingredientes.map((ing,i)=>`<div class="ingredient-row"><div><div class="ingredient-name">${ing.nombre}</div><div class="ingredient-unit">${ing.unidad}</div></div><div class="ingredient-price">${fmt(ing.costo)}<span style="font-size:10px;color:var(--muted);font-family:inherit;font-weight:400">/${ing.unidad}</span></div><button class="btn-del" onclick="deleteIngrediente(${i})">🗑</button></div>`).join('');
+// ── CONTEO FÍSICO ──
+function renderConteoForm(){
+  const el=document.getElementById('conteo-form-items');if(!el)return;
+  if(!state.catalogo.length){el.innerHTML='<div class="info-box">Primero agregá ítems en Config → Catálogo</div>';return;}
+  const mp=state.catalogo.filter(c=>c.tipo==='materia_prima');
+  const ins=state.catalogo.filter(c=>c.tipo==='insumo');
+  let html='';
+  if(mp.length){
+    html+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--border)">🌾 Materia Prima</div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr 90px 90px 50px;gap:6px;padding:4px 0;margin-bottom:4px"><span style="font-size:10px;font-weight:600;color:var(--muted)">ÍTEM</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">TEÓRICO</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">FÍSICO</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">UNID</span></div>`;
+    html+=mp.map(c=>{
+      const stock=getStock(c.nombre);
+      return `<div class="inv-conteo-row"><div class="inv-conteo-name">${c.nombre}</div><div class="inv-conteo-teorico">${stock.toFixed(3)}</div><input type="number" class="inv-conteo-input" data-item="${c.nombre}" data-tipo="materia_prima" data-unidad="${c.unidad}" placeholder="0" min="0" step="0.001"><div class="inv-conteo-unit">${c.unidad}</div></div>`;
+    }).join('');
+  }
+  if(ins.length){
+    html+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--border)">📦 Insumos y Empaques</div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr 90px 90px 50px;gap:6px;padding:4px 0;margin-bottom:4px"><span style="font-size:10px;font-weight:600;color:var(--muted)">ÍTEM</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">TEÓRICO</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">FÍSICO</span><span style="font-size:10px;font-weight:600;color:var(--muted);text-align:center">UNID</span></div>`;
+    html+=ins.map(c=>{
+      const stock=getStock(c.nombre);
+      return `<div class="inv-conteo-row"><div class="inv-conteo-name">${c.nombre}</div><div class="inv-conteo-teorico">${stock.toFixed(3)}</div><input type="number" class="inv-conteo-input" data-item="${c.nombre}" data-tipo="insumo" data-unidad="${c.unidad}" placeholder="0" min="0" step="0.001"><div class="inv-conteo-unit">${c.unidad}</div></div>`;
+    }).join('');
+  }
+  el.innerHTML=html;
 }
 
-window.deleteIngrediente=function(i){
-  const nombre=state.ingredientes[i].nombre;
-  state.ingredientes.splice(i,1);
-  Object.keys(state.recetas).forEach(p=>{state.recetas[p]=(state.recetas[p]||[]).filter(r=>r.ingrediente!==nombre);});
-  saveLocal();populateSelects();renderIngredientes();renderRecetas();
+function renderConteoHistorial(){
+  const el=document.getElementById('conteo-historial');if(!el)return;
+  const conteos=(state.conteosFisicos||[]).slice().reverse();
+  if(!conteos.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">📋</span>Sin conteos registrados</p>';return;}
+  el.innerHTML=conteos.map((c,i)=>{
+    const idx=state.conteosFisicos.length-1-i;
+    // Calcular si tiene faltantes sin ajustar
+    const faltantes=Object.entries(c.items||{}).filter(([,v])=>parseFloat(v.fisico||0)<parseFloat(v.teorico||0)-0.001);
+    const yaAjustado=c.ajustado===true;
+    const itemsHTML=Object.entries(c.items||{}).map(([nombre,v])=>{
+      const diff=parseFloat(v.fisico||0)-parseFloat(v.teorico||0);
+      const diffClass=diff>0.001?'inv-diff-pos':diff<-0.001?'inv-diff-neg':'inv-diff-zero';
+      const diffStr=diff>0.001?`+${diff.toFixed(3)}`:diff<-0.001?`${diff.toFixed(3)}`:'=';
+      return `<div class="inv-hist-item"><span>${nombre}</span><span>Físico: ${parseFloat(v.fisico||0).toFixed(3)} ${v.unidad}</span><span class="${diffClass}">${diffStr} ${v.unidad}</span></div>`;
+    }).join('');
+    const btnAjuste=faltantes.length>0&&!yaAjustado
+      ?`<button onclick="aplicarAjusteInventario(${idx})" style="margin:8px 13px 10px;width:calc(100% - 26px);padding:9px;background:var(--crimson);color:white;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">📉 Aplicar ajuste al inventario</button>`
+      :yaAjustado?`<div style="margin:6px 13px 10px;font-size:11px;color:var(--sage);font-weight:600;text-align:center">✅ Ajuste aplicado al inventario</div>`:'';
+    return `<div class="inv-hist-card">
+      <div class="inv-hist-header">
+        <div><div class="inv-hist-meta">📋 ${c.fecha} — ${c.empleado||'Sin responsable'}</div>${c.notas?`<div class="inv-hist-sub">${c.notas}</div>`:''}</div>
+        <button class="btn-del" onclick="deleteConteo(${idx})" style="opacity:0.5">🗑</button>
+      </div>
+      ${itemsHTML}
+      ${btnAjuste}
+    </div>`;
+  }).join('');
+}
+
+// ── APLICAR AJUSTE DE INVENTARIO desde Conteo Físico ──
+window.aplicarAjusteInventario=function(idx){
+  const conteo=state.conteosFisicos[idx];
+  if(!conteo)return;
+  // Calcular faltantes con costo promedio
+  const faltantes=[];
+  Object.entries(conteo.items||{}).forEach(([nombre,v])=>{
+    const diff=parseFloat(v.fisico||0)-parseFloat(v.teorico||0);
+    if(diff<-0.001){
+      const cantFaltante=Math.abs(diff);
+      // Costo promedio del ingrediente
+      const comprasItem=state.compras.filter(c=>c.item===nombre);
+      const totalMonto=comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0);
+      const totalCant=comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
+      const costoUnitario=totalCant>0.0001?(totalMonto/totalCant):0;
+      const costoTotal=costoUnitario*cantFaltante;
+      faltantes.push({nombre,cantFaltante,unidad:v.unidad||'',costoUnitario,costoTotal});
+    }
+  });
+  if(!faltantes.length){showToast('Sin faltantes para ajustar','');return;}
+  const totalAjuste=faltantes.reduce((s,f)=>s+f.costoTotal,0);
+  // Construir resumen para mostrar en modal
+  const detalle=faltantes.map(f=>`${f.nombre}: −${f.cantFaltante.toFixed(3)} ${f.unidad} = ${fmt(f.costoTotal)}`).join('\n');
+  showConfirm({
+    icon:'📉',
+    title:'Aplicar ajuste al inventario',
+    msg:'Se registrarán las siguientes pérdidas de materia prima:',
+    detail:`${detalle}\n\nTotal pérdida: ${fmt(totalAjuste)}`,
+    onConfirm:()=>{
+      // Registrar el ajuste
+      const ajuste={
+        fecha:conteo.fecha+'T12:00:00.000Z',
+        conteo_fecha:conteo.fecha,
+        empleado:conteo.empleado,
+        costo_total:totalAjuste,
+        items:{}
+      };
+      faltantes.forEach(f=>{
+        ajuste.items[f.nombre]={
+          cantidad_faltante:f.cantFaltante,
+          unidad:f.unidad,
+          costo_unitario:f.costoUnitario,
+          costo_total:f.costoTotal
+        };
+      });
+      if(!state.ajustesInventario)state.ajustesInventario=[];
+      state.ajustesInventario.push(ajuste);
+      // Marcar el conteo como ajustado
+      state.conteosFisicos[idx].ajustado=true;
+      saveLocal();
+      renderConteoHistorial();
+      renderDashboard();
+      showToast(`✓ Ajuste aplicado · Pérdida: ${fmt(totalAjuste)}`,'green');
+    }
+  });
+};
+
+window.deleteConteo=function(i){
+  showConfirm({icon:'📋',title:'¿Eliminar este conteo?',msg:'Esta acción no se puede deshacer.',detail:`Conteo del ${state.conteosFisicos[i]?.fecha||''}`,onConfirm:()=>{
+    state.conteosFisicos.splice(i,1);saveLocal();renderConteoHistorial();showToast('Conteo eliminado','green');
+  }});
 };
 
 function renderRecetas(){
@@ -2040,66 +1909,59 @@ function renderRecetas(){
   if(!conReceta.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">📖</span>Sin recetas. Seleccioná un producto y agregá sus ingredientes.</p>';return;}
   el.innerHTML=conReceta.map(producto=>{
     const receta=state.recetas[producto];
-    const costoTotal=getCostoReceta(producto);
+    const rendimiento=state.rendimientos[producto]||LOTE_RENDIMIENTO[producto]||1;
+    const costoUnitario=getCostoReceta(producto);
+    const costoLote=costoUnitario*rendimiento;
     const rows=receta.map((item,idx)=>{
-      const ing=state.ingredientes.find(i=>i.nombre===item.ingrediente);
-      const costoItem=ing?parseFloat(ing.costo)*parseFloat(item.cantidad):0;
-      return `<div class="recipe-ing-row"><span>${item.ingrediente}</span><span style="color:var(--muted)">${item.cantidad} ${item.unidad}</span><span style="font-weight:600;color:var(--brown);font-family:'Fraunces',serif">${fmt(costoItem)}</span><button class="btn-del" onclick="deleteRecetaItem('${producto}',${idx})" style="font-size:11px">✕</button></div>`;
+      const comprasItem=state.compras.filter(c=>c.item===item.ingrediente);
+      const totalMonto=comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0);
+      const totalCant=comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
+      const costoIng=totalCant>0.0001?(totalMonto/totalCant):0;
+      const costoItem=costoIng*parseFloat(item.cantidad||0);
+      return `<div class="recipe-ing-row"><span>${item.ingrediente}</span><span style="color:var(--muted)">${item.cantidad} ${item.unidad||''}</span><span style="font-weight:600;color:var(--brown);font-family:'Fraunces',serif">${fmt(costoItem)}</span><button class="btn-del" onclick="deleteRecetaItem('${producto}',${idx})" style="font-size:11px">✕</button></div>`;
     }).join('');
-    return `<div class="recipe-product"><div class="recipe-product-header" onclick="toggleReceta(this)"><span class="recipe-product-name">${producto}</span><div style="display:flex;align-items:center;gap:8px"><span class="recipe-cost">${fmt(costoTotal)}/u</span><span style="font-size:11px;color:var(--muted)">▾</span></div></div><div class="recipe-ingredients">${rows}</div></div>`;
+    return `<div class="recipe-product">
+      <div class="recipe-product-header" onclick="toggleReceta(this)">
+        <div><span class="recipe-product-name">${producto}</span><div style="font-size:10px;color:var(--muted);margin-top:2px">Lote: ${rendimiento} unidades</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div style="text-align:right"><div class="recipe-cost">${fmt(costoUnitario)}/u</div><div style="font-size:10px;color:var(--muted)">Lote: ${fmt(costoLote)}</div></div><span style="font-size:11px;color:var(--muted)">▾</span></div>
+      </div>
+      <div class="recipe-ingredients">${rows}</div>
+    </div>`;
   }).join('');
 }
 
 window.toggleReceta=function(header){
   const body=header.nextElementSibling;
-  body.classList.toggle('open');
-  header.classList.toggle('open');
+  body.classList.toggle('open');header.classList.toggle('open');
   const arrow=header.querySelector('span:last-child');
   if(arrow)arrow.textContent=body.classList.contains('open')?'▴':'▾';
 };
-
 window.deleteRecetaItem=function(producto,idx){
   const item=(state.recetas[producto]||[])[idx];
-  showConfirm({
-    icon:'📖', title:'¿Quitar de la receta?',
-    msg:`Se eliminará de la receta de "${producto}".`,
-    detail: item?`${item.ingrediente} — ${item.cantidad} ${item.unidad}`:'',
-    onConfirm:()=>{
-      if(state.recetas[producto]){state.recetas[producto].splice(idx,1);saveLocal();if(typeof saveConfigToSupabase==='function')saveConfigToSupabase();}
-      renderRecetas();showToast('Ingrediente eliminado de la receta','green');
-    }
-  });
+  showConfirm({icon:'📖',title:'¿Quitar de la receta?',msg:`Se eliminará de la receta de "${producto}".`,detail:item?`${item.ingrediente} — ${item.cantidad} ${item.unidad||''}`:'' ,onConfirm:()=>{
+    if(state.recetas[producto]){state.recetas[producto].splice(idx,1);saveLocal();saveConfigToSupabase();}
+    renderRecetas();showToast('Ingrediente eliminado de la receta','green');
+  }});
 };
 
 function renderMateriales(){
   const costos=filterMatPeriod(state.costos);
   const compras=filterMatPeriod(state.compras||[]);
-  // Unir costos + compras de MP en un solo conjunto
   const todosCostos=[
-    ...costos.map(c=>({desc:c.descripcion||COST_LABELS[c.tipo]||c.tipo, tipo:c.tipo, monto:parseFloat(c.monto||0), fecha:(c.fecha||'').split('T')[0], fuente:'costo'})),
-    ...compras.map(c=>({desc:`MP: ${c.item}`, tipo:'materia_prima', monto:parseFloat(c.monto||0), fecha:(c.fecha||'').split('T')[0], fuente:'compra'}))
+    ...costos.map(c=>({desc:c.descripcion||COST_LABELS[c.tipo]||c.tipo,tipo:c.tipo,monto:parseFloat(c.monto||0),fecha:(c.fecha||'').split('T')[0],fuente:'costo'})),
+    ...compras.map(c=>({desc:`MP: ${c.item}`,tipo:'materia_prima',monto:parseFloat(c.monto||0),fecha:(c.fecha||'').split('T')[0],fuente:'compra'})),
+    ...filterMatPeriod(state.ajustesInventario||[]).map(a=>({desc:'Pérdida Inventario',tipo:'perdida_inventario',monto:parseFloat(a.costo_total||0),fecha:(a.fecha||'').split('T')[0],fuente:'ajuste'}))
   ];
-
-  // Gráfico 1: top gastos por descripción (costos + compras MP)
   const byDesc={};
-  todosCostos.forEach(c=>{
-    if(!byDesc[c.desc])byDesc[c.desc]=0;
-    byDesc[c.desc]+=c.monto;
-  });
+  todosCostos.forEach(c=>{if(!byDesc[c.desc])byDesc[c.desc]=0;byDesc[c.desc]+=c.monto;});
   const topEntries=Object.entries(byDesc).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  const labels=topEntries.map(e=>e[0]);
-  const data=topEntries.map(e=>e[1]);
   const ctx=document.getElementById('mat-chart');
-  if(ctx){if(chartMat)chartMat.destroy();if(labels.length){chartMat=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Total',data,backgroundColor:'#C4832A',borderColor:'#8B5230',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>fmt(v),font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{font:{size:9},maxTicksLimit:12}}}}});}}
-
-  // Gráfico 2: evolución de gastos totales en el tiempo
+  if(ctx){if(chartMat)chartMat.destroy();if(topEntries.length){chartMat=new Chart(ctx,{type:'bar',data:{labels:topEntries.map(e=>e[0]),datasets:[{label:'Total',data:topEntries.map(e=>e[1]),backgroundColor:'#C4832A',borderColor:'#8B5230',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>fmt(v),font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{font:{size:9},maxTicksLimit:12}}}}});}}
   const byFecha={};
   todosCostos.forEach(c=>{byFecha[c.fecha]=(byFecha[c.fecha]||0)+c.monto;});
   const fechas=Object.keys(byFecha).sort(),montos=fechas.map(f=>byFecha[f]);
   const ctx2=document.getElementById('evol-chart');
   if(ctx2){if(chartEvol)chartEvol.destroy();if(fechas.length){chartEvol=new Chart(ctx2,{type:'line',data:{labels:fechas,datasets:[{label:'Gasto total',data:montos,borderColor:'#E8A84C',backgroundColor:'rgba(196,131,42,0.1)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#C4832A'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},maxRotation:40}},y:{ticks:{callback:v=>fmt(v),font:{size:10}}}}}});}}
-
-  // Gráfico 3: distribución por categoría (incluye materia_prima de compras)
   const byCat={};
   todosCostos.forEach(c=>{byCat[c.tipo]=(byCat[c.tipo]||0)+c.monto;});
   const totalCat=Object.values(byCat).reduce((a,b)=>a+b,0);
@@ -2119,138 +1981,45 @@ function renderMateriales(){
 }
 
 function exportCSV(){
-  const period=state.filtroMat;
   const costos=filterMatPeriod(state.costos);
   const compras=filterMatPeriod(state.compras||[]);
   const rows=[['Fecha','Tipo','Descripción','Categoría','Monto (Bs.)','Forma de pago']];
-  costos.forEach(c=>{
-    rows.push([(c.fecha||'').split('T')[0],'Costo fijo/insumo',c.descripcion||'',COST_LABELS[c.tipo]||c.tipo,parseFloat(c.monto||0).toFixed(2),c.forma||'']);
-  });
-  compras.forEach(c=>{
-    rows.push([(c.fecha||'').split('T')[0],'Compra MP',c.item,'Materia Prima',parseFloat(c.monto||0).toFixed(2),c.forma||'']);
-  });
-  // add produccion ventas
+  costos.forEach(c=>{rows.push([(c.fecha||'').split('T')[0],'Costo fijo/insumo',c.descripcion||'',COST_LABELS[c.tipo]||c.tipo,parseFloat(c.monto||0).toFixed(2),c.forma||'']);});
+  compras.forEach(c=>{rows.push([(c.fecha||'').split('T')[0],'Compra MP',c.item,'Materia Prima',parseFloat(c.monto||0).toFixed(2),c.forma||'']);});
   const prod=filterMatPeriod(state.produccion);
-  const mermaMap={};
-  filterMatPeriod(state.merma).forEach(m=>{mermaMap[m.producto]=(mermaMap[m.producto]||0)+parseFloat(m.cantidad||0);});
-  prod.forEach(r=>{
-    const vend=Math.max(0,parseFloat(r.cantidad_producida||0)-(mermaMap[r.producto]||0));
-    rows.push([(r.fecha||'').split('T')[0],'Producción/Venta',r.producto,'Ingreso',(r.precio_venta*vend).toFixed(2),'—']);
-  });
-    const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const mermaMap={};filterMatPeriod(state.merma).forEach(m=>{mermaMap[m.producto]=(mermaMap[m.producto]||0)+parseFloat(m.cantidad||0);});
+  prod.forEach(r=>{const vend=Math.max(0,parseFloat(r.cantidad_producida||0)-(mermaMap[r.producto]||0));rows.push([(r.fecha||'').split('T')[0],'Producción/Venta',r.producto,'Ingreso',(r.precio_venta*vend).toFixed(2),'—']);});
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
   const csv=rows.map(r=>r.map(esc).join(',')).join('\n');
   const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`shalom_costos_${period}_${today()}.csv`;
-  a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`shalom_costos_${today()}.csv`;a.click();
   showToast('✓ CSV exportado','green');
 }
 
 function renderConfig(){
-  renderConfigLists();
-  renderProveedores();
+  renderConfigLists();renderProveedores();
   const url=localStorage.getItem('sb_url')||'',key=localStorage.getItem('sb_key')||'';
   document.getElementById('cfg-url').value=url;document.getElementById('cfg-key').value=key;
-  // Muestra estado de conexión en la pantalla de config al navegar a ella
   const statusEl=document.getElementById('cfg-status');
-  if(statusEl&&supabase){
-    statusEl.style.display='block';
-    statusEl.className='cfg-status ok';
-    statusEl.textContent='✅ Conectado a Supabase — la sincronización está activa';
-  }
-  const sql=`-- ================================
--- SHALOM BAKERY v9 — SQL Supabase
--- Ejecutar en el SQL Editor
--- ================================
-
-CREATE TABLE IF NOT EXISTS produccion (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  producto text NOT NULL,
-  cantidad_producida numeric DEFAULT 0,
-  cantidad_vendida numeric DEFAULT 0,
-  precio_venta numeric DEFAULT 0,
-  costo_unitario numeric DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS costos (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  tipo text NOT NULL,
-  subcat text,
-  descripcion text,
-  monto numeric DEFAULT 0,
-  forma text DEFAULT 'efectivo',
-  producto text,
-  item_catalogo text,
-  cantidad_usada numeric DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS caja (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha date NOT NULL,
-  efectivo numeric DEFAULT 0,
-  qr numeric DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS merma (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  producto text NOT NULL,
-  cantidad numeric DEFAULT 0,
-  costo_unitario numeric DEFAULT 0,
-  motivo text
-);
-CREATE TABLE IF NOT EXISTS pagos (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  empleado text NOT NULL,
-  monto numeric DEFAULT 0,
-  forma text DEFAULT 'efectivo',
-  concepto text,
-  tipo text DEFAULT 'sueldo'
-);
-CREATE TABLE IF NOT EXISTS compras (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  item text NOT NULL,
-  unidad text,
-  cantidad numeric DEFAULT 0,
-  monto numeric DEFAULT 0,
-  forma text DEFAULT 'efectivo',
-  proveedor text
-);
-CREATE TABLE IF NOT EXISTS movimientos (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  fecha timestamptz DEFAULT now(),
-  tipo text NOT NULL,
-  monto numeric DEFAULT 0,
-  concepto text
-);
--- Tabla de configuración compartida (catálogo, productos, recetas, etc.)
-CREATE TABLE IF NOT EXISTS config (
-  clave text PRIMARY KEY,
-  valor text NOT NULL,
-  updated_at timestamptz DEFAULT now()
-);
-
--- Habilitar Row Level Security
-ALTER TABLE produccion ENABLE ROW LEVEL SECURITY;
-ALTER TABLE costos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE caja ENABLE ROW LEVEL SECURITY;
-ALTER TABLE merma ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pagos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE compras ENABLE ROW LEVEL SECURITY;
-
--- Políticas de acceso (ajustá si usás autenticación)
+  if(statusEl&&supabase){statusEl.style.display='block';statusEl.className='cfg-status ok';statusEl.textContent='✅ Conectado a Supabase';}
+  const sql=`-- SHALOM BAKERY v11 — SQL Supabase
+CREATE TABLE IF NOT EXISTS produccion (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), producto text NOT NULL, cantidad_producida numeric DEFAULT 0, cantidad_vendida numeric DEFAULT 0, precio_venta numeric DEFAULT 0, costo_unitario numeric DEFAULT 0);
+CREATE TABLE IF NOT EXISTS costos (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), tipo text NOT NULL, subcat text, descripcion text, monto numeric DEFAULT 0, forma text DEFAULT 'efectivo', producto text, item_catalogo text, cantidad_usada numeric DEFAULT 0);
+CREATE TABLE IF NOT EXISTS caja (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha date NOT NULL, efectivo numeric DEFAULT 0, qr numeric DEFAULT 0);
+CREATE TABLE IF NOT EXISTS merma (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), producto text NOT NULL, cantidad numeric DEFAULT 0, costo_unitario numeric DEFAULT 0, motivo text);
+CREATE TABLE IF NOT EXISTS pagos (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), empleado text NOT NULL, monto numeric DEFAULT 0, forma text DEFAULT 'efectivo', concepto text, tipo text DEFAULT 'sueldo');
+CREATE TABLE IF NOT EXISTS compras (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), item text NOT NULL, unidad text, cantidad numeric DEFAULT 0, monto numeric DEFAULT 0, forma text DEFAULT 'efectivo', proveedor text);
+CREATE TABLE IF NOT EXISTS movimientos (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, fecha timestamptz DEFAULT now(), tipo text NOT NULL, monto numeric DEFAULT 0, concepto text);
+CREATE TABLE IF NOT EXISTS config (clave text PRIMARY KEY, valor text NOT NULL, updated_at timestamptz DEFAULT now());
+ALTER TABLE produccion ENABLE ROW LEVEL SECURITY; ALTER TABLE costos ENABLE ROW LEVEL SECURITY; ALTER TABLE caja ENABLE ROW LEVEL SECURITY; ALTER TABLE merma ENABLE ROW LEVEL SECURITY; ALTER TABLE pagos ENABLE ROW LEVEL SECURITY; ALTER TABLE compras ENABLE ROW LEVEL SECURITY; ALTER TABLE movimientos ENABLE ROW LEVEL SECURITY; ALTER TABLE config ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "allow_all_produccion" ON produccion FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "allow_all_costos" ON costos FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "allow_all_caja" ON caja FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "allow_all_merma" ON merma FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "allow_all_pagos" ON pagos FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "allow_all_compras" ON compras FOR ALL USING (true) WITH CHECK (true);
-ALTER TABLE movimientos ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "allow_all_movimientos" ON movimientos FOR ALL USING (true) WITH CHECK (true);
-ALTER TABLE config ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "allow_all_config" ON config FOR ALL USING (true) WITH CHECK (true);`
+CREATE POLICY "allow_all_config" ON config FOR ALL USING (true) WITH CHECK (true);`;
   const sqlEl=document.getElementById('sql-block');if(sqlEl)sqlEl.textContent=sql;
   renderCatalogo();
 }
@@ -2265,31 +2034,25 @@ function renderPage(page){
   else if(page==='merma')renderMerma();
   else if(page==='personal'){renderPersonal();updateCajaSaldos();}
   else if(page==='materiales')renderMateriales();
-  else if(page==='ingredientes'){renderIngredientes();populateSelects();}
   else if(page==='compras'){renderCompras();renderProveedores();populateSelects();initCompraRows();}
-  else if(page==='inventario'){renderInventario();}
+  else if(page==='inventario')renderInventario();
+  else if(page==='conteo-fisico'){populateSelects();renderConteoForm();renderConteoHistorial();}
   else if(page==='recetas'){renderRecetas();populateSelects();}
   else if(page==='config')renderConfig();
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
   loadLocal();
-  // Modal confirm listeners
-  document.getElementById('modal-cancel').addEventListener('click', closeConfirm);
-  document.getElementById('modal-confirm').addEventListener('click', function(){
-    if(_modalCallback) _modalCallback();
-    closeConfirm();
-  });
-  document.getElementById('confirm-modal').addEventListener('click', function(e){
-    if(e.target === this) closeConfirm();
-  });
-initSupabase();
-  document.getElementById('header-date').textContent=new Date().toLocaleDateString('es-BO',{weekday:'short',day:'numeric',month:'long'});
 
+  document.getElementById('modal-cancel').addEventListener('click',closeConfirm);
+  document.getElementById('modal-confirm').addEventListener('click',function(){if(_modalCallback)_modalCallback();closeConfirm();});
+  document.getElementById('confirm-modal').addEventListener('click',function(e){if(e.target===this)closeConfirm();});
+
+  initSupabase();
+  document.getElementById('header-date').textContent=new Date().toLocaleDateString('es-BO',{weekday:'short',day:'numeric',month:'long'});
   document.getElementById('btn-menu').addEventListener('click',openNav);
   document.getElementById('nav-close').addEventListener('click',closeNav);
   document.getElementById('nav-overlay').addEventListener('click',closeNav);
-
   document.querySelectorAll('.bnav-item').forEach(item=>{item.addEventListener('click',()=>navigate(item.dataset.page));});
   document.querySelectorAll('.nav-item').forEach(item=>{item.addEventListener('click',e=>{e.preventDefault();navigate(item.dataset.page);});});
 
@@ -2307,7 +2070,6 @@ initSupabase();
     state.dashHasta=document.getElementById('dash-hasta').value||null;
     renderDashboard();
   });
-
   document.querySelectorAll('[data-filter-mat]').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.querySelectorAll('[data-filter-mat]').forEach(b=>b.classList.remove('active'));
@@ -2342,7 +2104,7 @@ initSupabase();
     renderProduccion();showToast('✓ Producción registrada','green');
   });
 
-  // COSTOS — subcategorías dinámicas
+  // COSTOS
   const SUBCATS={servicios:[{v:'agua',l:'Agua'},{v:'luz',l:'Luz / Energía'},{v:'gas',l:'Gas'},{v:'internet',l:'Internet'},{v:'telefono',l:'Teléfono'}],transporte:[{v:'flete',l:'Flete / Envío'},{v:'combustible',l:'Combustible'},{v:'movilidad',l:'Movilidad propia'},{v:'otros_transp',l:'Otros transporte'}],marketing:[{v:'redes',l:'Redes sociales'},{v:'impresos',l:'Material impreso'},{v:'otros_mkt',l:'Otros'}]};
   window.onCostoTipoChange=function(){
     const tipo=document.getElementById('costo-tipo').value;
@@ -2351,40 +2113,13 @@ initSupabase();
     const insumoPanel=document.getElementById('costo-insumo-panel');
     const formaGroup=document.getElementById('costo-forma-group');
     if(tipo==='insumos_empaques'){
-      grp.style.display='none';
-      if(formaGroup)formaGroup.style.display='none';
+      grp.style.display='none';if(formaGroup)formaGroup.style.display='none';
       if(insumoPanel){
         insumoPanel.style.display='block';
         const catSel=document.getElementById('costo-item-cat');
         if(catSel){
           catSel.innerHTML='<option value="">— Seleccionar ítem —</option>';
-          state.catalogo.filter(c=>c.tipo==='insumo').forEach(c=>{
-            const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad})`;catSel.appendChild(o);
-          });
-          if(!catSel._hintReady){
-            catSel._hintReady=true;
-            catSel.addEventListener('change',function(){
-              const nombre=this.value;
-              let hintEl=document.getElementById('costo-insumo-hint');
-              if(!hintEl){hintEl=document.createElement('div');hintEl.id='costo-insumo-hint';hintEl.style.cssText='font-size:11px;color:var(--sage);margin-top:4px;padding:4px 8px;background:var(--card-bg);border-radius:6px;border-left:3px solid var(--sage)';catSel.parentNode.appendChild(hintEl);}
-              if(!nombre){hintEl.textContent='';return;}
-              const comprasItem=state.compras.filter(c=>c.item===nombre);
-              if(comprasItem.length>0){
-                const totalMonto=comprasItem.reduce((s,c)=>s+parseFloat(c.monto||0),0);
-                const totalCant=comprasItem.reduce((s,c)=>s+parseFloat(c.cantidad||0),0);
-                const promedio=totalCant>0?totalMonto/totalCant:0;
-                const ultima=comprasItem.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''))[0];
-                const ultPrecio=ultima&&parseFloat(ultima.cantidad||0)>0?parseFloat(ultima.monto)/parseFloat(ultima.cantidad):0;
-                const cat=state.catalogo.find(c=>c.nombre===nombre);
-                const unidad=cat?cat.unidad:'u';
-                const montoEl=document.getElementById('costo-monto');
-                if(montoEl&&ultPrecio>0)montoEl.value=ultPrecio.toFixed(2);
-                hintEl.textContent=`📦 Última compra: Bs.${ultPrecio.toFixed(2)}/${unidad} · Promedio: Bs.${promedio.toFixed(2)}/${unidad}`;
-              } else {
-                hintEl.textContent='⚠️ Sin compras registradas para este ítem';
-              }
-            });
-          }
+          state.catalogo.filter(c=>c.tipo==='insumo').forEach(c=>{const o=document.createElement('option');o.value=c.nombre;o.textContent=`${c.nombre} (${c.unidad})`;catSel.appendChild(o);});
         }
       }
     } else {
@@ -2405,9 +2140,8 @@ initSupabase();
     if(!tipo){showToast('Seleccioná la categoría','red');return;}
     if(!descripcion){showToast('Ingresá una descripción','red');return;}
     if(monto<=0){showToast('Ingresá un monto válido','red');return;}
-    let item_catalogo='', cantidad_usada=0;
-    // Para insumos el pago ya fue registrado en Compras — no descuenta caja de nuevo
     const forma=tipo==='insumos_empaques'?'sin_pago':document.getElementById('costo-forma').value;
+    let item_catalogo='',cantidad_usada=0;
     if(tipo==='insumos_empaques'){
       item_catalogo=document.getElementById('costo-item-cat')?.value||'';
       cantidad_usada=parseFloat(document.getElementById('costo-cant-usada')?.value)||0;
@@ -2423,10 +2157,10 @@ initSupabase();
     const ip=document.getElementById('costo-insumo-panel');if(ip)ip.style.display='none';
     const fg=document.getElementById('costo-forma-group');if(fg)fg.style.display='block';
     renderCostos();renderInventario();updateCajaSaldos();
-    showToast(tipo==='insumos_empaques'?'✓ Consumo registrado · sin cargo a caja':'✓ Costo registrado · '+forma,'green');
+    showToast(tipo==='insumos_empaques'?'✓ Consumo registrado · sin cargo a caja':'✓ Costo registrado','green');
   });
 
-  // CAPITAL INICIAL
+  // CAPITAL
   document.getElementById('btn-save-capital').addEventListener('click',()=>{
     const efectivo=parseFloat(document.getElementById('capital-efectivo').value)||0;
     const qr=parseFloat(document.getElementById('capital-qr').value)||0;
@@ -2435,8 +2169,7 @@ initSupabase();
     if(!state.capital)state.capital=[];
     state.capital.push({fecha,efectivo,qr});
     saveLocal();saveConfigToSupabase();
-    document.getElementById('capital-efectivo').value='';
-    document.getElementById('capital-qr').value='';
+    document.getElementById('capital-efectivo').value='';document.getElementById('capital-qr').value='';
     renderCaja();showToast('✓ Capital inicial registrado','green');
   });
 
@@ -2454,20 +2187,14 @@ initSupabase();
     renderCaja();showToast('✓ Caja guardada','green');
   });
 
-  // MOVIMIENTO DE DINERO
+  // MOVIMIENTOS
   window.deleteMovimiento=function(i){
     const r=state.movimientos?state.movimientos[i]:null;
-    showConfirm({
-      icon:'💸', title:'¿Eliminar este movimiento?',
-      msg:'El saldo de caja se ajustará automáticamente.',
-      detail: r?`${r.tipo==='efectivo'?'💵 Efectivo':'📱 QR'} — ${fmt(r.monto)}${r.concepto?' · '+r.concepto:''}`:'',
-      onConfirm:async()=>{
-        const rid=r?.id;
-        state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();
-        if(supabase&&rid){try{await supabase.from('movimientos').delete().eq('id',rid);}catch(e){console.warn('Error eliminando movimiento:',e);}}
-        showToast('Movimiento eliminado','green');
-      }
-    });
+    showConfirm({icon:'💸',title:'¿Eliminar este movimiento?',msg:'El saldo de caja se ajustará.',detail:r?`${fmt(r.monto)}${r.concepto?' · '+r.concepto:''}`:'',onConfirm:async()=>{
+      const rid=r?.id;state.movimientos.splice(i,1);saveLocal();renderCaja();updateCajaSaldos();
+      if(supabase&&rid){try{await supabase.from('movimientos').delete().eq('id',rid);}catch(e){}}
+      showToast('Movimiento eliminado','green');
+    }});
   };
   document.getElementById('btn-add-mov').addEventListener('click',()=>{
     const fecha=document.getElementById('mov-fecha').value||today();
@@ -2479,9 +2206,7 @@ initSupabase();
     if(!state.movimientos)state.movimientos=[];
     state.movimientos.push(item);saveLocal();syncToSupabase('movimientos',item);
     ['mov-monto','mov-concepto'].forEach(id=>document.getElementById(id).value='');
-    renderCaja();updateCajaSaldos();
-    const label=tipo==='retiro_efectivo'?'Efectivo':'QR';
-    showToast(`✓ Movimiento registrado · ${label} Bs. ${monto}`,'green');
+    renderCaja();updateCajaSaldos();showToast(`✓ Movimiento registrado`,'green');
   });
 
   // MERMA
@@ -2496,9 +2221,8 @@ initSupabase();
     const costo_unitario=getCostoReceta(producto)||0;
     const item={fecha:fecha+'T12:00:00.000Z',producto,cantidad,costo_unitario,motivo};
     state.merma.push(item);saveLocal();syncToSupabase('merma',item);
-    document.getElementById('merma-cantidad').value='';
-    document.getElementById('merma-producto').value='';
-    renderMerma();renderProduccion();showToast('✓ Merma registrada — ventas actualizadas','green');
+    document.getElementById('merma-cantidad').value='';document.getElementById('merma-producto').value='';
+    renderMerma();renderProduccion();showToast('✓ Merma registrada','green');
   });
 
   // PERSONAL
@@ -2517,7 +2241,38 @@ initSupabase();
     ['pago-monto','pago-concepto'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('pago-empleado').value='';
     renderPersonal();updateCajaSaldos();
-    showToast(`✓ ${tipo} registrado · descontado de ${forma==='efectivo'?'Efectivo':'QR'}`,'green');
+    showToast(`✓ ${tipo} registrado · ${forma==='efectivo'?'Efectivo':'QR'}`,'green');
+  });
+
+  // CONTEO FÍSICO
+  document.getElementById('conteo-fecha').value=today();
+  document.getElementById('btn-save-conteo').addEventListener('click',()=>{
+    const fecha=document.getElementById('conteo-fecha').value||today();
+    const empleado=document.getElementById('conteo-empleado').value;
+    const notas=document.getElementById('conteo-notas').value.trim();
+    if(!empleado){showToast('Seleccioná el responsable','red');return;}
+    const inputs=document.querySelectorAll('#conteo-form-items .inv-conteo-input');
+    const items={};
+    let tieneAlguno=false;
+    inputs.forEach(inp=>{
+      const val=inp.value.trim();
+      if(val!==''){
+        const nombre=inp.dataset.item;
+        const teorico=getStock(nombre);
+        items[nombre]={fisico:parseFloat(val)||0,teorico:parseFloat(teorico.toFixed(3)),unidad:inp.dataset.unidad,tipo:inp.dataset.tipo};
+        tieneAlguno=true;
+      }
+    });
+    if(!tieneAlguno){showToast('Ingresá al menos un valor físico','red');return;}
+    const conteo={fecha,empleado,notas,items,timestamp:new Date().toISOString()};
+    if(!state.conteosFisicos)state.conteosFisicos=[];
+    state.conteosFisicos.push(conteo);
+    saveLocal();
+    // Limpiar inputs
+    inputs.forEach(inp=>inp.value='');
+    document.getElementById('conteo-notas').value='';
+    renderConteoHistorial();
+    showToast('✓ Conteo guardado','green');
   });
 
   // CATÁLOGO
@@ -2534,26 +2289,20 @@ initSupabase();
   });
 
   // COMPRAS
-  // ── COMPRAS MULTIPRODUTO ──
   document.getElementById('compra-fecha').value=today();
-
-  // Proveedores — agregar
   document.getElementById('btn-add-proveedor').addEventListener('click',()=>{
     const val=document.getElementById('new-proveedor').value.trim();
     if(!val){showToast('Ingresá el nombre del proveedor','red');return;}
     if(state.proveedores.includes(val)){showToast('Ese proveedor ya existe','red');return;}
-    state.proveedores.push(val);
-    document.getElementById('new-proveedor').value='';
+    state.proveedores.push(val);document.getElementById('new-proveedor').value='';
     saveLocal();saveConfigToSupabase();renderProveedores();showToast('✓ Proveedor agregado','green');
   });
 
-  // Fila de ítem vacía
   function crearFilaItem(){
     const id='row-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);
     const opts=state.catalogo.map(c=>`<option value="${c.nombre}" data-unidad="${c.unidad}">${c.nombre} (${c.unidad})</option>`).join('');
     const div=document.createElement('div');
-    div.className='compra-item-row';
-    div.id=id;
+    div.className='compra-item-row';div.id=id;
     div.innerHTML=`
       <div>
         <select class="ci-item" onchange="onCIItemChange(this)">
@@ -2568,104 +2317,76 @@ initSupabase();
     document.getElementById('compra-items-list').appendChild(div);
     return div;
   }
-
   window.onCIItemChange=function(sel){
     const opt=sel.selectedOptions[0];
     const unidad=opt?opt.dataset.unidad:'';
     const unitEl=sel.closest('.compra-item-row').querySelector('.ci-unit');
     if(unitEl)unitEl.textContent=unidad?`Unidad: ${unidad}`:'';
   };
-
   window.recalcTotal=function(){
-    const rows=document.querySelectorAll('#compra-items-list .compra-item-row');
     let total=0;
-    rows.forEach(row=>{
-      const monto=parseFloat(row.querySelector('.ci-monto')?.value)||0;
-      total+=monto;
-    });
-    const el=document.getElementById('compra-total-preview');
-    if(el)el.textContent='Bs. '+total.toFixed(2);
+    document.querySelectorAll('#compra-items-list .compra-item-row').forEach(row=>{total+=parseFloat(row.querySelector('.ci-monto')?.value)||0;});
+    const el=document.getElementById('compra-total-preview');if(el)el.textContent='Bs. '+total.toFixed(2);
   };
-
   document.getElementById('btn-add-item-row').addEventListener('click',()=>{
     if(!state.catalogo.length){showToast('Primero agregá ítems en Config → Catálogo','red');return;}
     crearFilaItem();
   });
-
-  // Iniciar con una fila vacía al cargar la página de compras
   function initCompraRows(){
     const lista=document.getElementById('compra-items-list');
     if(lista&&lista.children.length===0)crearFilaItem();
   }
-
-  // Registrar compra completa
   document.getElementById('btn-registrar-compra').addEventListener('click',async()=>{
     const fecha=document.getElementById('compra-fecha').value||today();
     const proveedor=document.getElementById('compra-proveedor-sel').value;
     const forma=document.getElementById('compra-forma').value;
     const rows=document.querySelectorAll('#compra-items-list .compra-item-row');
-    const items=[];
-    let valido=true;
+    const items=[];let valido=true;
     rows.forEach(row=>{
       const item=row.querySelector('.ci-item')?.value;
       const cantidad=parseFloat(row.querySelector('.ci-cantidad')?.value)||0;
       const monto=parseFloat(row.querySelector('.ci-monto')?.value)||0;
-      if(item&&cantidad>0&&monto>0){
-        const cat=state.catalogo.find(c=>c.nombre===item);
-        items.push({fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor});
-      } else if(item||cantidad>0||monto>0){
-        valido=false;
-      }
+      if(item&&cantidad>0&&monto>0){const cat=state.catalogo.find(c=>c.nombre===item);items.push({fecha:fecha+'T12:00:00.000Z',item,unidad:cat?cat.unidad:'',cantidad,monto,forma,proveedor});}
+      else if(item||cantidad>0||monto>0){valido=false;}
     });
     if(!valido){showToast('Completá todos los campos de cada ítem','red');return;}
     if(!items.length){showToast('Agregá al menos un ítem a la compra','red');return;}
     setSyncStatus('syncing');
-    for(const compra of items){
-      state.compras.push(compra);
-      await syncToSupabase('compras',compra);
-    }
+    for(const compra of items){state.compras.push(compra);await syncToSupabase('compras',compra);}
     saveLocal();
-    // Limpiar filas
-    document.getElementById('compra-items-list').innerHTML='';
-    crearFilaItem();
-    recalcTotal();
+    document.getElementById('compra-items-list').innerHTML='';crearFilaItem();recalcTotal();
     document.getElementById('compra-proveedor-sel').value='';
     renderCompras();renderInventario();updateCajaSaldos();
-    showToast(`✓ ${items.length} ítem${items.length>1?'s':''} registrado${items.length>1?'s':''} · ${fmt(items.reduce((s,i)=>s+i.monto,0))} total`,'green');
+    showToast(`✓ ${items.length} ítem${items.length>1?'s':''} registrado${items.length>1?'s':''}·${fmt(items.reduce((s,i)=>s+i.monto,0))} total`,'green');
   });
-
-  // INGREDIENTES (legacy - kept for compatibility)
-  const addIngBtn=document.getElementById('btn-add-ing');
-  if(addIngBtn){addIngBtn.addEventListener('click',()=>{
-    const nombre=document.getElementById('ing-nombre').value.trim();
-    const unidad=document.getElementById('ing-unidad').value;
-    const costo=parseFloat(document.getElementById('ing-costo').value)||0;
-    if(!nombre){showToast('Ingresá el nombre del ingrediente','red');return;}
-    if(state.ingredientes.find(i=>i.nombre.toLowerCase()===nombre.toLowerCase())){showToast('Ese ingrediente ya existe','red');return;}
-    state.ingredientes.push({nombre,unidad,costo});
-    document.getElementById('ing-nombre').value='';document.getElementById('ing-costo').value='';
-    saveLocal();populateSelects();renderIngredientes();showToast('✓ Ingrediente agregado','green');
-  });}
 
   // RECETAS
   document.getElementById('rec-ingrediente').addEventListener('change',function(){
     const cat=state.catalogo.find(c=>c.nombre===this.value);
-    const ing=state.ingredientes.find(i=>i.nombre===this.value);
     const uv=document.getElementById('rec-unidad-val');
-    const unidad=cat?cat.unidad:(ing?ing.unidad:'');
-    if(uv)uv.value=unidad;
+    if(uv)uv.value=cat?cat.unidad:'';
+  });
+  document.getElementById('rec-producto').addEventListener('change',function(){
+    const rendEl=document.getElementById('rec-rendimiento');
+    if(rendEl){
+      const rendExistente=state.rendimientos[this.value]||LOTE_RENDIMIENTO[this.value]||'';
+      rendEl.value=rendExistente||'';
+    }
   });
   document.getElementById('btn-add-rec').addEventListener('click',()=>{
     const producto=document.getElementById('rec-producto').value;
     const ingrediente=document.getElementById('rec-ingrediente').value;
     const cantidad=parseFloat(document.getElementById('rec-cantidad').value)||0;
-    const ing=state.ingredientes.find(i=>i.nombre===ingrediente);
+    const rendimiento=parseFloat(document.getElementById('rec-rendimiento').value)||1;
+    const cat=state.catalogo.find(c=>c.nombre===ingrediente);
     if(!producto){showToast('Seleccioná el producto','red');return;}
     if(!ingrediente){showToast('Seleccioná el ingrediente','red');return;}
     if(cantidad<=0){showToast('Ingresá la cantidad','red');return;}
     if(!state.recetas[producto])state.recetas[producto]=[];
+    if(!state.rendimientos)state.rendimientos={};
+    state.rendimientos[producto]=rendimiento;
     const existing=state.recetas[producto].findIndex(r=>r.ingrediente===ingrediente);
-    const item={ingrediente,cantidad,unidad:ing?ing.unidad:''};
+    const item={ingrediente,cantidad,unidad:cat?cat.unidad:''};
     if(existing>=0)state.recetas[producto][existing]=item;else state.recetas[producto].push(item);
     document.getElementById('rec-ingrediente').value='';document.getElementById('rec-cantidad').value='';document.getElementById('rec-unidad-val').value='';
     saveLocal();saveConfigToSupabase();renderRecetas();showToast(`✓ Receta de ${producto} actualizada`,'green');
@@ -2680,7 +2401,7 @@ initSupabase();
     if(!url||!key){status.textContent='Ingresá la URL y la clave';status.className='cfg-status err';return;}
     localStorage.setItem('sb_url',url);localStorage.setItem('sb_key',key);
     initSupabase();
-    if(supabase){status.textContent='✓ Conectado. Sincronizando configuración y datos...';status.className='cfg-status ok';await loadFromSupabase();startRealtimeSync();status.textContent='✅ Sincronizado. Catálogo, recetas y datos cargados desde la nube.';setSyncStatus('ok');}
+    if(supabase){status.textContent='✓ Conectado. Sincronizando...';status.className='cfg-status ok';await loadFromSupabase();status.textContent='✅ Sincronizado correctamente.';setSyncStatus('ok');}
     else{status.textContent='Error al conectar. Verificá la URL y clave.';status.className='cfg-status err';}
   });
   document.getElementById('btn-add-producto').addEventListener('click',()=>{
@@ -2694,105 +2415,82 @@ initSupabase();
     saveLocal();saveConfigToSupabase();populateSelects();renderConfigLists();showToast('✓ Empleado agregado','green');
   });
   document.getElementById('btn-copy-sql').addEventListener('click',()=>{
-    const sql=document.getElementById('sql-block').textContent;
-    navigator.clipboard.writeText(sql).then(()=>showToast('✓ SQL copiado','green'));
+    navigator.clipboard.writeText(document.getElementById('sql-block').textContent).then(()=>showToast('✓ SQL copiado','green'));
   });
   document.getElementById('btn-clear-data').addEventListener('click',()=>{
     if(!confirm('¿Seguro que querés borrar TODOS los datos?'))return;
     ['shalom_v3','shalom_v2','shalom_state'].forEach(k=>localStorage.removeItem(k));
-    state.produccion=[];state.costos=[];state.caja=[];state.merma=[];state.pagos=[];state.capital=[];state.movimientos=[];
+    state.produccion=[];state.costos=[];state.caja=[];state.merma=[];state.pagos=[];state.capital=[];state.movimientos=[];state.conteosFisicos=[];
     state.productos=['Pan Blanco','Pan Integral','Medialunas','Facturas','Torta del Día','Bizcochos'];
-    state.empleados=['Empleado 1'];state.ingredientes=[];state.recetas={};
+    state.empleados=['Empleado 1'];state.ingredientes=[];state.recetas={};state.rendimientos={};
     saveLocal();saveConfigToSupabase();populateSelects();renderAll();showToast('✓ Datos borrados','green');
   });
 
-  // EXPORTAR DATOS
+  // EXPORTAR
   document.getElementById('btn-export-data').addEventListener('click',()=>{
-    const exportData = {
-      version: 'shalom_v3',
-      exportDate: new Date().toISOString(),
-      data: {
-        produccion: state.produccion,
-        costos: state.costos,
-        caja: state.caja,
-        merma: state.merma,
-        pagos: state.pagos,
-        capital: state.capital,
-        movimientos: state.movimientos,
-        compras: state.compras,
-        catalogo: state.catalogo,
-        productos: state.productos,
-        empleados: state.empleados,
-        ingredientes: state.ingredientes,
-        recetas: state.recetas,
-        proveedores: state.proveedores||[]
-      }
-    };
-    const json = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([json], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `shalom_backup_${today()}.json`;
-    a.click();
+    const exportData={version:'shalom_v11',exportDate:new Date().toISOString(),data:{
+      produccion:state.produccion,costos:state.costos,caja:state.caja,merma:state.merma,
+      pagos:state.pagos,capital:state.capital,movimientos:state.movimientos,compras:state.compras,
+      catalogo:state.catalogo,productos:state.productos,empleados:state.empleados,
+      ingredientes:state.ingredientes,recetas:state.recetas,rendimientos:state.rendimientos,
+      proveedores:state.proveedores||[],conteosFisicos:state.conteosFisicos||[],
+      ajustesInventario:state.ajustesInventario||[]
+    }};
+    const blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`shalom_backup_${today()}.json`;a.click();
     showToast('✓ Datos exportados correctamente','green');
   });
 
-  // IMPORTAR DATOS
+  // IMPORTAR
   document.getElementById('btn-import-data').addEventListener('click',()=>{
-    const file = document.getElementById('import-file').files[0];
-    if(!file){ showToast('Seleccioná un archivo JSON primero','red'); return; }
-    const reader = new FileReader();
-    reader.onload = function(e){
+    const file=document.getElementById('import-file').files[0];
+    if(!file){showToast('Seleccioná un archivo JSON primero','red');return;}
+    const reader=new FileReader();
+    reader.onload=function(e){
       try{
-        const parsed = JSON.parse(e.target.result);
-        const d = parsed.data || parsed; // soporta ambos formatos
-        if(!confirm(`¿Importar datos del archivo "${file.name}"?\n\nEsto REEMPLAZARÁ todos los datos actuales en este dispositivo.\n\nProductos: ${(d.productos||[]).length}\nCatálogo: ${(d.catalogo||[]).length} ítems\nCompras: ${(d.compras||[]).length}\nProducción: ${(d.produccion||[]).length} registros`)) return;
-        // Importar todo
-        if(d.produccion) state.produccion = d.produccion;
-        if(d.costos) state.costos = d.costos;
-        if(d.caja) state.caja = d.caja;
-        if(d.merma) state.merma = d.merma;
-        if(d.pagos) state.pagos = d.pagos;
-        if(d.capital) state.capital = d.capital;
-        if(d.movimientos) state.movimientos = d.movimientos;
-        if(d.compras) state.compras = d.compras;
-        if(d.catalogo) state.catalogo = d.catalogo;
-        if(d.productos && d.productos.length) state.productos = d.productos;
-        if(d.empleados && d.empleados.length) state.empleados = d.empleados;
-        if(d.ingredientes) state.ingredientes = d.ingredientes;
-        if(d.recetas) state.recetas = d.recetas;
-        if(d.proveedores && d.proveedores.length) state.proveedores = d.proveedores;
+        const parsed=JSON.parse(e.target.result);
+        const d=parsed.data||parsed;
+        if(!confirm(`¿Importar datos del archivo "${file.name}"?\n\nEsto REEMPLAZARÁ todos los datos actuales.\n\nProductos: ${(d.productos||[]).length}\nCatálogo: ${(d.catalogo||[]).length} ítems\nCompras: ${(d.compras||[]).length}\nProducción: ${(d.produccion||[]).length} registros`))return;
+        if(d.produccion)state.produccion=d.produccion;
+        if(d.costos)state.costos=d.costos;
+        if(d.caja)state.caja=d.caja;
+        if(d.merma)state.merma=d.merma;
+        if(d.pagos)state.pagos=d.pagos;
+        if(d.capital)state.capital=d.capital;
+        if(d.movimientos)state.movimientos=d.movimientos;
+        if(d.compras)state.compras=d.compras;
+        if(d.catalogo)state.catalogo=d.catalogo;
+        if(d.productos&&d.productos.length)state.productos=d.productos;
+        if(d.empleados&&d.empleados.length)state.empleados=d.empleados;
+        if(d.ingredientes)state.ingredientes=d.ingredientes;
+        if(d.recetas)state.recetas=d.recetas;
+        if(d.rendimientos)state.rendimientos=d.rendimientos;
+        if(d.proveedores&&d.proveedores.length)state.proveedores=d.proveedores;
+        if(d.conteosFisicos)state.conteosFisicos=d.conteosFisicos;
+        if(d.ajustesInventario)state.ajustesInventario=d.ajustesInventario;
+        // Migrar recetas si vienen del formato antiguo (sin rendimientos)
+        if(!d.rendimientos||!Object.keys(d.rendimientos).length){migrateRecetasALote();}
         saveLocal();
-        // Si hay Supabase conectado, sincronizar también a la nube
-        if(supabase){ saveConfigToSupabase(); showToast('✓ Datos importados y sincronizados a Supabase','green'); }
-        else { showToast('✓ Datos importados correctamente','green'); }
-        populateSelects(); renderAll();
-        document.getElementById('import-file').value = '';
-      }catch(err){
-        showToast('Error: el archivo no es válido','red');
-        console.error('Import error:', err);
-      }
+        if(supabase){saveConfigToSupabase();showToast('✓ Datos importados y sincronizados','green');}
+        else{showToast('✓ Datos importados correctamente','green');}
+        populateSelects();renderAll();
+        document.getElementById('import-file').value='';
+      }catch(err){showToast('Error: el archivo no es válido','red');}
     };
     reader.readAsText(file);
   });
 
-  // Edit modal listeners
-  document.getElementById('edit-modal-cancel').addEventListener('click', closeEditModal);
-  document.getElementById('edit-modal-save').addEventListener('click', function(){
-    if(_editCallback) _editCallback();
-    closeEditModal();
-  });
-  document.getElementById('edit-modal').addEventListener('click', function(e){
-    if(e.target === this) closeEditModal();
-  });
+  // EDIT MODAL
+  document.getElementById('edit-modal-cancel').addEventListener('click',closeEditModal);
+  document.getElementById('edit-modal-save').addEventListener('click',function(){if(_editCallback)_editCallback();closeEditModal();});
+  document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
-  // Filtro proveedor en compras
   const cfp=document.getElementById('compra-filtro-proveedor');
   if(cfp)cfp.addEventListener('change',renderCompras);
 
   populateSelects();
   renderDashboard();
-  if(supabase){ loadFromSupabase().then(()=>startRealtimeSync()); }
+  if(supabase){loadFromSupabase();}
 });
 </script>
 </body>
