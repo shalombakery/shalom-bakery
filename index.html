@@ -777,6 +777,21 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(
     <div class="card-header"><div class="card-title">% por categoría</div></div>
     <div id="mat-detail"></div>
   </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">📈 Evolución de Precio por Ingrediente</div><span class="badge badge-new">Compra a compra</span></div>
+    <div class="form-group" style="margin-bottom:8px">
+      <select class="form-control" id="mat-ing-select" onchange="renderIngredienteEvol()">
+        <option value="">— Seleccionar ingrediente —</option>
+      </select>
+    </div>
+    <div class="chart-wrap"><canvas id="ing-evol-chart"></canvas></div>
+    <div id="ing-evol-stats" style="margin-top:10px"></div>
+  </div>
+  <div class="card" style="border:1.5px solid rgba(179,48,48,0.15)">
+    <div class="card-header"><div class="card-title">⚠️ Alerta de Compresión de Margen</div><span class="badge badge-prod">Por producto</span></div>
+    <div class="info-box" style="margin-bottom:10px">Productos donde el costo actual de ingredientes subió y está afectando el margen respecto al precio de venta registrado.</div>
+    <div id="mat-margen-alert"></div>
+  </div>
 </section>
 
 <!-- ====== CONFIG ====== -->
@@ -927,7 +942,7 @@ let state = {
   filtro:'dia', filtroMat:'semana',
   dashDesde:null, dashHasta:null, matDesde:null, matHasta:null
 };
-let chartCostos=null, chartMat=null, chartEvol=null;
+let chartCostos=null, chartMat=null, chartEvol=null, chartIngEvol=null;
 
 const fmt = n => { const v=parseFloat(n||0); return 'Bs. ' + v.toLocaleString('es-BO',{minimumFractionDigits:Number.isInteger(v)?0:2,maximumFractionDigits:2}); };
 const today = () => new Date().toISOString().split('T')[0];
@@ -1302,14 +1317,16 @@ function renderDashboard(){
   const mermaMap={};
   merma.forEach(m=>{mermaMap[m.producto]=(mermaMap[m.producto]||0)+parseFloat(m.cantidad||0);});
 
-  // ── FIX: ventas = producido total del período - merma total del período por producto ──
+  // ── COSTO DINÁMICO: siempre calculado desde recetas + precio promedio compras ──
   const byProd={};
   prod.forEach(r=>{
-    if(!byProd[r.producto])byProd[r.producto]={producido:0,costos:0,precio:parseFloat(r.precio_venta||0),cu:parseFloat(r.costo_unitario||0)};
+    // Costo dinámico desde receta — ignora el costo guardado en el registro
+    const cuDinamico=getCostoReceta(r.producto)||parseFloat(r.costo_unitario||0);
+    if(!byProd[r.producto])byProd[r.producto]={producido:0,costos:0,precio:parseFloat(r.precio_venta||0),cu:cuDinamico};
     byProd[r.producto].producido+=parseFloat(r.cantidad_producida||0);
-    byProd[r.producto].costos+=parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad_producida||0);
+    byProd[r.producto].costos+=cuDinamico*parseFloat(r.cantidad_producida||0);
     byProd[r.producto].precio=parseFloat(r.precio_venta||0);
-    byProd[r.producto].cu=parseFloat(r.costo_unitario||0);
+    byProd[r.producto].cu=cuDinamico;
   });
   let ventas=0;
   Object.entries(byProd).forEach(([nombre,v])=>{
@@ -1320,7 +1337,8 @@ function renderDashboard(){
     ventas+=v.ingresos;
   });
 
-  const costosProd=prod.reduce((s,r)=>s+parseFloat(r.costo_unitario||0)*parseFloat(r.cantidad_producida||0),0);
+  // costosProd también usa costo dinámico
+  const costosProd=prod.reduce((s,r)=>s+(getCostoReceta(r.producto)||parseFloat(r.costo_unitario||0))*parseFloat(r.cantidad_producida||0),0);
   const costosReg=costos.reduce((s,r)=>s+parseFloat(r.monto||0),0);
   const totalPagos=pagos.reduce((s,r)=>s+parseFloat(r.monto||0),0);
   // Pérdidas de inventario del período (ajustes de conteo físico)
@@ -1560,6 +1578,8 @@ function renderProduccion(){
   el.innerHTML=lista.map(r=>{
     const idx=state.produccion.indexOf(r);
     const dProd=(r.fecha||'').split('T')[0];
+    // ── COSTO DINÁMICO desde receta ──
+    const cuDinamico=getCostoReceta(r.producto)||parseFloat(r.costo_unitario||0);
 
     // ── FIX: merma filtrada por fecha exacta del registro Y producto ──
     const mermaDelDia=state.merma
@@ -1572,7 +1592,7 @@ function renderProduccion(){
     totalVend+=vendU;
     totalIngresos+=ingresos;
     const fechaLabel=rangoActivo?`<span style="font-size:10px;color:var(--muted);margin-left:4px">${dProd}</span>`:'';
-    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermaDelDia} · <strong>Vend: ${vendU}</strong> · ${fmt(r.costo_unitario)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(ingresos)}</div><button class="btn-edit" onclick="editItem('produccion',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${idx})">🗑</button></div></div>`;
+    return `<div class="list-item"><div class="list-item-info"><div class="list-item-name">${r.producto}${fechaLabel}</div><div class="list-item-sub">Prod: ${r.cantidad_producida} · Merma: ${mermaDelDia} · <strong>Vend: ${vendU}</strong> · ${fmt(cuDinamico)}/u</div></div><div style="display:flex;align-items:center;gap:2px"><div class="list-item-amount">${fmt(ingresos)}</div><button class="btn-edit" onclick="editItem('produccion',${idx})">✏️</button><button class="btn-del" onclick="deleteItem('produccion',${idx})">🗑</button></div></div>`;
   }).join('');
 
   if(totalEl){
@@ -1978,6 +1998,110 @@ function renderMateriales(){
       return `<div class="cost-dist-row"><div class="cost-dist-dot" style="background:${dot}"></div><div class="cost-dist-name">${label}</div><span class="cost-dist-type cost-type-${esProd?'prod':'op'}">${esProd?'Variable':'Fijo'}</span><div class="cost-dist-bar-bg"><div class="cost-dist-bar" style="width:${pct}%;background:${dot}"></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px"><div class="cost-dist-pct">${pct}%</div><div style="font-size:10px;color:var(--muted)">${fmt(monto)}</div></div></div>`;
     }).join('');
   }
+  // Poblar select de ingredientes y renderizar alertas
+  const ingSelect=document.getElementById('mat-ing-select');
+  if(ingSelect){
+    const prev=ingSelect.value;
+    ingSelect.innerHTML='<option value="">— Seleccionar ingrediente —</option>';
+    state.catalogo.filter(c=>c.tipo==='materia_prima').forEach(c=>{
+      const o=document.createElement('option');o.value=c.nombre;o.textContent=c.nombre;ingSelect.appendChild(o);
+    });
+    if(prev)ingSelect.value=prev;
+    if(ingSelect.value)renderIngredienteEvol();
+  }
+  renderMargenAlert();
+}
+
+// ── EVOLUCIÓN DE PRECIO POR INGREDIENTE ──
+function renderIngredienteEvol(){
+  const sel=document.getElementById('mat-ing-select');
+  const nombre=sel?sel.value:'';
+  const statsEl=document.getElementById('ing-evol-stats');
+  const ctx=document.getElementById('ing-evol-chart');
+  if(!nombre||!ctx){if(statsEl)statsEl.innerHTML='';return;}
+  const comprasIng=state.compras
+    .filter(c=>c.item===nombre&&parseFloat(c.cantidad||0)>0)
+    .map(c=>({fecha:(c.fecha||'').split('T')[0],precio:parseFloat(c.monto||0)/parseFloat(c.cantidad||0),cantidad:parseFloat(c.cantidad||0),monto:parseFloat(c.monto||0),proveedor:c.proveedor||'—'}))
+    .sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  if(!comprasIng.length){
+    if(statsEl)statsEl.innerHTML='<p class="empty-state"><span class="empty-icon">📦</span>Sin compras registradas para este ingrediente</p>';
+    if(chartIngEvol){chartIngEvol.destroy();chartIngEvol=null;}
+    return;
+  }
+  const labels=comprasIng.map(c=>c.fecha);
+  const precios=comprasIng.map(c=>parseFloat(c.precio.toFixed(4)));
+  const precioMin=Math.min(...precios);
+  const precioMax=Math.max(...precios);
+  const precioPromedio=precios.reduce((a,b)=>a+b,0)/precios.length;
+  const cat=state.catalogo.find(c=>c.nombre===nombre);
+  const unidad=cat?cat.unidad:'u';
+  if(chartIngEvol)chartIngEvol.destroy();
+  chartIngEvol=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:`Bs./${unidad}`,data:precios,borderColor:'#C4832A',backgroundColor:'rgba(196,131,42,0.1)',tension:0.3,fill:true,pointRadius:5,pointBackgroundColor:'#C4832A',pointHoverRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Bs. ${c.raw.toFixed(4)}/${unidad}`}}},scales:{x:{ticks:{font:{size:10},maxRotation:40}},y:{ticks:{callback:v=>`Bs. ${v.toFixed(2)}`,font:{size:10}}}}}});
+  const variacion=precios.length>1?((precios[precios.length-1]-precios[0])/precios[0]*100).toFixed(1):0;
+  const colorVar=parseFloat(variacion)>0?'var(--crimson)':parseFloat(variacion)<0?'var(--sage)':'var(--muted)';
+  const ultima=comprasIng[comprasIng.length-1];
+  if(statsEl){statsEl.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+      <div style="background:var(--wheat-light);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">PRECIO ACTUAL</div>
+        <div style="font-size:15px;font-weight:700;color:var(--brown);font-family:'Fraunces',serif">Bs. ${ultima.precio.toFixed(3)}</div>
+        <div style="font-size:9px;color:var(--muted)">por ${unidad}</div>
+      </div>
+      <div style="background:var(--wheat-light);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">PROMEDIO</div>
+        <div style="font-size:15px;font-weight:700;color:var(--brown);font-family:'Fraunces',serif">Bs. ${precioPromedio.toFixed(3)}</div>
+        <div style="font-size:9px;color:var(--muted)">por ${unidad}</div>
+      </div>
+      <div style="background:var(--wheat-light);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">VARIACIÓN</div>
+        <div style="font-size:15px;font-weight:700;color:${colorVar};font-family:'Fraunces',serif">${parseFloat(variacion)>0?'+':''}${variacion}%</div>
+        <div style="font-size:9px;color:var(--muted)">primera→última compra</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted);text-align:center">
+      ${comprasIng.length} compra${comprasIng.length>1?'s':''} · Mín: Bs. ${precioMin.toFixed(3)} · Máx: Bs. ${precioMax.toFixed(3)} por ${unidad}
+    </div>`;}
+}
+
+// ── ALERTA DE COMPRESIÓN DE MARGEN ──
+function renderMargenAlert(){
+  const el=document.getElementById('mat-margen-alert');if(!el)return;
+  const productos=state.productos.filter(p=>state.recetas[p]&&state.recetas[p].length>0);
+  if(!productos.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin recetas configuradas</p>';return;}
+  const alertas=[];
+  productos.forEach(producto=>{
+    const cuActual=getCostoReceta(producto);
+    if(!cuActual)return;
+    const ultimoProd=state.produccion
+      .filter(r=>r.producto===producto&&parseFloat(r.precio_venta||0)>0)
+      .sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''))[0];
+    if(!ultimoProd)return;
+    const pv=parseFloat(ultimoProd.precio_venta||0);
+    const margenActual=pv>0?((pv-cuActual)/pv*100):0;
+    const cuAnterior=parseFloat(ultimoProd.costo_unitario||0);
+    const margenAnterior=cuAnterior>0&&pv>0?((pv-cuAnterior)/pv*100):margenActual;
+    const diferencia=margenActual-margenAnterior;
+    alertas.push({producto,pv,cuActual,margenActual,margenAnterior,diferencia});
+  });
+  if(!alertas.length){el.innerHTML='<p class="empty-state"><span class="empty-icon">✅</span>Sin datos suficientes</p>';return;}
+  alertas.sort((a,b)=>a.margenActual-b.margenActual);
+  el.innerHTML=alertas.map(a=>{
+    const colorM=a.margenActual>=40?'var(--sage)':a.margenActual>=20?'var(--amber)':'var(--crimson)';
+    const iconM=a.margenActual>=40?'✅':a.margenActual>=20?'⚠️':'🔴';
+    const difStr=a.diferencia<-0.5?`<span style="color:var(--crimson);font-size:10px;font-weight:600"> ▼${Math.abs(a.diferencia).toFixed(1)}%</span>`:
+                 a.diferencia>0.5?`<span style="color:var(--sage);font-size:10px;font-weight:600"> ▲${a.diferencia.toFixed(1)}%</span>`:'';
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600;color:var(--ink)">${iconM} ${a.producto}</span>
+        <span style="font-size:16px;font-weight:700;color:${colorM};font-family:'Fraunces',serif">${a.margenActual.toFixed(1)}%${difStr}</span>
+      </div>
+      <div style="display:flex;gap:12px;font-size:11px;color:var(--muted);flex-wrap:wrap">
+        <span>C/u actual: <strong style="color:var(--ink)">${fmt(a.cuActual)}</strong></span>
+        <span>P/venta: <strong style="color:var(--ink)">${fmt(a.pv)}</strong></span>
+        <span>Gan/u: <strong style="color:${a.pv-a.cuActual>=0?'var(--sage)':'var(--crimson)'}">${fmt(a.pv-a.cuActual)}</strong></span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function exportCSV(){
@@ -2033,7 +2157,7 @@ function renderPage(page){
   else if(page==='caja'){renderCaja();updateCajaSaldos();}
   else if(page==='merma')renderMerma();
   else if(page==='personal'){renderPersonal();updateCajaSaldos();}
-  else if(page==='materiales')renderMateriales();
+  else if(page==='materiales'){renderMateriales();renderMargenAlert();}
   else if(page==='compras'){renderCompras();renderProveedores();populateSelects();initCompraRows();}
   else if(page==='inventario')renderInventario();
   else if(page==='conteo-fisico'){populateSelects();renderConteoForm();renderConteoHistorial();}
